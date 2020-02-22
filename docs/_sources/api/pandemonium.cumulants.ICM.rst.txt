@@ -1,0 +1,7 @@
+ICM
+===
+
+.. currentmodule:: pandemonium.cumulants
+
+.. autoclass:: ICM
+   :show-inheritance:

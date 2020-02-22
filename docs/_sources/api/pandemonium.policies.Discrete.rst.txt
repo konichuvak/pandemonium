@@ -1,0 +1,7 @@
+Discrete
+========
+
+.. currentmodule:: pandemonium.policies
+
+.. autoclass:: Discrete
+   :show-inheritance:

@@ -20,7 +20,7 @@
 project = 'pandemonium'
 copyright = '2020, konichuvak'
 author = 'konichuvak'
-rst_epilog = '.. |project_name| replace:: *%s*' % project
+rst_epilog = '.. |project_name| replace:: **%s**' % project
 
 # -- General configuration ---------------------------------------------------
 

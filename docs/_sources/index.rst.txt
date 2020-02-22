@@ -1,8 +1,6 @@
 |project_name|
 **************
 
-|project_name| is a trading execution system
-
 .. toctree::
    :maxdepth: -1
    :caption: Spinning Up

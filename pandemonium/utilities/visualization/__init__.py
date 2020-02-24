@@ -2,7 +2,7 @@ from functools import partial
 
 import plotly.subplots as tools
 
-from pandemonium.utilities.visualization.plotter import PlotterOneHot
+from pandemonium.utilities.visualization.plotter import Plotter
 
 tools.make_subplots = partial(
     tools.make_subplots,

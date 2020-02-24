@@ -8,16 +8,17 @@ from pandemonium.experience import Transition, Trajectory
 from pandemonium.utilities.replay import Replay
 
 
-class Q1(TemporalDifference, ControlDemon):
+class DQN(TemporalDifference, ControlDemon):
     """
 
     .. todolist::
         parametrize config
         add various options for replay buffer
+        n-step returns
 
     """
 
-    def __init__(self, replay_buffer: Replay, *args, **kwargs):
+    def __init__(self, replay_buffer: Replay, device: torch.device, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.i = 0  # batch counter
@@ -38,6 +39,9 @@ class Q1(TemporalDifference, ControlDemon):
         # Use replay buffer for breaking correlation in the experience samples
         self.replay_buffer = replay_buffer
 
+        self.optimizer = torch.optim.Adam(self.parameters(), 0.001)
+        self.to(device)
+
     def delta(self, *args, **kwargs):
         batch = Trajectory.from_transitions(zip(*self.replay_buffer.sample()))
 
@@ -54,8 +58,6 @@ class Q1(TemporalDifference, ControlDemon):
         return self.target_net(self.target_feature_net(s))
 
     def learn(self, exp: List[Transition]):
-        WARMUP = 10
-        TARGET_UPDATE_FREQ = 200
 
         self.i += 1
         self.replay_buffer.feed_batch(exp)
@@ -95,7 +97,7 @@ class Sarsa(TemporalDifference, ControlDemon):
         batch = Trajectory.from_transitions(exp)
 
         q = self.predict(batch.s0).gather(1, batch.a.unsqueeze(1)).squeeze(1)
-        next_a = self.behavior_policy(batch.s1).unsqueeze(1)
+        next_a = self.behavior_policy(batch.s1).sample().unsqueeze(1)
         next_q = self.predict(batch.s1).gather(1, next_a).squeeze(1)
 
         gamma = self.gvf.continuation(batch)

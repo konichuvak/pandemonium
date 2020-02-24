@@ -1,15 +1,14 @@
-from typing import List
-
 import textwrap
 import torch
+from torchviz import make_dot
+
 from pandemonium import GVF
 from pandemonium.experience import Transitions
-from pandemonium.networks.heads import LinearNet
 from pandemonium.policies import Policy
 from pandemonium.traces import EligibilityTrace
 
 
-class Demon(LinearNet):
+class Demon(torch.nn.Module):
     r""" **General Value Function Approximator**
 
     Each demon is an independent reinforcement learning agent responsible
@@ -30,32 +29,28 @@ class Demon(LinearNet):
                  feature,
                  behavior_policy: Policy,
                  eligibility: EligibilityTrace,
-                 device: torch.device = None,
-                 *args, **kwargs):
-        super().__init__(body=feature, *args, **kwargs)
-
+                 output_dim: int,
+                 ):
+        super().__init__()
         self.gvf = gvf
 
         self.φ = feature
         self.μ = behavior_policy
         self.λ = eligibility
 
-        # Jointly optimizes feature generation net and prediction net
-        parameters = set(self.parameters())
-        if isinstance(feature, torch.nn.Module):
-            parameters |= set(self.body.parameters())
-        self.optimizer = torch.optim.Adam(parameters, 0.001)
+        self.value_head = torch.nn.Linear(feature.feature_dim, output_dim)
 
-        self.to(device)
+    def forward(self, state: torch.Tensor) -> torch.Tensor:
+        return self.predict(state)
 
-    def predict(self, x: torch.Tensor) -> torch.Tensor:
+    def predict(self, state: torch.Tensor) -> torch.Tensor:
         r""" Approximate value of a state is linear wrt features
 
         .. math::
             \widetilde{V}(s) = \boldsymbol{\phi}(s)^{T}\boldsymbol{w}
 
         """
-        return self.forward(x)
+        return self.value_head(self.feature(state))
 
     def feature(self, *args, **kwargs) -> torch.Tensor:
         r""" A mapping from MDP states to features
@@ -93,9 +88,13 @@ class Demon(LinearNet):
         """ Specifies the loss function, i.e. TD error """
         raise NotImplementedError
 
-    def learn(self, exp: Transitions):
+    def learn(self, transitions: Transitions):
         """ Updates parameters of the network via auto-diff """
-        loss = self.delta(exp)
+        loss = self.delta(transitions)
+
+        # TODO: pass this to the monitoring system on the first pass
+        # make_dot(loss, params=dict(self.named_parameters()))
+
         self.optimizer.zero_grad()
         loss.backward()
         # torch.nn.utils.clip_grad_norm_(self.parameters(), 5)

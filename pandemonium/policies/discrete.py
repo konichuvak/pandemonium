@@ -22,7 +22,7 @@ class Random(Discrete):
     """ Picks an option at random """
 
     def dist(self, *args, **kwargs):
-        raise NotImplementedError
+        return self.action_space
 
     def __str__(self):
         return f'RandomPolicy({self.action_space.n})'

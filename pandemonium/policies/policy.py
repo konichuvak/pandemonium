@@ -2,6 +2,7 @@ from typing import Union
 
 import gym
 import numpy as np
+from torch.distributions import Distribution
 
 
 class Policy:
@@ -16,25 +17,20 @@ class Policy:
                  action_space: gym.spaces.Discrete,
                  rng: np.random.RandomState = np.random.RandomState(1337)):
         self.action_space = action_space
-        self.sampling_space = np.arange(self.action_space.n)
         self.rng = rng
 
-    def __call__(self, *args, **kwargs):
-        return self.act(*args, **kwargs)
-
-    def dist(self, *args, **kwargs):
+    def dist(self, *args, **kwargs) -> Distribution:
         """ Returns a distribution over actions """
         raise NotImplementedError
 
-    def act(self, x, *args, **kwargs) -> Union['Option', 'Action']:
-        prob = self.dist(x, *args, **kwargs)
-        return self.rng.choice(self.sampling_space, p=prob)
+    def act(self, state, *args, **kwargs) -> Union['Option', 'Action']:
+        return self.dist(state, *args, **kwargs).sample()
 
-    def action_filter(self, x):
+    def action_filter(self, state):
         """ Filters the actions available at a given state
 
         Closely relates to option initiation sets:
-            [o for o in options if o.initiation(x) == 1]
+        >>> [o for o in options if o.initiation(state) == 1]
 
         .. seealso:: Interest Functions by K. Khetarpal et al. 2020
             https://arxiv.org/pdf/2001.00271.pdf

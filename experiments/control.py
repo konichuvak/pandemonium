@@ -9,36 +9,37 @@ from gym_minigrid.wrappers import FullyObsWrapper, ImgObsWrapper
 from ray.rllib.utils.schedules import LinearSchedule, ConstantSchedule
 from tqdm import tqdm
 
-from pandemonium.agent import Agent
+from pandemonium import Agent, GVF
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
-from pandemonium.demons import Horde
-from pandemonium.demons.control import Q1, Sarsa1
+from pandemonium.demons import Horde, PredictionDemon, ControlDemon
+from pandemonium.demons.control import DQN, Sarsa, AC
 from pandemonium.envs import FourRooms
 from pandemonium.envs.utils import generate_all_states
 from pandemonium.envs.wrappers import (Torch, OneHotObsWrapper,
                                        SimplifyActionSpace)
-from pandemonium.gvf import GVF
 from pandemonium.networks.bodies import ConvBody, Identity
 from pandemonium.policies.discrete import Egreedy
-from pandemonium.utilities.visualization.plotter import PlotterOneHot
+from pandemonium.policies.gradient import VPG
+from pandemonium.utilities.visualization.plotter import Plotter
 from pandemonium.utilities.replay import Replay
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+# device = torch.device('cpu')
 
 # ------------------------------------------------------------------------------
 # Specify learning environment
 # ------------------------------------------------------------------------------
 
 envs = [
-    EmptyEnv(size=8),
+    EmptyEnv(size=6),
     # FourRooms(),
-    # DoorKeyEnv(size=8),
+    # DoorKeyEnv(size=10),
     # MultiRoomEnv(4, 4)
 ]
 wrappers = [
     # Non-observation wrappers
-    SimplifyActionSpace,
+    # SimplifyActionSpace,
 
     # Observation wrappers
     # FullyObsWrapper,
@@ -69,12 +70,7 @@ gvf = GVF(target_policy=target_policy,
 # Representation learning
 # ==================================
 obs = env.reset()
-# feature_extractor = ConvBody(d=3,
-#                              w=7,
-#                              h=7,
-#                              # w=env.unwrapped.width,
-#                              # h=env.unwrapped.height,
-#                              feature_dim=256)
+# feature_extractor = ConvBody(d=3, w=7, h=7, feature_dim=2**10)
 # feature_extractor = FCBody(state_dim=obs.shape[0], hidden_units=(256,))
 feature_extractor = Identity(state_dim=obs.shape[0])
 
@@ -82,24 +78,34 @@ feature_extractor = Identity(state_dim=obs.shape[0])
 # Behavioral Policy
 # ==================================
 # policy = Random(action_space=env.action_space)
-exploration = LinearSchedule(schedule_timesteps=10000, final_p=0.01)
-policy = Egreedy(epsilon=exploration, action_space=env.action_space)
+
+# exploration = LinearSchedule(schedule_timesteps=20000, final_p=0.1)
+# policy = Egreedy(epsilon=exploration, action_space=env.action_space)
+
+policy = VPG(feature_dim=feature_extractor.feature_dim, action_space=env.action_space)
 
 # ==================================
 # Learning Algorithm
 # ==================================
+BATCH_SIZE = 32
+prediction_demons = list()
 
-# demon = Sarsa1(gvf=gvf,
+# control_demon = Sarsa(gvf=gvf,
 #            feature=feature_extractor,
 #            behavior_policy=policy,
 #            device=device)
 
 replay = Replay(memory_size=1e5, batch_size=32)
-demon = Q1(gvf=gvf,
-           feature=feature_extractor,
-           behavior_policy=policy,
-           replay_buffer=replay,
-           device=device)
+# control_demon = DQN(gvf=gvf,
+#            feature=feature_extractor,
+#            behavior_policy=policy,
+#            replay_buffer=replay,
+#            device=device)
+
+control_demon = AC(gvf=gvf, actor=policy, feature=feature_extractor, device=device)
+
+horde = Horde(control_demon=control_demon, prediction_demons=prediction_demons)
+print(horde)
 
 # ------------------------------------------------------------------------------
 # Specify agent that will be interacting with the environment
@@ -109,15 +115,16 @@ demon = Q1(gvf=gvf,
 #   Together with the environment, agent produces a steam of (x, A) data,
 #   from which the GVFs in question are estimated by demons
 
-agent = Agent(policy=policy,
-              feature_extractor=feature_extractor,
-              horde=Horde(control_demon=demon, prediction_demons=[]))
+# NOTE: How is agent different from a Horde?
+#   ??? It is not???
+
+agent = Agent(feature_extractor=feature_extractor, horde=horde)
 
 # ------------------------------------------------------------------------------
 # Monitoring tools
 # ------------------------------------------------------------------------------
 
-plotter = PlotterOneHot(env)
+plotter = Plotter(env)
 
 # Generate all possible states
 states = generate_all_states(test_env, wrappers)
@@ -133,17 +140,21 @@ pbar = tqdm(range(episodes),
             leave=False, position=1,
             desc=f'S {steps:5}, T {total_steps:8}')
 for e in pbar:
-    steps = agent.interact(env, render=False)
+    steps = agent.interact(BATCH_SIZE=BATCH_SIZE, env=env, render=False)
     total_steps += steps
 
-    eps = agent.horde.control_demon.μ._epsilon.value(total_steps)
+    # eps = agent.horde.control_demon.μ._epsilon.value(total_steps)
     pbar.set_description(desc=f'S {steps:5} | '
-                              f'T {total_steps:7} | '
-                              f'ε {round(eps, 3):5}',
+                              f'T {total_steps:7} | ',
+                              # f'ε {round(eps, 3):5}',
                          refresh=False)
 
-    if e % 25 == 0:
-        v = agent.horde.control_demon.predict(states)
-        v = v.mean(1).view(4, env.height, env.width)
-        v = v.cpu().detach().numpy()
-        plotter.plot_option_value_function(f'episode {e} Q', v, 'vf')
+    # Record value function
+    if e % 10 == 0:
+        q = agent.horde.control_demon.behavior_policy(states).probs
+        q = q.transpose(0, 1).view(q.shape[1], 4, env.height, env.width)
+        q = q.cpu().detach().numpy()
+        plotter.save_figure(plotter.plot_value_function, save_path='vf',
+                            figure_name=f'episode {e}',
+                            value_tensor=q)
+

@@ -1,16 +1,13 @@
 from gym_minigrid.minigrid import MiniGridEnv
 from pandemonium.demons import Horde
 from pandemonium.experience import Transition
-from pandemonium.policies import Policy
 
 
 class Agent:
 
     def __init__(self,
-                 policy: Policy,
                  feature_extractor,
                  horde: Horde):
-        self.policy = policy
 
         # Feature extractor is shared across all demons
         self.feature_extractor = feature_extractor
@@ -19,10 +16,10 @@ class Agent:
         self.horde = horde
 
     def interact(self,
+                 BATCH_SIZE: 32,
                  env: MiniGridEnv,
                  render: bool = False):
 
-        BATCH_SIZE = 32
         render_batch = False
 
         done = False
@@ -40,10 +37,8 @@ class Agent:
                 if render_batch:
                     env.render()
 
-                # TODO: return both the action and distribution object
-                #   so that demons can compute IS later if need be
-                a = self.horde.control_demon.behavior_policy(s0)
-
+                dist = self.horde.control_demon.behavior_policy(s0)
+                a = dist.sample()
                 s1, reward, done, info = env.step(a)
 
                 t = Transition(s0, a, reward, s1, done, info=info)

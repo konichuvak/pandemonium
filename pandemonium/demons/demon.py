@@ -1,5 +1,6 @@
 from typing import List
 
+import textwrap
 import torch
 from pandemonium import GVF
 from pandemonium.experience import Transitions
@@ -78,7 +79,7 @@ class Demon(LinearNet):
         The distribution across all possible motor commands of the agent
         could be specified in this way.
         """
-        return self.μ(s)
+        return self.μ.dist(s)
 
     def eligibility(self, s):
         r""" Specifies eligibility trace-decay rate
@@ -147,9 +148,8 @@ class ControlDemon(Demon):
                          behavior_policy=behavior_policy, *args, **kwargs)
 
     def behavior_policy(self, state):
-        # Control policies require access to value functions.
-        return self.μ(state, vf=self)
-
+        # Control policies usually require access to value functions.
+        return self.μ.dist(state, vf=self)
 
 class Horde:
     r""" A horde of demons

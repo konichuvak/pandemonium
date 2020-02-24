@@ -27,10 +27,8 @@ class Fitness(Cumulant):
 
     def __init__(self, env: Env):
         self.env = env
-        self.z = 0
 
     def __call__(self, experience: Transition):
-        self.z += experience.r
         return experience.r
 
     def __str__(self):

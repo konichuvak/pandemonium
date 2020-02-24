@@ -30,7 +30,11 @@ Transitions = Union[Collection[Transition], Iterator[Collection[Transition]]]
 
 
 class Trajectory(Transition):
-    """ A batch of transitions """
+    """ A batch of transitions
+
+    .. todo::
+        - make an option to iterate over transitions
+    """
 
     done: torch.Tensor
     advantages: torch.Tensor = None

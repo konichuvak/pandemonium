@@ -41,8 +41,9 @@ class TDn(TemporalDifference, PredictionDemon):
 
     def n_step_target(self, traj: Trajectory):
         γ = self.gvf.continuation(traj)
-        targets = torch.empty_like(traj.r, dtype=torch.float)
+        z = self.gvf.cumulant(traj)
+        targets = torch.empty_like(z, dtype=torch.float)
         target = self.predict(traj.s1[-1, None])  # preserving batch dim
         for i in range(len(traj)-1, -1, -1):
-            target = targets[i] = traj.r[i] + γ[i] * target
+            target = targets[i] = z[i] + γ[i] * target
         return targets

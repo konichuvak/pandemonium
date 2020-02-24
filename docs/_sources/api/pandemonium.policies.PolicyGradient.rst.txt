@@ -1,0 +1,19 @@
+PolicyGradient
+==============
+
+.. currentmodule:: pandemonium.policies
+
+.. autoclass:: PolicyGradient
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~PolicyGradient.delta
+      ~PolicyGradient.dist
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: delta
+   .. automethod:: dist

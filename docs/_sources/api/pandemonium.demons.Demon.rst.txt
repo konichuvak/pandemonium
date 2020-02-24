@@ -14,6 +14,7 @@ Demon
       ~Demon.delta
       ~Demon.eligibility
       ~Demon.feature
+      ~Demon.forward
       ~Demon.learn
       ~Demon.predict
 
@@ -23,5 +24,6 @@ Demon
    .. automethod:: delta
    .. automethod:: eligibility
    .. automethod:: feature
+   .. automethod:: forward
    .. automethod:: learn
    .. automethod:: predict

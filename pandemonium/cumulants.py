@@ -5,7 +5,7 @@ from pandemonium.utilities.utilities import get_all_classes
 
 
 class Cumulant:
-    r""" A signal of interest accumulated over time
+    r""" A signal of interest :math:`z` accumulated over time
 
     The classical example of a cumulant is a reward from MDP environment.
     Cumulant is not always maximized; most of the time we are interested
@@ -38,7 +38,7 @@ class Fitness(Cumulant):
 
 
 class FeatureCumulant(Cumulant):
-    r""" Tracks a single value from the feature vector $\boldsymbol{x}$
+    r""" Tracks a single value from the feature vector :math:`\boldsymbol{x}`
 
     In case when the features are linearly separable (linea FA) this cumulant
     can track the value of a particular feature in the feature vector over time.
@@ -74,7 +74,7 @@ class Curiosity(Cumulant):
 class Empowerment(Cumulant):
     r""" Measures the amount of causal influence an agent has on the world
 
-    Computed as a $log(|S|)$, i.e. logarithm of number of reachable (in fixed
+    Computed as a $log(S)$, i.e. logarithm of number of reachable (in fixed
     number of steps) states after performing action A.
 
     See Salge et al. 2014 for details.

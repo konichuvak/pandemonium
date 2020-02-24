@@ -54,3 +54,6 @@ class Trajectory(Transition):
 
     def __len__(self):
         return self.s0.shape[0]
+
+
+__all__ = ['Trajectory', 'Transition']

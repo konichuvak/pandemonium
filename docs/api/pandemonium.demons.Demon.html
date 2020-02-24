@@ -37,8 +37,8 @@
   <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Horde" href="pandemonium.demons.Horde.html" />
-    <link rel="prev" title="ControlDemon" href="pandemonium.demons.ControlDemon.html" /> 
+    <link rel="next" title="PredictionDemon" href="pandemonium.demons.PredictionDemon.html" />
+    <link rel="prev" title="DQN" href="pandemonium.demons.DQN.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,7 +84,7 @@
             
               <p class="caption"><span class="caption-text">Spinning Up</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing <em>pandemonium</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing <strong>pandemonium</strong></a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul class="current">
@@ -92,10 +92,15 @@
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.gvf">pandemonium.gvf Module</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../package-ref.html#module-pandemonium.demons">pandemonium.demons Package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="../package-ref.html#id1">Classes</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.AC.html">AC</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.ControlDemon.html">ControlDemon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DQN.html">DQN</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">Demon</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.Horde.html">Horde</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.PredictionDemon.html">PredictionDemon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.Sarsa.html">Sarsa</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.SarsaN.html">SarsaN</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TD.html">TD</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TDn.html">TDn</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../package-ref.html#id2">Class Inheritance Diagram</a></li>
@@ -183,8 +188,8 @@
 <h1>Demon<a class="headerlink" href="#demon" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pandemonium.demons.Demon">
-<em class="property">class </em><code class="sig-prename descclassname">pandemonium.demons.</code><code class="sig-name descname">Demon</code><span class="sig-paren">(</span><em class="sig-param">gvf: pandemonium.gvf.GVF</em>, <em class="sig-param">feature</em>, <em class="sig-param">behavior_policy: pandemonium.policies.policy.Policy</em>, <em class="sig-param">eligibility: pandemonium.traces.EligibilityTrace</em>, <em class="sig-param">device: torch.device = None</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.networks.heads.LinearNet</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">pandemonium.demons.</code><code class="sig-name descname">Demon</code><span class="sig-paren">(</span><em class="sig-param">gvf: pandemonium.gvf.GVF</em>, <em class="sig-param">feature</em>, <em class="sig-param">behavior_policy: pandemonium.policies.policy.Policy</em>, <em class="sig-param">eligibility: pandemonium.traces.EligibilityTrace</em>, <em class="sig-param">output_dim: int</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p><strong>General Value Function Approximator</strong></p>
 <p>Each demon is an independent reinforcement learning agent responsible
 for learning one piece of predictive knowledge about the main agent’s
@@ -218,10 +223,13 @@ the demon uses to learn the approximation are called answers functions:</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.Demon.feature" title="pandemonium.demons.Demon.feature"><code class="xref py py-obj docutils literal notranslate"><span class="pre">feature</span></code></a>(*args, **kwargs)</p></td>
 <td><p>A mapping from MDP states to features</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.Demon.learn" title="pandemonium.demons.Demon.learn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">learn</span></code></a>(exp)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.Demon.forward" title="pandemonium.demons.Demon.forward"><code class="xref py py-obj docutils literal notranslate"><span class="pre">forward</span></code></a>(state)</p></td>
+<td><p>Defines the computation performed at every call.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.Demon.learn" title="pandemonium.demons.Demon.learn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">learn</span></code></a>(transitions)</p></td>
 <td><p>Updates parameters of the network via auto-diff</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.Demon.predict" title="pandemonium.demons.Demon.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(x)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.Demon.predict" title="pandemonium.demons.Demon.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(state)</p></td>
 <td><p>Approximate value of a state is linear wrt features</p></td>
 </tr>
 </tbody>
@@ -263,14 +271,28 @@ sensor readings (not just the ones corresponding to light).</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="pandemonium.demons.Demon.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">state: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="headerlink" href="#pandemonium.demons.Demon.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="pandemonium.demons.Demon.learn">
-<code class="sig-name descname">learn</code><span class="sig-paren">(</span><em class="sig-param">exp: Union[Collection[pandemonium.experience.Transition], Iterator[Collection[pandemonium.experience.Transition]]]</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon.learn" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">learn</code><span class="sig-paren">(</span><em class="sig-param">transitions: Union[Collection[pandemonium.experience.Transition], Iterator[Collection[pandemonium.experience.Transition]]]</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon.learn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Updates parameters of the network via auto-diff</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pandemonium.demons.Demon.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="headerlink" href="#pandemonium.demons.Demon.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">state: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="headerlink" href="#pandemonium.demons.Demon.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Approximate value of a state is linear wrt features</p>
 <div class="math notranslate nohighlight">
 \[\widetilde{V}(s) = \boldsymbol{\phi}(s)^{T}\boldsymbol{w}\]</div>
@@ -288,10 +310,10 @@ sensor readings (not just the ones corresponding to light).</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="pandemonium.demons.Horde.html" class="btn btn-neutral float-right" title="Horde" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="pandemonium.demons.PredictionDemon.html" class="btn btn-neutral float-right" title="PredictionDemon" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="pandemonium.demons.ControlDemon.html" class="btn btn-neutral float-left" title="ControlDemon" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="pandemonium.demons.DQN.html" class="btn btn-neutral float-left" title="DQN" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

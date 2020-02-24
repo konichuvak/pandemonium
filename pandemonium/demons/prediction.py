@@ -6,17 +6,16 @@ from pandemonium.experience import Transition, Trajectory
 
 
 class TD(TemporalDifference, PredictionDemon):
-    r""" Semi-gradient $TD(\lambda)$ rule for estimating $\tilde{v}$
+    r""" Semi-gradient :math:`TD(\lambda)` rule for estimating :math:`\tilde{v} ≈ v_{\pi}`
 
     .. math::
-        e_t = γ_t λ e_{t-1} + \Nabla \Tilde{v}(x_t)
-        w_{t+1} = w_t + \alpha (z_t + γ_{t+1}\Tilde{v}(x_{t+1}) - \Tilde{v}(x_t))e_t
+        \begin{align*}
+            e_t &= γ_t λ e_{t-1} + \nabla \tilde{v}(x_t) \\
+            w_{t+1} &= w_t + \alpha (z_t + γ_{t+1} \tilde{v}(x_{t+1}) - \tilde{v}(x_t))e_t
+        \end{align*}
 
-    In case when $\lambda=0$ we recover one-step TD(0) algorithm:
-
-    .. math::
-        e_t = \Nabla \Tilde{v}(x_t)
-        w_{t+1} = w_t + \alpha (z_t + γ_{t+1}V(x_{t+1}) - V(x_t}))e_t
+    In case when $\lambda=0$ we recover one-step $TD(0)$ algorithm with
+    $e_t = \nabla \tilde{v}(x_t)$.
 
     """
 
@@ -28,10 +27,10 @@ class TD(TemporalDifference, PredictionDemon):
 
 
 class TDn(TemporalDifference, PredictionDemon):
-    """ Bootstrapped Temporal Difference
+    """ :math:`n`-step :math:`TD` for estimating :math:`V ≈ v_{\pi}`
 
-    Targets are calculated using forward view from n-step returns, where
-    n is determined by the length of trajectory.
+    Targets are calculated using forward view from $n$-step returns, where
+    $n$ is determined by the length of trajectory.
     """
 
     def delta(self, traj: Trajectory):

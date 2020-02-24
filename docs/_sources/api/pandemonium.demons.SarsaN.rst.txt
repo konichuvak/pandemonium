@@ -1,0 +1,19 @@
+SarsaN
+======
+
+.. currentmodule:: pandemonium.demons
+
+.. autoclass:: SarsaN
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~SarsaN.delta
+      ~SarsaN.n_step_target
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: delta
+   .. automethod:: n_step_target

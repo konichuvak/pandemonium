@@ -1,24 +1,20 @@
 from copy import deepcopy
 from functools import reduce
 
-import numpy as np
 import torch
-from gym.core import ObservationWrapper
 from gym_minigrid.envs import EmptyEnv, DoorKeyEnv, MultiRoomEnv
 from gym_minigrid.wrappers import FullyObsWrapper, ImgObsWrapper
 from ray.rllib.utils.schedules import LinearSchedule, ConstantSchedule
 from tqdm import tqdm
 
-from pandemonium import Agent, GVF
+from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
-from pandemonium.demons import Horde, PredictionDemon, ControlDemon
 from pandemonium.demons.control import DQN, Sarsa, AC
 from pandemonium.envs import FourRooms
 from pandemonium.envs.utils import generate_all_states
-from pandemonium.envs.wrappers import (Torch, OneHotObsWrapper,
-                                       SimplifyActionSpace)
-from pandemonium.networks.bodies import ConvBody, Identity
+from pandemonium.envs.wrappers import Torch, OneHotObsWrapper
+from pandemonium.networks.bodies import ConvBody, FCBody, Identity
 from pandemonium.policies.discrete import Egreedy
 from pandemonium.policies.gradient import VPG
 from pandemonium.utilities.visualization.plotter import Plotter
@@ -95,7 +91,7 @@ prediction_demons = list()
 #            behavior_policy=policy,
 #            device=device)
 
-replay = Replay(memory_size=1e5, batch_size=32)
+# replay = Replay(memory_size=1e5, batch_size=32)
 # control_demon = DQN(gvf=gvf,
 #            feature=feature_extractor,
 #            behavior_policy=policy,

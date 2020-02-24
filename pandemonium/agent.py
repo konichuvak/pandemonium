@@ -1,5 +1,5 @@
 from gym_minigrid.minigrid import MiniGridEnv
-from pandemonium.demons import Horde
+from pandemonium.horde import Horde
 from pandemonium.experience import Transition
 
 

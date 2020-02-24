@@ -1,0 +1,17 @@
+TD
+==
+
+.. currentmodule:: pandemonium.demons
+
+.. autoclass:: TD
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~TD.delta
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: delta

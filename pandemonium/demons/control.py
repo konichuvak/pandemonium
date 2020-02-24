@@ -14,10 +14,10 @@ from pandemonium.utilities.replay import Replay
 class DQN(TemporalDifference, ControlDemon):
     """
 
-    .. todolist::
-        parametrize config
-        add various options for replay buffer
-        n-step returns
+    .. todo::
+        - parametrize config
+        - add various options for replay buffer
+        - n-step returns
 
     """
 
@@ -88,7 +88,7 @@ class DQN(TemporalDifference, ControlDemon):
 
 
 class Sarsa(TemporalDifference, ControlDemon):
-    r""" One-step semi-gradient SARSA for estimating $\tilde{q}$
+    r""" One-step semi-gradient :math:`SARSA` for estimating :math:`\tilde{q}`
 
     On-policy control method suitable for episodic tasks.
     """
@@ -107,20 +107,21 @@ class Sarsa(TemporalDifference, ControlDemon):
 
 
 class SarsaN(TemporalDifference, ControlDemon):
-    r""" N-step semi-gradient SARSA for estimating $\tilde{q}$
+    r""" :math:`n`-step semi-gradient :math:`SARSA` for estimating :math:`\tilde{q}`
 
     This is a classic on-policy control method suitable for episodic tasks.
 
     .. note::
-        n-step returns are calculated in an unusual way!
-        Each (S, A) tuple in the trajectory gets updated towards a different
-        n-step return where each {n, n-1, ..., 1} (S, A) of the trajectory is
-        updated using 1 step, 2 step, ..., n-step returns respectively.
+        $n$-step returns are calculated in an unusual way!
+        Each $(S, A)$ tuple in the trajectory gets updated towards a different
+        $n$-step return where each $\{n, n-1, \dots, 1\}$ $(S, A)$ of the
+        trajectory is updated using $\{1, 2, \dots, n\}$-step returns
+        respectively.
 
     .. todo::
-        implement true n-step return (each state gets updated towards n-step
+        - implement true n-step return (each state gets updated towards n-step
         return)
-        alternatively, subdivide the trajectory into n-batches instead of
+        - alternatively, subdivide the trajectory into n-batches instead of
         assuming that n = batch size
 
     """

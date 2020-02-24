@@ -1,0 +1,17 @@
+Sarsa
+=====
+
+.. currentmodule:: pandemonium.demons
+
+.. autoclass:: Sarsa
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~Sarsa.delta
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: delta

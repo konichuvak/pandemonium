@@ -5,7 +5,7 @@ from pandemonium.policies import Policy
 
 
 class PolicyGradient(Policy, nn.Module):
-    """ A class of parametrized policies """
+    """ Base class for parametrized policies """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

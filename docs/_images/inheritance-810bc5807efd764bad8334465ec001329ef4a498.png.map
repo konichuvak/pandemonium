@@ -1,0 +1,7 @@
+<map id="inheritance98f06f49ce" name="inheritance98f06f49ce">
+<area shape="rect" id="node2" title="Base abstract class for decision making rules" alt="" coords="5,55,77,80"/>
+<area shape="rect" id="node3" title="Base class for discrete policies" alt="" coords="146,55,222,80"/>
+<area shape="rect" id="node5" title="Base class for parametrized policies" alt="" coords="125,104,243,129"/>
+<area shape="rect" id="node4" title="Base class for all neural network modules." alt="" coords="5,104,77,129"/>
+<area shape="rect" id="node6" title="Vanilla Policy Gradient" alt="" coords="291,104,363,129"/>
+</map>

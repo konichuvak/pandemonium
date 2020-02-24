@@ -1,0 +1,19 @@
+AC
+==
+
+.. currentmodule:: pandemonium.demons
+
+.. autoclass:: AC
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~AC.delta
+      ~AC.learn
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: delta
+   .. automethod:: learn

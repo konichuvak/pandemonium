@@ -5,7 +5,7 @@ from pandemonium.demons import ControlDemon, PredictionDemon
 
 
 class Horde:
-    r""" A horde of demons
+    r""" A horde of Demons
 
     Container class for all the demons of a particular agent.
     """

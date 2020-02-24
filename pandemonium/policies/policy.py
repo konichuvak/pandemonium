@@ -6,7 +6,7 @@ from torch.distributions import Distribution
 
 
 class Policy:
-    r"""
+    r""" Base abstract class for decision making rules
 
     .. todo::
         consider making an ``option space``

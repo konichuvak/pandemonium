@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="conv2d_size_out" href="pandemonium.networks.conv2d_size_out.html" />
+    <link rel="next" title="PolicyGradient" href="pandemonium.policies.PolicyGradient.html" />
     <link rel="prev" title="Discrete" href="pandemonium.policies.Discrete.html" /> 
 </head>
 
@@ -84,7 +84,7 @@
             
               <p class="caption"><span class="caption-text">Spinning Up</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing <em>pandemonium</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing <strong>pandemonium</strong></a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul class="current">
@@ -97,6 +97,8 @@
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.Continuous.html">Continuous</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.Discrete.html">Discrete</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">Policy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.PolicyGradient.html">PolicyGradient</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.VPG.html">VPG</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../package-ref.html#id4">Class Inheritance Diagram</a></li>
@@ -183,8 +185,9 @@
 <h1>Policy<a class="headerlink" href="#policy" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pandemonium.policies.Policy">
-<em class="property">class </em><code class="sig-prename descclassname">pandemonium.policies.</code><code class="sig-name descname">Policy</code><span class="sig-paren">(</span><em class="sig-param">action_space: gym.spaces.discrete.Discrete</em>, <em class="sig-param">rng: numpy.random.mtrand.RandomState = RandomState(MT19937) at 0x7F6B741B4AF0</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.Policy" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pandemonium.policies.</code><code class="sig-name descname">Policy</code><span class="sig-paren">(</span><em class="sig-param">action_space: gym.spaces.discrete.Discrete</em>, <em class="sig-param">rng: numpy.random.mtrand.RandomState = RandomState(MT19937) at 0x7FBEF4F629E0</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.Policy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base abstract class for decision making rules</p>
 <div class="admonition-todo admonition" id="id1">
 <p class="admonition-title">Todo</p>
 <p>consider making an <code class="docutils literal notranslate"><span class="pre">option</span> <span class="pre">space</span></code></p>
@@ -196,40 +199,29 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.policies.Policy.__call__" title="pandemonium.policies.Policy.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Call self as a function.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.policies.Policy.act" title="pandemonium.policies.Policy.act"><code class="xref py py-obj docutils literal notranslate"><span class="pre">act</span></code></a>(x, *args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.policies.Policy.act" title="pandemonium.policies.Policy.act"><code class="xref py py-obj docutils literal notranslate"><span class="pre">act</span></code></a>(state, *args, **kwargs)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.policies.Policy.action_filter" title="pandemonium.policies.Policy.action_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">action_filter</span></code></a>(x)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.policies.Policy.action_filter" title="pandemonium.policies.Policy.action_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">action_filter</span></code></a>(state)</p></td>
 <td><p>Filters the actions available at a given state</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.policies.Policy.dist" title="pandemonium.policies.Policy.dist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dist</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.policies.Policy.dist" title="pandemonium.policies.Policy.dist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dist</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Returns a distribution over actions</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
-<dt id="pandemonium.policies.Policy.__call__">
-<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.Policy.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call self as a function.</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="pandemonium.policies.Policy.act">
-<code class="sig-name descname">act</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; Union[Option, Action]<a class="headerlink" href="#pandemonium.policies.Policy.act" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">act</code><span class="sig-paren">(</span><em class="sig-param">state</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; Union[Option, Action]<a class="headerlink" href="#pandemonium.policies.Policy.act" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="pandemonium.policies.Policy.action_filter">
-<code class="sig-name descname">action_filter</code><span class="sig-paren">(</span><em class="sig-param">x</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.Policy.action_filter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">action_filter</code><span class="sig-paren">(</span><em class="sig-param">state</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.Policy.action_filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filters the actions available at a given state</p>
-<dl class="simple">
-<dt>Closely relates to option initiation sets:</dt><dd><p>[o for o in options if o.initiation(x) == 1]</p>
-</dd>
-</dl>
+<p>Closely relates to option initiation sets:
+&gt;&gt;&gt; [o for o in options if o.initiation(state) == 1]</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p>Interest Functions by K. Khetarpal et al. 2020
@@ -244,7 +236,7 @@
 
 <dl class="method">
 <dt id="pandemonium.policies.Policy.dist">
-<code class="sig-name descname">dist</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.Policy.dist" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">dist</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; torch.distributions.distribution.Distribution<a class="headerlink" href="#pandemonium.policies.Policy.dist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a distribution over actions</p>
 </dd></dl>
 
@@ -260,7 +252,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="pandemonium.networks.conv2d_size_out.html" class="btn btn-neutral float-right" title="conv2d_size_out" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="pandemonium.policies.PolicyGradient.html" class="btn btn-neutral float-right" title="PolicyGradient" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="pandemonium.policies.Discrete.html" class="btn btn-neutral float-left" title="Discrete" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

@@ -1,6 +1,6 @@
 import textwrap
+
 import torch
-from torchviz import make_dot
 
 from pandemonium import GVF
 from pandemonium.experience import Transitions

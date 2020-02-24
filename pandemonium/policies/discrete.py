@@ -24,8 +24,8 @@ class Random(Discrete):
     def dist(self, *args, **kwargs):
         raise NotImplementedError
 
-    def act(self, x, *args, **kwargs) -> Union['Option', 'Action']:
-        return self.action_space.sample()
+    def __str__(self):
+        return f'RandomPolicy({self.action_space.n})'
 
 
 class Egreedy(Discrete):
@@ -58,3 +58,10 @@ class Egreedy(Discrete):
     def act(self, state, *args, **kwargs) -> 'Action':
         dist = self.dist(state, *args, **kwargs)
         return dist.sample()
+
+    def __str__(self):
+        return f'ε-greedy({self._epsilon})'
+
+
+class Boltzman(Discrete):
+    pass

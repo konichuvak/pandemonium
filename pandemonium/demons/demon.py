@@ -100,6 +100,18 @@ class Demon(LinearNet):
         # torch.nn.utils.clip_grad_norm_(self.parameters(), 5)
         self.optimizer.step()
 
+    def __str__(self):
+        Γ = textwrap.indent(str(self.gvf), "\t")
+        φ = textwrap.indent(str(self.φ), "\t\t")
+        μ = textwrap.indent(str(self.μ), "\t\t")
+        λ = textwrap.indent(str(self.λ), "\t\t")
+        return f'{self.__class__.__name__}(\n' \
+               f'{Γ}\n' \
+               f'\t(φ):\n {φ}\n' \
+               f'\t(μ):\n {μ}\n' \
+               f'\t(λ):\n {λ}\n' \
+               f')'
+
 
 class PredictionDemon(Demon):
     r""" Collects factual knowledge about environment by learning to predict

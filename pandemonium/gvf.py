@@ -78,8 +78,12 @@ class GVF:
         """
         return self.z(s)
 
-    def __repr__(self):
-        return self.__class__.__name__
+    def __str__(self):
+        return f'GVF(\n' \
+               f'\t(z): {self.z}\n' \
+               f'\t(π): {self.π}\n' \
+               f'\t(γ): {self.γ}\n' \
+               f')'
 
 
 __all__ = ['GVF']

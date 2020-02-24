@@ -20,16 +20,16 @@ class Q1(TemporalDifference, ControlDemon):
     def __init__(self, replay_buffer: Replay, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Batch counter
-        self.i = 0
+        self.i = 0  # batch counter
+        self.warmup = 10  # in batches
+        self.target_update_freq = 200  # in batches
 
         # Create a target networks to stabilize training
         self.target_feature_net = deepcopy(self.φ)
-        if hasattr(self.φ, 'state_dict'):
-            self.target_feature_net.load_state_dict(self.φ.state_dict())
+        self.target_feature_net.load_state_dict(self.φ.state_dict())
 
-        self.target_net = deepcopy(self.head)
-        self.target_net.load_state_dict(self.head.state_dict())
+        self.target_net = deepcopy(self.value_head)
+        self.target_net.load_state_dict(self.value_head.state_dict())
 
         # Set both feature and prediction nets to evaluation mode
         # self.target_net.eval()
@@ -60,18 +60,29 @@ class Q1(TemporalDifference, ControlDemon):
         self.i += 1
         self.replay_buffer.feed_batch(exp)
 
-        if self.i == WARMUP:
+        if self.i == self.warmup:
             print('learning_starts')
-        if self.i > WARMUP:
+        if self.i > self.warmup:
             super().learn(exp)
-        if self.i % TARGET_UPDATE_FREQ == 0:
-            if hasattr(self.φ, 'state_dict'):
-                self.target_feature_net.load_state_dict(self.φ.state_dict())
-            self.target_net.load_state_dict(self.head.state_dict())
+        if self.i % self.target_update_freq == 0:
+            self.target_feature_net.load_state_dict(self.φ.state_dict())
+            self.target_net.load_state_dict(self.value_head.state_dict())
+
+    def __str__(self):
+        # model = torch.nn.Module.__str__(self)[:-2]
+        demon = ControlDemon.__str__(self)
+        buffer = f'  (replay_buffer): {self.replay_buffer}'
+        hyperparams = f'  (hyperparams):\n' \
+                      f'    (warmup): {self.warmup}\n' \
+                      f'    (target_update_freq): {self.target_update_freq}\n'
+
+        return f'{demon}\n' \
+               f'{buffer}\n' \
+               f'{hyperparams}\n)'
 
 
-class Sarsa1(TemporalDifference, ControlDemon):
-    r""" One-step semi-gradient sarsa for estimating $\tilde{q}$
+class Sarsa(TemporalDifference, ControlDemon):
+    r""" One-step semi-gradient SARSA for estimating $\tilde{q}$
 
     On-policy control method suitable for episodic tasks.
 

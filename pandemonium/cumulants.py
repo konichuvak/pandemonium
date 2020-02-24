@@ -33,6 +33,9 @@ class Fitness(Cumulant):
         self.z += experience.r
         return experience.r
 
+    def __str__(self):
+        return f'Fitness({self.env.unwrapped.__class__.__name__})'
+
 
 class FeatureCumulant(Cumulant):
     r""" Tracks a single value from the feature vector $\boldsymbol{x}$
@@ -52,7 +55,7 @@ class FeatureCumulant(Cumulant):
         return experience.x0[self.idx]
 
 
-class Surprise:
+class Surprise(Cumulant):
     r""" Tracks the 'surprise' associated with a new state using a density model
 
     See Berseth et al. 2019 for details @ https://arxiv.org/pdf/1912.05510.pdf
@@ -60,7 +63,7 @@ class Surprise:
     pass
 
 
-class Curiosity:
+class Curiosity(Cumulant):
     r""" Tracks the novelty of the states wrt to the forward model
 
     See Pathak et al. 2017 for details.
@@ -68,7 +71,7 @@ class Curiosity:
     pass
 
 
-class Empowerment:
+class Empowerment(Cumulant):
     r""" Measures the amount of causal influence an agent has on the world
 
     Computed as a $log(|S|)$, i.e. logarithm of number of reachable (in fixed

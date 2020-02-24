@@ -3,8 +3,10 @@ from typing import List
 
 import torch
 from pandemonium.demons import ControlDemon
+from pandemonium.demons.prediction import TDn
 from pandemonium.demons.td import TemporalDifference
-from pandemonium.experience import Transition, Trajectory
+from pandemonium.experience import Transition, Trajectory, Transitions
+from pandemonium.policies.gradient import PolicyGradient
 from pandemonium.utilities.replay import Replay
 
 
@@ -104,3 +106,33 @@ class Sarsa(TemporalDifference, ControlDemon):
         target_q = batch.r + gamma * next_q
         loss = torch.functional.F.smooth_l1_loss(q, target_q)
         return loss
+
+
+class AC(TDn):
+    """ Actor-Critic architecture """
+
+    def __init__(self, actor: PolicyGradient, device, *args, **kwargs):
+        super().__init__(behavior_policy=actor, *args, **kwargs)
+
+        # This includes parameters for feature generator, actor and critic
+        self.optimizer = torch.optim.Adam(self.parameters(), 0.001)
+        self.to(device)
+
+    def delta(self, traj: Trajectory, *args, **kwargs):
+        # Value gradient
+        targets = self.n_step_target(traj).detach()
+        x = self.feature(traj.s0)
+        values = self.value_head(x).squeeze(1)
+        value_loss = torch.functional.F.smooth_l1_loss(values, targets)
+
+        # Policy gradient
+        advantages = targets - values.detach()
+        policy_loss = self.μ.delta(x, traj.a, advantages)
+
+        # Weighted loss
+        loss = policy_loss + 0.5 * value_loss
+        return loss
+
+    def learn(self, transitions: Transitions):
+        traj = Trajectory.from_transitions(transitions)
+        super().learn(traj)

@@ -150,16 +150,3 @@ class ControlDemon(Demon):
     def behavior_policy(self, state):
         # Control policies usually require access to value functions.
         return self.μ.dist(state, vf=self)
-
-class Horde:
-    r""" A horde of demons
-
-    Container class for all the demons of a particular agents.
-    """
-
-    def __init__(self,
-                 control_demon: ControlDemon,
-                 prediction_demons: List[PredictionDemon]):
-        self.control_demon = control_demon
-        self.prediction_demons = prediction_demons
-        self.demons = prediction_demons + [control_demon]

@@ -1,6 +1,7 @@
 from typing import NamedTuple, Union, Collection, Iterator
 
 import torch
+from torch.distributions import Distribution
 
 
 class Transition(NamedTuple):
@@ -20,6 +21,7 @@ class Transition(NamedTuple):
     done: bool = False  # episode termination indicator
     x0: torch.Tensor = None  # current feature vector
     x1: torch.Tensor = None  # next feature vector
+    a_dist: Distribution = None  # distribution from which `a` was generated
     o: 'Option' = None  # an option that was followed during transition
     info: dict = {}
 
@@ -31,6 +33,7 @@ class Trajectory(Transition):
     """ A batch of transitions """
 
     done: torch.Tensor
+    advantages: torch.Tensor = None
 
     @classmethod
     def from_transitions(cls, t: Transitions):
@@ -48,3 +51,6 @@ class Trajectory(Transition):
         done = torch.tensor(batch.done, device=device, dtype=torch.bool)
 
         return cls(s0, a, z, s1, done)
+
+    def __len__(self):
+        return self.s0.shape[0]

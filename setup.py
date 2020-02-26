@@ -24,6 +24,8 @@ REQUIRED = [
     'numpy',
     'tqdm',
     'plotly',
+    'termcolor',
+    'colorlog'
 ]
 
 # What packages are optional?

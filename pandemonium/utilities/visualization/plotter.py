@@ -6,7 +6,6 @@ import numpy as np
 import plotly
 import plotly.graph_objs as go
 from gym_minigrid.minigrid import MiniGridEnv
-
 from pandemonium.utilities.visualization import tools
 from pandemonium.utilities.visualization.utilities import plotlyfig2json
 
@@ -39,18 +38,6 @@ class Plotter:
     def __init__(self, env: MiniGridEnv):
         self.env = env
         self.env_img = self.env.render()
-
-    @staticmethod
-    def save_figure(plotting_fn,
-                    save_path: Union[Path, str],
-                    save_json: bool = False,
-                    **kwargs):
-        fig = plotting_fn(**kwargs)
-        plotly.offline.plot(fig,
-                            filename=f'{save_path}.html',
-                            include_mathjax='cdn')
-        if save_json:
-            plotlyfig2json(fig=fig, fpath=f'{save_path}.json')
 
     def plot_env(self) -> go.Image:
         return go.Image(z=self.env_img)
@@ -88,6 +75,17 @@ class Plotter:
             coloraxis={'colorscale': 'viridis'}
         )
         return fig
+
+    @staticmethod
+    def save_figure(fig: go.Figure,
+                     save_path: Union[Path, str],
+                     auto_open: bool = False,
+                     save_json: bool = False):
+        plotly.offline.plot(fig,
+                            filename=f'{save_path}.html',
+                            include_mathjax='cdn', auto_open=auto_open)
+        if save_json:
+            plotlyfig2json(fig=fig, fpath=f'{save_path}.json')
 
     @staticmethod
     def _normalize_matrix(m):

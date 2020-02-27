@@ -175,12 +175,13 @@ class AC(TDn):
 
         # Policy gradient
         advantages = targets - values.detach()
-        policy_loss = self.μ.delta(x, traj.a, advantages)
+        policy_loss, info = self.μ.delta(x, traj.a, advantages)
 
         # Weighted loss
         loss = policy_loss + 0.5 * value_loss
-        return loss
+        info.update({'value_loss': value_loss.item(), 'loss': loss.item()})
+        return loss, info
 
     def learn(self, transitions: Transitions):
         traj = Trajectory.from_transitions(transitions)
-        super().learn(traj)
+        return super().learn(traj)

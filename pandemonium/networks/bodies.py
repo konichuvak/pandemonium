@@ -18,14 +18,14 @@ class ConvBody(nn.Module):
         super().__init__()
         self.feature_dim = feature_dim
 
-        self.conv1 = layer_init(nn.Conv2d(d, 4, 2, 1))
-        self.conv2 = layer_init(nn.Conv2d(4, 8, 2, 1))
-        self.conv3 = layer_init(nn.Conv2d(8, 16, 2, 1))
+        self.conv1 = layer_init(nn.Conv2d(d, 8, 2, 1))
+        self.conv2 = layer_init(nn.Conv2d(8, 16, 2, 1))
+        self.conv3 = layer_init(nn.Conv2d(16, 32, 2, 1))
 
         w = conv2d_size_out(conv2d_size_out(conv2d_size_out(w)))
         h = conv2d_size_out(conv2d_size_out(conv2d_size_out(h)))
 
-        self.fc = layer_init(nn.Linear(w * h * 16, self.feature_dim))
+        self.fc = layer_init(nn.Linear(w * h * 32, self.feature_dim))
 
     def forward(self, x):
         y = F.relu(self.conv1(x))

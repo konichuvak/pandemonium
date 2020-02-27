@@ -36,7 +36,9 @@ class VPG(PolicyGradient):
         policy_loss = -(dist.log_prob(actions) * weights).mean()
         entropy_loss = dist.entropy().mean()
         loss = policy_loss - self.β * entropy_loss
-        return loss
+        return loss, {'policy_grad': policy_loss.item(),
+                      'entropy': entropy_loss.item(),
+                      'policy_loss': loss.item()}
 
     def __str__(self):
         model = super().__str__()[:-2]

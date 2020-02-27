@@ -10,3 +10,5 @@ PhD work on learning predictive knowledge representations.
 
 [[Project Docs]](http://konichuvak.github.io/pandemonium/)
 
+TODO:
+- make a trainable class that follows Ray interface so that we can leverage mp with lots of agents

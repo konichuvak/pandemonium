@@ -90,7 +90,7 @@ class Demon(torch.nn.Module):
 
     def learn(self, transitions: Transitions):
         """ Updates parameters of the network via auto-diff """
-        loss = self.delta(transitions)
+        loss, info = self.delta(transitions)
 
         # TODO: pass this to the monitoring system on the first pass
         # make_dot(loss, params=dict(self.named_parameters()))
@@ -99,6 +99,8 @@ class Demon(torch.nn.Module):
         loss.backward()
         # torch.nn.utils.clip_grad_norm_(self.parameters(), 5)
         self.optimizer.step()
+
+        return info
 
     def __str__(self):
         Γ = textwrap.indent(str(self.gvf), "\t")

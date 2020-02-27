@@ -14,7 +14,10 @@ def generate_all_states(env: MiniGridEnv, wrappers: List[Type[gym.Wrapper]]):
         for j in range(env.grid.height):
             for i in range(env.grid.width):
                 env.grid.set(*np.array((i, j)), None)
-                env.place_agent(top=(i, j), size=(1, 1))
+                try:
+                    env.place_agent(top=(i, j), size=(1, 1))
+                except TypeError:
+                    env.place_agent(i, j, force=True)
                 env.unwrapped.agent_dir = direction
 
                 # Obtain observation by sequentially applying all the wrappers

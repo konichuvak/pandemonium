@@ -12,7 +12,7 @@ class RLogger(logging.Logger):
 
     def __init__(self,
                  name: str = 'RLogger',
-                 level: int = None,
+                 level: int = logging.NOTSET,
                  file_logger: Tuple[int, str] = None,
                  extra_handlers: List[logging.Handler] = None,
                  ):

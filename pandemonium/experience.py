@@ -51,10 +51,10 @@ class Trajectory(Transition):
             s0 = torch.stack(batch.s0)
             s1 = torch.stack(batch.s1)
         a = torch.tensor(batch.a, device=device)
-        z = torch.tensor(batch.r, device=device)
+        r = torch.tensor(batch.r, device=device, dtype=torch.float)
         done = torch.tensor(batch.done, device=device, dtype=torch.bool)
 
-        return cls(s0, a, z, s1, done)
+        return cls(s0, a, r, s1, done)
 
     def __len__(self):
         return self.s0.shape[0]

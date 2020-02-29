@@ -39,7 +39,7 @@ class Plotter:
 
     def __init__(self, env: MiniGridEnv):
         self.env = env
-        self.env_img = self.env.render()
+        self.env_img = self.env.render(close=True)
 
     def plot_env(self) -> go.Image:
         return go.Image(z=self.env_img)

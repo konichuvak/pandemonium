@@ -3,6 +3,8 @@ from typing import Union
 import torch
 from pandemonium.experience import Trajectory, Transition
 from pandemonium.utilities.utilities import get_all_classes
+from torch import nn
+from torch.distributions import Bernoulli
 
 
 class ContinuationFunction:
@@ -13,7 +15,7 @@ class ContinuationFunction:
     continuation / termination signal for a particular GVF.
     """
 
-    def __init__(self, gamma, *args, **kwargs):
+    def __init__(self, gamma=None, *args, **kwargs):
         self.γ = self.gamma = gamma
 
     def __call__(self, *args, **kwargs):
@@ -43,6 +45,37 @@ class ConstantContinuation(ContinuationFunction):
         if isinstance(t.done, torch.Tensor):
             return abs(t.done.int() - 1) * self.gamma
         return self.γ if not t.done else 0
+
+
+class DiffContinuation(ContinuationFunction, nn.Module):
+    """ Base abstract class for parametrized continuation functions """
+
+    def __init__(self):
+        super().__init__()
+        nn.Module.__init__(self)
+
+    def __call__(self, *args, **kwargs):
+        raise NotImplementedError
+
+    def dist(self, x):
+        raise NotImplementedError
+
+
+class SigmoidContinuation(DiffContinuation):
+
+    def __init__(self, feature_dim):
+        super().__init__()
+        self.continuation = nn.Linear(feature_dim, 1)
+
+    def __call__(self, x):
+        return self.continuation(x).sigmoid()
+
+    def dist(self, x) -> Bernoulli:
+        return Bernoulli(self(x))
+
+
+class TerminationCritic(DiffContinuation):
+    pass
 
 
 __all__ = get_all_classes(__name__)

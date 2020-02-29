@@ -84,7 +84,7 @@
             
               <p class="caption"><span class="caption-text">Spinning Up</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing <strong>pandemonium</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spinning-up.html">Spinning Up</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul class="current">
@@ -96,6 +96,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.ControlDemon.html">ControlDemon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DQN.html">DQN</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.Demon.html">Demon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OC.html">OC</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.PredictionDemon.html">PredictionDemon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.Sarsa.html">Sarsa</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.SarsaN.html">SarsaN</a></li>
@@ -188,8 +189,8 @@
 <h1>AC<a class="headerlink" href="#ac" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pandemonium.demons.AC">
-<em class="property">class </em><code class="sig-prename descclassname">pandemonium.demons.</code><code class="sig-name descname">AC</code><span class="sig-paren">(</span><em class="sig-param">actor: pandemonium.policies.gradient.PolicyGradient</em>, <em class="sig-param">device</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.AC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.prediction.TDn</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">pandemonium.demons.</code><code class="sig-name descname">AC</code><span class="sig-paren">(</span><em class="sig-param">actor: pandemonium.policies.gradient.DiffPolicy</em>, <em class="sig-param">device</em>, <em class="sig-param">output_dim: int = 1</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.AC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.td.TemporalDifference</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.demon.Demon</span></code></p>
 <p>Actor-Critic architecture</p>
 <p class="rubric">Methods Summary</p>
 <table class="longtable docutils align-default">
@@ -198,7 +199,7 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.AC.delta" title="pandemonium.demons.AC.delta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delta</span></code></a>(traj, *args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.AC.delta" title="pandemonium.demons.AC.delta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delta</span></code></a>(traj)</p></td>
 <td><p>Specifies the loss function, i.e.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.AC.learn" title="pandemonium.demons.AC.learn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">learn</span></code></a>(transitions)</p></td>
@@ -209,7 +210,7 @@
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="pandemonium.demons.AC.delta">
-<code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">traj: pandemonium.experience.Trajectory</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.AC.delta" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">traj: pandemonium.experience.Trajectory</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.AC.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Specifies the loss function, i.e. TD error</p>
 </dd></dl>
 

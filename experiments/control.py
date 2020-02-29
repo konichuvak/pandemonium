@@ -6,21 +6,22 @@ import tensorboardX
 import torch
 from gym_minigrid.envs import EmptyEnv, DoorKeyEnv
 from gym_minigrid.wrappers import ImgObsWrapper
-from ray.rllib.utils.schedules import ConstantSchedule
+from ray.rllib.utils.schedules import ConstantSchedule, LinearSchedule
 from tqdm import tqdm
 
 from experiments import EXPERIMENT_DIR, RLogger
 from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
-from pandemonium.demons.control import AC
+from pandemonium.demons.control import AC, OC
 from pandemonium.envs.utils import generate_all_states
 from pandemonium.envs.wrappers import Torch
 from pandemonium.experience import Transition, Trajectory
 from pandemonium.networks.bodies import ConvBody
-from pandemonium.policies.discrete import Egreedy
+from pandemonium.policies.discrete import Egreedy, EgreedyOverOptions
 from pandemonium.policies.gradient import VPG
 from pandemonium.utilities.visualization.plotter import Plotter
+from pandemonium.utilities.spaces import create_option_space
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = torch.device('cpu')
@@ -30,9 +31,9 @@ device = torch.device('cpu')
 # ------------------------------------------------------------------------------
 
 envs = [
-    # EmptyEnv(size=10),
+    EmptyEnv(size=10),
     # FourRooms(),
-    DoorKeyEnv(size=7),
+    # DoorKeyEnv(size=7),
     # MultiRoomEnv(4, 4),
     # CrossingEnv(),
 ]
@@ -82,9 +83,18 @@ feature_extractor = ConvBody(d=3, w=7, h=7, feature_dim=2 ** 8)
 # exploration = LinearSchedule(schedule_timesteps=20000, final_p=0.1)
 # policy = Egreedy(epsilon=exploration, action_space=env.action_space)
 
-policy = VPG(feature_dim=feature_extractor.feature_dim,
-             action_space=env.action_space)
-
+# policy = VPG(feature_dim=feature_extractor.feature_dim,
+#              action_space=env.action_space)
+#
+option_space = create_option_space(
+    n=2, action_space=env.action_space,
+    feature_dim=feature_extractor.feature_dim
+)
+policy = EgreedyOverOptions(
+    # epsilon=LinearSchedule(schedule_timesteps=20000, final_p=0.1),
+    epsilon=ConstantSchedule(0.1),
+    option_space=option_space
+)
 # ==================================
 # Learning Algorithm
 # ==================================
@@ -103,8 +113,10 @@ prediction_demons = list()
 #            replay_buffer=replay,
 #            device=device)
 
-control_demon = AC(gvf=gvf, actor=policy, feature=feature_extractor,
-                   device=device)
+# control_demon = AC(gvf=gvf, actor=policy, feature=feature_extractor, device=device)
+#
+control_demon = OC(gvf=gvf, actor=policy,
+                   feature=feature_extractor, device=device)
 
 horde = Horde(control_demon=control_demon, prediction_demons=prediction_demons)
 print(horde)
@@ -175,8 +187,8 @@ def gen_pbar(stats):
 # Make this an
 total_steps = total_time = total_updates = 0
 
-for episode in range(500):
-    for logs in agent.interact(BATCH_SIZE=BATCH_SIZE, env=env, render=False):
+for episode in range(500 + 1):
+    for logs in agent.interact(BATCH_SIZE=BATCH_SIZE, env=env):
 
         done = logs.pop('done')
         if done:
@@ -188,20 +200,42 @@ for episode in range(500):
             pass
 
             # Record value function
-            if episode % 100 == 0 and episode:
-                agent.interact(BATCH_SIZE=BATCH_SIZE, render=False, env=env,
-                               learn=False)
-                x = agent.horde.control_demon.feature(states)
-                q = agent.horde.control_demon.behavior_policy(x).probs
-                q = q.transpose(0, 1).view(q.shape[1], 4, env.height, env.width)
-                q = q.cpu().detach().numpy()
+            if episode % 1 == 0 and episode:
 
-                fig = plotter.plot_value_function(
+                grid_shape = (4, env.height, env.width)
+
+                # Visualize value function
+                x = control_demon.feature(states)
+                q = control_demon.μ.dist(x, agent.horde.control_demon.value_head).probs
+                q = q.transpose(0, 1).view(q.shape[1], 4, env.height, env.width)
+                fig = plotter.plot_option_value_function(
                     figure_name=f'episode {episode}',
-                    value_tensor=q,
+                    q=q.cpu().detach().numpy(),
+                    option_ids=tuple(control_demon.μ.option_space.options)
                 )
-                plotter.save_figure(fig, save_path=f'{EXPERIMENT_PATH}/vf{episode}',
-                                    auto_open=False)
+                plotter.save_figure(fig, save_path=f'{EXPERIMENT_PATH}/vf{episode}')
+
+                # Visualize individual policies and continuations of options
+                n = len(control_demon.μ.option_space)
+                pi = torch.empty((n, env.action_space.n, *grid_shape))
+                beta = torch.empty((n, *grid_shape))
+                for option_id, option in control_demon.μ.option_space.options.items():
+                    pi[option_id] = option.policy.dist(x).probs.transpose(0, 1).view(env.action_space.n, *grid_shape)
+                    beta[option_id] = option.continuation(x).squeeze().view(grid_shape)
+
+                fig = plotter.plot_option_continuation(
+                    figure_name=f'episode {episode}',
+                    beta=beta.cpu().detach().numpy(),
+                    option_ids=tuple(control_demon.μ.option_space.options)
+                )
+                plotter.save_figure(fig, save_path=f'{EXPERIMENT_PATH}/beta{episode}')
+
+                figures = plotter.plot_option_action_values(
+                    figure_name=f'episode {episode}',
+                    pi=pi.cpu().detach().numpy(),
+                )
+                for i, fig in enumerate(figures):
+                    plotter.save_figure(fig, save_path=f'{EXPERIMENT_PATH}/pi{episode}_o{i}')
 
         else:
             # Generate progress bar

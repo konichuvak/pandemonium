@@ -38,7 +38,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="conv2d_size_out" href="pandemonium.networks.conv2d_size_out.html" />
-    <link rel="prev" title="PolicyGradient" href="pandemonium.policies.PolicyGradient.html" /> 
+    <link rel="prev" title="Policy" href="pandemonium.policies.Policy.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,7 +84,7 @@
             
               <p class="caption"><span class="caption-text">Spinning Up</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing <strong>pandemonium</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spinning-up.html">Spinning Up</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul class="current">
@@ -95,9 +95,9 @@
 <li class="toctree-l3"><a class="reference internal" href="../package-ref.html#functions">Functions</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="../package-ref.html#id3">Classes</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.Continuous.html">Continuous</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.DiffPolicy.html">DiffPolicy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.Discrete.html">Discrete</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.Policy.html">Policy</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.PolicyGradient.html">PolicyGradient</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">VPG</a></li>
 </ul>
 </li>
@@ -186,7 +186,7 @@
 <dl class="class">
 <dt id="pandemonium.policies.VPG">
 <em class="property">class </em><code class="sig-prename descclassname">pandemonium.policies.</code><code class="sig-name descname">VPG</code><span class="sig-paren">(</span><em class="sig-param">feature_dim: int</em>, <em class="sig-param">entropy_coefficient: float = 0.01</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.VPG" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.policies.gradient.PolicyGradient</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.policies.gradient.DiffPolicy</span></code></p>
 <p>Vanilla Policy Gradient</p>
 <p class="rubric">Methods Summary</p>
 <table class="longtable docutils align-default">
@@ -230,7 +230,7 @@
         <a href="pandemonium.networks.conv2d_size_out.html" class="btn btn-neutral float-right" title="conv2d_size_out" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="pandemonium.policies.PolicyGradient.html" class="btn btn-neutral float-left" title="PolicyGradient" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="pandemonium.policies.Policy.html" class="btn btn-neutral float-left" title="Policy" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

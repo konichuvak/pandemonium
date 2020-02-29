@@ -1,30 +1,27 @@
-from typing import Union
+from typing import Tuple, Dict
 
 import gym
-import numpy as np
 from torch.distributions import Distribution
+
+PolicyInfo = Dict[str, Distribution]
 
 
 class Policy:
-    r""" Base abstract class for decision making rules
+    r""" Base abstract class for decision making rules """
 
-    .. todo::
-        consider making an ``option space``
-
-    """
-
-    def __init__(self,
-                 action_space: gym.spaces.Discrete,
-                 rng: np.random.RandomState = np.random.RandomState(1337)):
+    def __init__(self, action_space: gym.spaces.Space):
         self.action_space = action_space
-        self.rng = rng
+
+    def __call__(self, *args, **kwargs):
+        return self.act(*args, **kwargs)
 
     def dist(self, *args, **kwargs) -> Distribution:
         """ Returns a distribution over actions """
         raise NotImplementedError
 
-    def act(self, state, *args, **kwargs) -> Union['Option', 'Action']:
-        return self.dist(state, *args, **kwargs).sample()
+    def act(self, *args, **kwargs) -> Tuple['Action', PolicyInfo]:
+        dist = self.dist(*args, **kwargs)
+        return dist.sample(), {'action_dist': dist}
 
     def action_filter(self, state):
         """ Filters the actions available at a given state

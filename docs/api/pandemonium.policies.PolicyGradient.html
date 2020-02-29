@@ -36,9 +36,7 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
   <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="VPG" href="pandemonium.policies.VPG.html" />
-    <link rel="prev" title="Policy" href="pandemonium.policies.Policy.html" /> 
+    <link rel="search" title="Search" href="../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,33 +82,11 @@
             
               <p class="caption"><span class="caption-text">Spinning Up</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing <strong>pandemonium</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spinning-up.html">Spinning Up</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="../package-ref.html">Library Reference</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.gvf">pandemonium.gvf Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.demons">pandemonium.demons Package</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../package-ref.html#module-pandemonium.policies">pandemonium.policies Package</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="../package-ref.html#functions">Functions</a></li>
-<li class="toctree-l3 current"><a class="reference internal" href="../package-ref.html#id3">Classes</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.Continuous.html">Continuous</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.Discrete.html">Discrete</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.Policy.html">Policy</a></li>
-<li class="toctree-l4 current"><a class="current reference internal" href="#">PolicyGradient</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.VPG.html">VPG</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../package-ref.html#id4">Class Inheritance Diagram</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.networks">pandemonium.networks Package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.cumulants">pandemonium.cumulants Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.continuations">pandemonium.continuations Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.traces">pandemonium.traces Module</a></li>
-</ul>
-</li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../package-ref.html">Library Reference</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Examples and Usecases</span></p>
 <ul>
@@ -160,8 +136,6 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="../package-ref.html">Library Reference</a> &raquo;</li>
-        
       <li>PolicyGradient</li>
     
     
@@ -183,40 +157,6 @@
             
   <div class="section" id="policygradient">
 <h1>PolicyGradient<a class="headerlink" href="#policygradient" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="pandemonium.policies.PolicyGradient">
-<em class="property">class </em><code class="sig-prename descclassname">pandemonium.policies.</code><code class="sig-name descname">PolicyGradient</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.PolicyGradient" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.policies.policy.Policy</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
-<p>Base class for parametrized policies</p>
-<p class="rubric">Methods Summary</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.policies.PolicyGradient.delta" title="pandemonium.policies.PolicyGradient.delta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delta</span></code></a>(features, actions, weights)</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.policies.PolicyGradient.dist" title="pandemonium.policies.PolicyGradient.dist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dist</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Returns a distribution over actions</p></td>
-</tr>
-</tbody>
-</table>
-<p class="rubric">Methods Documentation</p>
-<dl class="method">
-<dt id="pandemonium.policies.PolicyGradient.delta">
-<code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">features</em>, <em class="sig-param">actions</em>, <em class="sig-param">weights</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.PolicyGradient.delta" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="pandemonium.policies.PolicyGradient.dist">
-<code class="sig-name descname">dist</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; torch.distributions.distribution.Distribution<a class="headerlink" href="#pandemonium.policies.PolicyGradient.dist" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a distribution over actions</p>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 
 
@@ -224,15 +164,6 @@
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="pandemonium.policies.VPG.html" class="btn btn-neutral float-right" title="VPG" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="pandemonium.policies.Policy.html" class="btn btn-neutral float-left" title="Policy" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>

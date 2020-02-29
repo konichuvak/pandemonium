@@ -1,7 +1,6 @@
 import textwrap
 
 import torch
-
 from pandemonium import GVF
 from pandemonium.experience import Transitions
 from pandemonium.policies import Policy
@@ -74,7 +73,7 @@ class Demon(torch.nn.Module):
         The distribution across all possible motor commands of the agent
         could be specified in this way.
         """
-        return self.μ.dist(s)
+        return self.μ(s)
 
     def eligibility(self, s):
         r""" Specifies eligibility trace-decay rate
@@ -151,3 +150,6 @@ class ControlDemon(Demon):
     def behavior_policy(self, state):
         # Control policies usually require access to value functions.
         return self.μ.dist(state, vf=self)
+
+
+__all__ = ['Demon', 'PredictionDemon', 'ControlDemon']

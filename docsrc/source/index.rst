@@ -5,20 +5,20 @@
    :maxdepth: -1
    :caption: Spinning Up
 
-   installation
+   spinning-up.rst
 
 
 .. toctree::
    :maxdepth: -1
    :caption: Reference
 
-   package-ref
+   package-ref.rst
 
 .. toctree::
    :maxdepth: -1
    :caption: Examples and Usecases
 
-   examples
+   examples.rst
 
 
 Indices and tables

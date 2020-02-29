@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Trajectory" href="pandemonium.experience.Trajectory.html" />
+    <link rel="next" title="DiffContinuation" href="pandemonium.continuations.DiffContinuation.html" />
     <link rel="prev" title="ConstantContinuation" href="pandemonium.continuations.ConstantContinuation.html" /> 
 </head>
 
@@ -84,7 +84,7 @@
             
               <p class="caption"><span class="caption-text">Spinning Up</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing <strong>pandemonium</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spinning-up.html">Spinning Up</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul class="current">
@@ -98,6 +98,9 @@
 <li class="toctree-l3 current"><a class="reference internal" href="../package-ref.html#id10">Classes</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.continuations.ConstantContinuation.html">ConstantContinuation</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">ContinuationFunction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.continuations.DiffContinuation.html">DiffContinuation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.continuations.SigmoidContinuation.html">SigmoidContinuation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.continuations.TerminationCritic.html">TerminationCritic</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../package-ref.html#id11">Class Inheritance Diagram</a></li>
@@ -181,7 +184,7 @@
 <h1>ContinuationFunction<a class="headerlink" href="#continuationfunction" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pandemonium.continuations.ContinuationFunction">
-<em class="property">class </em><code class="sig-prename descclassname">pandemonium.continuations.</code><code class="sig-name descname">ContinuationFunction</code><span class="sig-paren">(</span><em class="sig-param">gamma</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.continuations.ContinuationFunction" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pandemonium.continuations.</code><code class="sig-name descname">ContinuationFunction</code><span class="sig-paren">(</span><em class="sig-param">gamma=None</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.continuations.ContinuationFunction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>State-dependent discount factor</p>
 <p>Generalizes the notion of MDP discount factor <span class="math notranslate nohighlight">\(\gamma\)</span>, making it dependent
@@ -218,7 +221,7 @@ continuation / termination signal for a particular GVF.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="pandemonium.experience.Trajectory.html" class="btn btn-neutral float-right" title="Trajectory" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="pandemonium.continuations.DiffContinuation.html" class="btn btn-neutral float-right" title="DiffContinuation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="pandemonium.continuations.ConstantContinuation.html" class="btn btn-neutral float-left" title="ConstantContinuation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

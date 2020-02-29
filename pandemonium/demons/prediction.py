@@ -3,6 +3,7 @@ import torch
 from pandemonium.demons.demon import PredictionDemon
 from pandemonium.demons.td import TemporalDifference
 from pandemonium.experience import Transition, Trajectory
+from pandemonium.utilities.utilities import get_all_classes
 
 
 class TD(TemporalDifference, PredictionDemon):
@@ -44,6 +45,9 @@ class TDn(TemporalDifference, PredictionDemon):
         z = self.gvf.cumulant(traj)
         targets = torch.empty_like(z, dtype=torch.float)
         target = self.predict(traj.s1[-1, None])  # preserving batch dim
-        for i in range(len(traj)-1, -1, -1):
+        for i in range(len(traj) - 1, -1, -1):
             target = targets[i] = z[i] + γ[i] * target
         return targets
+
+
+__all__ = get_all_classes(__name__)

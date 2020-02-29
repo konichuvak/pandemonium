@@ -21,48 +21,39 @@ class Agent:
     def interact(self,
                  BATCH_SIZE: 32,
                  env: MiniGridEnv,
-                 learn: bool = True,
-                 render: bool = False):
+                 ):
         """
         .. todo::
             Add ability to interrupt and resume interactions for on-demand eval
         """
-        render_batch = False
-
         done = False
         env.seed(1337)  # keep the env consistent from episode to episode
         s0 = env.reset()
+        x0 = self.horde.control_demon.feature(s0)
 
         steps = updates = 0
         wall_time = time.time()
         while not done:
 
-            if render and env.unwrapped.step_count % 100 == 0:
-                render_batch = True
-
+            # Interact
             transitions = list()
             while len(transitions) < BATCH_SIZE and not done:
-
-                if render_batch:
-                    env.render()
-                    time.sleep(0.1)
-
-                x = self.horde.control_demon.feature(s0).detach()
-                dist = self.horde.control_demon.behavior_policy(x)
-                a = dist.sample()
+                a, policy_info = self.horde.control_demon.behavior_policy(x0)
                 s1, reward, done, info = env.step(a)
-
-                t = Transition(s0, a, reward, s1, done, info=info)
+                x1 = self.horde.control_demon.feature(s1)
+                info.update(**policy_info)
+                t = Transition(s0, a, reward, s1, done, x0, x1, info=info)
                 transitions.append(t)
+                s0, x0 = s1, x1
 
-                s0 = s1
-                steps += 1
-
+            # Learn from experience
             logs = dict()
-            if learn:
-                for demon in self.horde.demons:
-                    log = demon.learn(transitions)
-                    logs[id(demon)] = log
+            for demon in self.horde.demons:
+                log = demon.learn(transitions)
+                logs[id(demon)] = log
+
+            # Record statistics
+            steps += len(transitions)
             updates += 1
             logs.update({
                 'done': False,

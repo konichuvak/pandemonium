@@ -10,15 +10,19 @@ What is |project_name|?
 predicting multiple signals from a single stream of experience.
 
 .. _architecture: https://en.wikipedia.org/wiki/Pandemonium_architecture
+.. _Horde: http://incompleteideas.net/papers/horde-aamas-11.pdf
+.. _thesis: https://sites.ualberta.ca/~amw8/phd.pdf
 
 The name of the project is inspired from the `architecture`_
 originally developed by Oliver Selfridge in the late 1950s. His computational model is composed of different groups
 of "demons" working independently to process the visual stimulus, hence the name -- |project_name|.
 
-This computational framework that is used in the project is due to Adam White's PhD work on learning predictive
-knowledge representations.
+The pandemonium framework has inspired some of the more recent work such as `Horde`_ by Sutton et. al 2011.
+The authors designed a scalable real-time architecture for learning knowledge from unsupervised sensorimotor interaction.
+Since then, `Horde` was further developed and formalized in Adam White's Doctoral `thesis`_, from which this library
+borrows most of the definitions and notation.
 
-The goal of this project is to further develop the computational framework established by Adam White and
+The goal of this project is to further develop the computational framework established by the creators of `Horde` and
 express some of the common algorithms in RL in terms of terms of hierarchy of "demons".
 
 ------------

@@ -37,7 +37,7 @@
   <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Installing pandemonium" href="installation.html" /> 
+    <link rel="next" title="Spinning Up" href="spinning-up.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -83,7 +83,7 @@
             
               <p class="caption"><span class="caption-text">Spinning Up</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing <strong>pandemonium</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="spinning-up.html">Spinning Up</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul>
@@ -161,7 +161,11 @@
 <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Spinning Up</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing <strong>pandemonium</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="spinning-up.html">Spinning Up</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="spinning-up.html#what-is-project-name">What is <strong>pandemonium</strong>?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spinning-up.html#installation">Installation</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
@@ -182,6 +186,7 @@
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.ControlDemon.html">ControlDemon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.DQN.html">DQN</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.Demon.html">Demon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.OC.html">OC</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.PredictionDemon.html">PredictionDemon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.Sarsa.html">Sarsa</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.SarsaN.html">SarsaN</a></li>
@@ -192,41 +197,54 @@
 <li class="toctree-l3"><a class="reference internal" href="package-ref.html#id2">Class Inheritance Diagram</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="package-ref.html#module-pandemonium.horde">pandemonium.horde Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="package-ref.html#id3">Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.horde.Horde.html">Horde</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="package-ref.html#id4">Class Inheritance Diagram</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="package-ref.html#module-pandemonium.policies">pandemonium.policies Package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="package-ref.html#functions">Functions</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.randargmax.html">randargmax</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.torch_argmax_mask.html">torch_argmax_mask</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="package-ref.html#id3">Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="package-ref.html#id5">Classes</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.Continuous.html">Continuous</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.DiffPolicy.html">DiffPolicy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.Discrete.html">Discrete</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.Egreedy.html">Egreedy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.EgreedyOverOptions.html">EgreedyOverOptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.HierarchicalPolicy.html">HierarchicalPolicy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.Policy.html">Policy</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.PolicyGradient.html">PolicyGradient</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.Random.html">Random</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.SoftmaxPolicy.html">SoftmaxPolicy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.VPG.html">VPG</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="package-ref.html#id4">Class Inheritance Diagram</a></li>
+<li class="toctree-l3"><a class="reference internal" href="package-ref.html#id6">Class Inheritance Diagram</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="package-ref.html#module-pandemonium.networks">pandemonium.networks Package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="package-ref.html#id5">Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="package-ref.html#id7">Functions</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.networks.conv2d_size_out.html">conv2d_size_out</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.networks.layer_init.html">layer_init</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="package-ref.html#id6">Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="package-ref.html#id8">Classes</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.networks.ConvBody.html">ConvBody</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.networks.FCBody.html">FCBody</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.networks.Identity.html">Identity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.networks.LinearNet.html">LinearNet</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="package-ref.html#id7">Class Inheritance Diagram</a></li>
+<li class="toctree-l3"><a class="reference internal" href="package-ref.html#id9">Class Inheritance Diagram</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="package-ref.html#module-pandemonium.cumulants">pandemonium.cumulants Module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="package-ref.html#id8">Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="package-ref.html#id10">Classes</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.cumulants.Cumulant.html">Cumulant</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.cumulants.Curiosity.html">Curiosity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.cumulants.Empowerment.html">Empowerment</a></li>
@@ -235,35 +253,38 @@
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.cumulants.Surprise.html">Surprise</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="package-ref.html#id9">Class Inheritance Diagram</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="package-ref.html#module-pandemonium.continuations">pandemonium.continuations Module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="package-ref.html#id10">Classes</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.continuations.ConstantContinuation.html">ConstantContinuation</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.continuations.ContinuationFunction.html">ContinuationFunction</a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="package-ref.html#id11">Class Inheritance Diagram</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="package-ref.html#module-pandemonium.experience">pandemonium.experience Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="package-ref.html#module-pandemonium.continuations">pandemonium.continuations Module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="package-ref.html#id12">Classes</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.experience.Trajectory.html">Trajectory</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.experience.Transition.html">Transition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.continuations.ConstantContinuation.html">ConstantContinuation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.continuations.ContinuationFunction.html">ContinuationFunction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.continuations.DiffContinuation.html">DiffContinuation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.continuations.SigmoidContinuation.html">SigmoidContinuation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.continuations.TerminationCritic.html">TerminationCritic</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="package-ref.html#id13">Class Inheritance Diagram</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="package-ref.html#module-pandemonium.traces">pandemonium.traces Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="package-ref.html#module-pandemonium.experience">pandemonium.experience Module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="package-ref.html#id14">Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.experience.Trajectory.html">Trajectory</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.experience.Transition.html">Transition</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="package-ref.html#id15">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="package-ref.html#module-pandemonium.traces">pandemonium.traces Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="package-ref.html#id16">Classes</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.traces.AccumulatingTrace.html">AccumulatingTrace</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.traces.DutchTrace.html">DutchTrace</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.traces.EligibilityTrace.html">EligibilityTrace</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="package-ref.html#id15">Class Inheritance Diagram</a></li>
+<li class="toctree-l3"><a class="reference internal" href="package-ref.html#id17">Class Inheritance Diagram</a></li>
 </ul>
 </li>
 </ul>
@@ -294,7 +315,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="installation.html" class="btn btn-neutral float-right" title="Installing pandemonium" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="spinning-up.html" class="btn btn-neutral float-right" title="Spinning Up" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>

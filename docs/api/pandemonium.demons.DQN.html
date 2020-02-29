@@ -84,7 +84,7 @@
             
               <p class="caption"><span class="caption-text">Spinning Up</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing <strong>pandemonium</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spinning-up.html">Spinning Up</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul class="current">
@@ -96,6 +96,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.ControlDemon.html">ControlDemon</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">DQN</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.Demon.html">Demon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OC.html">OC</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.PredictionDemon.html">PredictionDemon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.Sarsa.html">Sarsa</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.SarsaN.html">SarsaN</a></li>
@@ -188,7 +189,7 @@
 <h1>DQN<a class="headerlink" href="#dqn" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pandemonium.demons.DQN">
-<em class="property">class </em><code class="sig-prename descclassname">pandemonium.demons.</code><code class="sig-name descname">DQN</code><span class="sig-paren">(</span><em class="sig-param">replay_buffer: pandemonium.utilities.replay.Replay</em>, <em class="sig-param">device: torch.device</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.DQN" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pandemonium.demons.</code><code class="sig-name descname">DQN</code><span class="sig-paren">(</span><em class="sig-param">replay_buffer: pandemonium.utilities.replay.Replay</em>, <em class="sig-param">device: torch.device</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.DQN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.td.TemporalDifference</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.demon.ControlDemon</span></code></p>
 <div class="admonition-todo admonition" id="id1">
 <p class="admonition-title">Todo</p>
@@ -205,7 +206,7 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.DQN.delta" title="pandemonium.demons.DQN.delta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delta</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.DQN.delta" title="pandemonium.demons.DQN.delta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delta</span></code></a>(**kwargs)</p></td>
 <td><p>Specifies the loss function, i.e.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.DQN.learn" title="pandemonium.demons.DQN.learn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">learn</span></code></a>(exp)</p></td>
@@ -219,7 +220,7 @@
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="pandemonium.demons.DQN.delta">
-<code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.DQN.delta" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.DQN.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Specifies the loss function, i.e. TD error</p>
 </dd></dl>
 

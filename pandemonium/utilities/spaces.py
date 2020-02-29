@@ -4,7 +4,7 @@ import torch
 from gym.spaces import Discrete
 
 from pandemonium.continuations import SigmoidContinuation
-from pandemonium.option import Option
+from pandemonium.policies.option import Option
 from pandemonium.policies import VPG
 
 

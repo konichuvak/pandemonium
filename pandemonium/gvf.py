@@ -1,12 +1,7 @@
-from typing import Union
-
-import torch
-
 from pandemonium.continuations import ContinuationFunction
 from pandemonium.cumulants import Cumulant
 from pandemonium.policies import Policy
-
-ActionDistribution = Union[torch.distributions.distribution.Distribution]
+from torch.distributions.distribution import Distribution
 
 
 class GVF:
@@ -48,7 +43,7 @@ class GVF:
         self.π = target_policy
         self.γ = termination
 
-    def target_policy(self, s) -> ActionDistribution:
+    def target_policy(self, s) -> Distribution:
         r""" The policy, whose value we would like to learn
 
         .. math::

@@ -25,3 +25,6 @@ class Horde:
                f'\tControl:\n{control}\n' \
                f'\tPrediction:\n{pred}\n' \
                f')'
+
+
+__all__ = ['Horde']

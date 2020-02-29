@@ -22,10 +22,6 @@ class Agent:
                  BATCH_SIZE: 32,
                  env: MiniGridEnv,
                  ):
-        """
-        .. todo::
-            Add ability to interrupt and resume interactions for on-demand eval
-        """
         done = False
         env.seed(1337)  # keep the env consistent from episode to episode
         s0 = env.reset()

@@ -2,7 +2,6 @@ from copy import deepcopy
 from typing import List
 
 import torch
-
 from pandemonium.demons import ControlDemon, Demon
 from pandemonium.demons.td import TemporalDifference
 from pandemonium.experience import Transition, Trajectory, Transitions
@@ -10,6 +9,76 @@ from pandemonium.policies import HierarchicalPolicy
 from pandemonium.policies.gradient import DiffPolicy
 from pandemonium.utilities.replay import Replay
 from pandemonium.utilities.utilities import get_all_classes
+
+
+class Sarsa(TemporalDifference, ControlDemon):
+    r""" One-step semi-gradient :math:`SARSA` for estimating :math:`\tilde{q}`
+
+    On-policy control method suitable for episodic tasks.
+    """
+
+    def delta(self, exp: List[Transition]):
+        batch = Trajectory.from_transitions(exp)
+
+        q = self.predict(batch.s0).gather(1, batch.a.unsqueeze(1)).squeeze(1)
+        next_a = self.behavior_policy(batch.s1).sample().unsqueeze(1)
+        next_q = self.predict(batch.s1).gather(1, next_a).squeeze(1)
+
+        gamma = self.gvf.continuation(batch)
+        target_q = batch.r + gamma * next_q
+        loss = torch.functional.F.smooth_l1_loss(q, target_q)
+        return loss
+
+
+class SarsaN(TemporalDifference, ControlDemon):
+    r""" :math:`n`-step semi-gradient :math:`SARSA` for estimating :math:`\tilde{q}`
+
+    This is a classic on-policy control method suitable for episodic tasks.
+
+    .. note::
+        $n$-step returns are calculated in an unusual way!
+        Each $(S, A)$ tuple in the trajectory gets updated towards a different
+        $n$-step return where each $\{n, n-1, \dots, 1\}$ $(S, A)$ of the
+        trajectory is updated using $\{1, 2, \dots, n\}$-step returns
+        respectively.
+
+    .. todo::
+        - implement true n-step return (each state gets updated towards n-step
+        return)
+        - alternatively, subdivide the trajectory into n-batches instead of
+        assuming that n = batch size
+
+
+    """
+
+    def delta(self, transitions: List[Transition]):
+        traj = Trajectory.from_transitions(transitions)
+
+        true_n_step = False
+        if true_n_step:
+            q = self.predict(traj.s0[0])[traj.a[0]]
+            targets = self.n_step_target(traj)[0]
+        else:
+            q = self.predict(traj.s0).gather(1, traj.a.unsqueeze(1)).squeeze(1)
+            targets = self.n_step_target(traj)
+
+        loss = torch.functional.F.smooth_l1_loss(q, targets)
+        return loss
+
+    @torch.no_grad()
+    def n_step_target(self, traj: Trajectory):
+        γ = self.gvf.continuation(traj)
+
+        # Obtain estimate of the value function at the end of the trajectory
+        last_q = self.behavior_policy(traj.s1[-1]).sample()
+        target = self.predict(traj.s1[-1])[last_q]
+
+        # Recursively compute the target for each of the transition
+        targets = torch.empty_like(traj.r, dtype=torch.float)
+        for i in range(len(traj) - 1, -1, -1):
+            target = targets[i] = traj.r[i] + γ[i] * target
+
+        return targets
 
 
 class DQN(TemporalDifference, ControlDemon):
@@ -87,76 +156,6 @@ class DQN(TemporalDifference, ControlDemon):
                f'{hyperparams}\n)'
 
 
-class Sarsa(TemporalDifference, ControlDemon):
-    r""" One-step semi-gradient :math:`SARSA` for estimating :math:`\tilde{q}`
-
-    On-policy control method suitable for episodic tasks.
-    """
-
-    def delta(self, exp: List[Transition]):
-        batch = Trajectory.from_transitions(exp)
-
-        q = self.predict(batch.s0).gather(1, batch.a.unsqueeze(1)).squeeze(1)
-        next_a = self.behavior_policy(batch.s1).sample().unsqueeze(1)
-        next_q = self.predict(batch.s1).gather(1, next_a).squeeze(1)
-
-        gamma = self.gvf.continuation(batch)
-        target_q = batch.r + gamma * next_q
-        loss = torch.functional.F.smooth_l1_loss(q, target_q)
-        return loss
-
-
-class SarsaN(TemporalDifference, ControlDemon):
-    r""" :math:`n`-step semi-gradient :math:`SARSA` for estimating :math:`\tilde{q}`
-
-    This is a classic on-policy control method suitable for episodic tasks.
-
-    .. note::
-        $n$-step returns are calculated in an unusual way!
-        Each $(S, A)$ tuple in the trajectory gets updated towards a different
-        $n$-step return where each $\{n, n-1, \dots, 1\}$ $(S, A)$ of the
-        trajectory is updated using $\{1, 2, \dots, n\}$-step returns
-        respectively.
-
-    .. todo::
-        - implement true n-step return (each state gets updated towards n-step
-        return)
-        - alternatively, subdivide the trajectory into n-batches instead of
-        assuming that n = batch size
-
-
-    """
-
-    def delta(self, transitions: List[Transition]):
-        traj = Trajectory.from_transitions(transitions)
-
-        true_n_step = False
-        if true_n_step:
-            q = self.predict(traj.s0[0])[traj.a[0]]
-            targets = self.n_step_target(traj)[0]
-        else:
-            q = self.predict(traj.s0).gather(1, traj.a.unsqueeze(1)).squeeze(1)
-            targets = self.n_step_target(traj)
-
-        loss = torch.functional.F.smooth_l1_loss(q, targets)
-        return loss
-
-    @torch.no_grad()
-    def n_step_target(self, traj: Trajectory):
-        γ = self.gvf.continuation(traj)
-
-        # Obtain estimate of the value function at the end of the trajectory
-        last_q = self.behavior_policy(traj.s1[-1]).sample()
-        target = self.predict(traj.s1[-1])[last_q]
-
-        # Recursively compute the target for each of the transition
-        targets = torch.empty_like(traj.r, dtype=torch.float)
-        for i in range(len(traj) - 1, -1, -1):
-            target = targets[i] = traj.r[i] + γ[i] * target
-
-        return targets
-
-
 class AC(TemporalDifference, Demon):
     """ Actor-Critic architecture """
 
@@ -202,6 +201,7 @@ class AC(TemporalDifference, Demon):
 
 
 class OC(AC):
+    """ DQN style Option-Critic architecture """
 
     def __init__(self, actor: HierarchicalPolicy, **kwargs):
         super().__init__(output_dim=len(actor.option_space), actor=actor,
@@ -242,11 +242,10 @@ class OC(AC):
         # ------------------------------------
         # Estimate target using n-step returns
         targets = torch.empty_like(z, dtype=torch.float)
-        target = self.target_predict(traj.s1[-1, None]).squeeze().detach()
+        target = self.target_predict(traj.s1[-1, None]).squeeze()
         target = β[-1] * target[ω[-1]] + (1 - β[-1]) * target.max()
         for i in range(len(traj) - 1, -1, -1):
             target = targets[i] = z[i] + γ[i] * target
-
         values = self.value_head(traj.x0).gather(1, ω).squeeze(1)
         value_loss = torch.functional.F.smooth_l1_loss(values, targets.detach())
 
@@ -254,19 +253,17 @@ class OC(AC):
         # Policy gradient
         # TODO: re-compute targets with current net instead of target net?
         #  see PLB p. 116
-        advantages = targets - values.detach()
+        advantage = (targets - values).detach()
         log_probs = torch.cat([pi.log_prob(a) for pi, a in zip(π, traj.a)])
         entropy = torch.cat([pi.entropy() for pi in π])
-        entropy_coeff = torch.tensor([o.policy.β for o in self.μ.option_space[ω.squeeze(1)]],
-                                     device=entropy.device)
-        policy_loss = -(log_probs * advantages.detach()) - entropy_coeff * entropy
-        policy_loss = policy_loss.mean()
+        entropy_reg = [o.policy.β for o in self.μ.option_space[ω.squeeze(1)]]
+        entropy_reg = torch.tensor(entropy_reg, device=entropy.device)
+        policy_loss = (-log_probs * advantage - entropy_reg * entropy).mean()
 
         # ------------------------------------
         # Termination gradient
         termination_advantage = values - values.max()
-        beta_loss = β * (termination_advantage.detach() + η)
-        beta_loss = beta_loss.mean()
+        beta_loss = (β * (termination_advantage.detach() + η)).mean()
 
         loss = policy_loss + value_loss + beta_loss
         return loss, {

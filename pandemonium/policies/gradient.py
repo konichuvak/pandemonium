@@ -1,24 +1,24 @@
+from pandemonium.policies import Policy
 from torch import nn
 from torch.distributions import Distribution, Categorical
+from pandemonium.utilities.utilities import get_all_classes
 
-from pandemonium.policies import Policy
 
-
-class PolicyGradient(Policy, nn.Module):
+class DiffPolicy(Policy, nn.Module):
     """ Base class for parametrized policies """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         nn.Module.__init__(self)
 
-    def delta(self, features, actions, weights):
-        raise NotImplementedError
-
     def dist(self, *args, **kwargs) -> Distribution:
         raise NotImplementedError
 
+    def forward(self, *args, **kwargs):
+        return self.act(*args, **kwargs)
 
-class VPG(PolicyGradient):
+
+class VPG(DiffPolicy):
     """ Vanilla Policy Gradient """
 
     def __init__(self, feature_dim: int, entropy_coefficient: float = 0.01,
@@ -33,8 +33,8 @@ class VPG(PolicyGradient):
 
     def delta(self, features, actions, weights):
         dist = self.dist(features)
-        policy_loss = -(dist.log_prob(actions) * weights).mean()
-        entropy_loss = dist.entropy().mean()
+        policy_loss = -(dist.log_prob(actions) * weights).mean(0)
+        entropy_loss = dist.entropy().mean(0)
         loss = policy_loss - self.β * entropy_loss
         return loss, {'policy_grad': policy_loss.item(),
                       'entropy': entropy_loss.item(),
@@ -45,3 +45,6 @@ class VPG(PolicyGradient):
         return f'{model}\n' \
                f'  (β): {self.β}\n' \
                f')'
+
+
+__all__ = get_all_classes(__name__)

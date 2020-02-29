@@ -37,8 +37,8 @@
   <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="PolicyGradient" href="pandemonium.policies.PolicyGradient.html" />
-    <link rel="prev" title="Discrete" href="pandemonium.policies.Discrete.html" /> 
+    <link rel="next" title="Random" href="pandemonium.policies.Random.html" />
+    <link rel="prev" title="HierarchicalPolicy" href="pandemonium.policies.HierarchicalPolicy.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,7 +84,7 @@
             
               <p class="caption"><span class="caption-text">Spinning Up</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installing <strong>pandemonium</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spinning-up.html">Spinning Up</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul class="current">
@@ -95,9 +95,14 @@
 <li class="toctree-l3"><a class="reference internal" href="../package-ref.html#functions">Functions</a></li>
 <li class="toctree-l3 current"><a class="reference internal" href="../package-ref.html#id3">Classes</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.Continuous.html">Continuous</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.DiffPolicy.html">DiffPolicy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.Discrete.html">Discrete</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.Egreedy.html">Egreedy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.EgreedyOverOptions.html">EgreedyOverOptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.HierarchicalPolicy.html">HierarchicalPolicy</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">Policy</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.PolicyGradient.html">PolicyGradient</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.Random.html">Random</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.SoftmaxPolicy.html">SoftmaxPolicy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.policies.VPG.html">VPG</a></li>
 </ul>
 </li>
@@ -185,13 +190,9 @@
 <h1>Policy<a class="headerlink" href="#policy" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pandemonium.policies.Policy">
-<em class="property">class </em><code class="sig-prename descclassname">pandemonium.policies.</code><code class="sig-name descname">Policy</code><span class="sig-paren">(</span><em class="sig-param">action_space: gym.spaces.discrete.Discrete</em>, <em class="sig-param">rng: numpy.random.mtrand.RandomState = RandomState(MT19937) at 0x7FBEF4F629E0</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.Policy" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pandemonium.policies.</code><code class="sig-name descname">Policy</code><span class="sig-paren">(</span><em class="sig-param">action_space: gym.spaces.space.Space</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.Policy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Base abstract class for decision making rules</p>
-<div class="admonition-todo admonition" id="id1">
-<p class="admonition-title">Todo</p>
-<p>consider making an <code class="docutils literal notranslate"><span class="pre">option</span> <span class="pre">space</span></code></p>
-</div>
 <p class="rubric">Methods Summary</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -199,7 +200,7 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.policies.Policy.act" title="pandemonium.policies.Policy.act"><code class="xref py py-obj docutils literal notranslate"><span class="pre">act</span></code></a>(state, *args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.policies.Policy.act" title="pandemonium.policies.Policy.act"><code class="xref py py-obj docutils literal notranslate"><span class="pre">act</span></code></a>(*args, **kwargs)</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.policies.Policy.action_filter" title="pandemonium.policies.Policy.action_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">action_filter</span></code></a>(state)</p></td>
@@ -213,7 +214,7 @@
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="pandemonium.policies.Policy.act">
-<code class="sig-name descname">act</code><span class="sig-paren">(</span><em class="sig-param">state</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; Union[Option, Action]<a class="headerlink" href="#pandemonium.policies.Policy.act" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">act</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; Tuple[Action, Dict[str, torch.distributions.distribution.Distribution]]<a class="headerlink" href="#pandemonium.policies.Policy.act" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -252,10 +253,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="pandemonium.policies.PolicyGradient.html" class="btn btn-neutral float-right" title="PolicyGradient" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="pandemonium.policies.Random.html" class="btn btn-neutral float-right" title="Random" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="pandemonium.policies.Discrete.html" class="btn btn-neutral float-left" title="Discrete" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="pandemonium.policies.HierarchicalPolicy.html" class="btn btn-neutral float-left" title="HierarchicalPolicy" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

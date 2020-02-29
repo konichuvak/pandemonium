@@ -83,7 +83,7 @@
             
               <p class="caption"><span class="caption-text">Spinning Up</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing <strong>pandemonium</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="spinning-up.html">Spinning Up</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Reference</span></p>
 <ul>
@@ -166,9 +166,11 @@
  | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
@@ -183,6 +185,10 @@
 
       <ul>
         <li><a href="api/pandemonium.continuations.ContinuationFunction.html#pandemonium.continuations.ContinuationFunction.__call__">(pandemonium.continuations.ContinuationFunction method)</a>
+</li>
+        <li><a href="api/pandemonium.continuations.DiffContinuation.html#pandemonium.continuations.DiffContinuation.__call__">(pandemonium.continuations.DiffContinuation method)</a>
+</li>
+        <li><a href="api/pandemonium.continuations.SigmoidContinuation.html#pandemonium.continuations.SigmoidContinuation.__call__">(pandemonium.continuations.SigmoidContinuation method)</a>
 </li>
         <li><a href="api/pandemonium.cumulants.Cumulant.html#pandemonium.cumulants.Cumulant.__call__">(pandemonium.cumulants.Cumulant method)</a>
 </li>
@@ -207,10 +213,16 @@
 </li>
       <li><a href="api/pandemonium.traces.AccumulatingTrace.html#pandemonium.traces.AccumulatingTrace">AccumulatingTrace (class in pandemonium.traces)</a>
 </li>
+      <li><a href="api/pandemonium.policies.Egreedy.html#pandemonium.policies.Egreedy.act">act() (pandemonium.policies.Egreedy method)</a>
+
+      <ul>
+        <li><a href="api/pandemonium.policies.HierarchicalPolicy.html#pandemonium.policies.HierarchicalPolicy.act">(pandemonium.policies.HierarchicalPolicy method)</a>
+</li>
+        <li><a href="api/pandemonium.policies.Policy.html#pandemonium.policies.Policy.act">(pandemonium.policies.Policy method)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pandemonium.policies.Policy.html#pandemonium.policies.Policy.act">act() (pandemonium.policies.Policy method)</a>
-</li>
       <li><a href="api/pandemonium.policies.Policy.html#pandemonium.policies.Policy.action_filter">action_filter() (pandemonium.policies.Policy method)</a>
 </li>
   </ul></td>
@@ -266,6 +278,8 @@
 </li>
         <li><a href="api/pandemonium.demons.DQN.html#pandemonium.demons.DQN.delta">(pandemonium.demons.DQN method)</a>
 </li>
+        <li><a href="api/pandemonium.demons.OC.html#pandemonium.demons.OC.delta">(pandemonium.demons.OC method)</a>
+</li>
         <li><a href="api/pandemonium.demons.Sarsa.html#pandemonium.demons.Sarsa.delta">(pandemonium.demons.Sarsa method)</a>
 </li>
         <li><a href="api/pandemonium.demons.SarsaN.html#pandemonium.demons.SarsaN.delta">(pandemonium.demons.SarsaN method)</a>
@@ -274,21 +288,31 @@
 </li>
         <li><a href="api/pandemonium.demons.TDn.html#pandemonium.demons.TDn.delta">(pandemonium.demons.TDn method)</a>
 </li>
-        <li><a href="api/pandemonium.policies.PolicyGradient.html#pandemonium.policies.PolicyGradient.delta">(pandemonium.policies.PolicyGradient method)</a>
-</li>
         <li><a href="api/pandemonium.policies.VPG.html#pandemonium.policies.VPG.delta">(pandemonium.policies.VPG method)</a>
 </li>
       </ul></li>
+      <li><a href="api/pandemonium.demons.Demon.html#pandemonium.demons.Demon">Demon (class in pandemonium.demons)</a>
+</li>
+      <li><a href="api/pandemonium.continuations.DiffContinuation.html#pandemonium.continuations.DiffContinuation">DiffContinuation (class in pandemonium.continuations)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pandemonium.demons.Demon.html#pandemonium.demons.Demon">Demon (class in pandemonium.demons)</a>
+      <li><a href="api/pandemonium.policies.DiffPolicy.html#pandemonium.policies.DiffPolicy">DiffPolicy (class in pandemonium.policies)</a>
 </li>
       <li><a href="api/pandemonium.policies.Discrete.html#pandemonium.policies.Discrete">Discrete (class in pandemonium.policies)</a>
 </li>
-      <li><a href="api/pandemonium.policies.Policy.html#pandemonium.policies.Policy.dist">dist() (pandemonium.policies.Policy method)</a>
+      <li><a href="api/pandemonium.policies.DiffPolicy.html#pandemonium.policies.DiffPolicy.dist">dist() (pandemonium.policies.DiffPolicy method)</a>
 
       <ul>
-        <li><a href="api/pandemonium.policies.PolicyGradient.html#pandemonium.policies.PolicyGradient.dist">(pandemonium.policies.PolicyGradient method)</a>
+        <li><a href="api/pandemonium.policies.Egreedy.html#pandemonium.policies.Egreedy.dist">(pandemonium.policies.Egreedy method)</a>
+</li>
+        <li><a href="api/pandemonium.policies.HierarchicalPolicy.html#pandemonium.policies.HierarchicalPolicy.dist">(pandemonium.policies.HierarchicalPolicy method)</a>
+</li>
+        <li><a href="api/pandemonium.policies.Policy.html#pandemonium.policies.Policy.dist">(pandemonium.policies.Policy method)</a>
+</li>
+        <li><a href="api/pandemonium.policies.Random.html#pandemonium.policies.Random.dist">(pandemonium.policies.Random method)</a>
+</li>
+        <li><a href="api/pandemonium.policies.SoftmaxPolicy.html#pandemonium.policies.SoftmaxPolicy.dist">(pandemonium.policies.SoftmaxPolicy method)</a>
 </li>
         <li><a href="api/pandemonium.policies.VPG.html#pandemonium.policies.VPG.dist">(pandemonium.policies.VPG method)</a>
 </li>
@@ -303,6 +327,10 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pandemonium.policies.Egreedy.html#pandemonium.policies.Egreedy">Egreedy (class in pandemonium.policies)</a>
+</li>
+      <li><a href="api/pandemonium.policies.EgreedyOverOptions.html#pandemonium.policies.EgreedyOverOptions">EgreedyOverOptions (class in pandemonium.policies)</a>
+</li>
       <li><a href="api/pandemonium.demons.Demon.html#pandemonium.demons.Demon.eligibility">eligibility() (pandemonium.demons.Demon method)</a>
 </li>
   </ul></td>
@@ -310,6 +338,8 @@
       <li><a href="api/pandemonium.traces.EligibilityTrace.html#pandemonium.traces.EligibilityTrace">EligibilityTrace (class in pandemonium.traces)</a>
 </li>
       <li><a href="api/pandemonium.cumulants.Empowerment.html#pandemonium.cumulants.Empowerment">Empowerment (class in pandemonium.cumulants)</a>
+</li>
+      <li><a href="api/pandemonium.policies.Egreedy.html#pandemonium.policies.Egreedy.epsilon">epsilon (pandemonium.policies.Egreedy attribute)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -325,8 +355,6 @@
 </li>
       <li><a href="api/pandemonium.cumulants.Fitness.html#pandemonium.cumulants.Fitness">Fitness (class in pandemonium.cumulants)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pandemonium.demons.Demon.html#pandemonium.demons.Demon.forward">forward() (pandemonium.demons.Demon method)</a>
 
       <ul>
@@ -338,6 +366,8 @@
 </li>
         <li><a href="api/pandemonium.networks.LinearNet.html#pandemonium.networks.LinearNet.forward">(pandemonium.networks.LinearNet method)</a>
 </li>
+        <li><a href="api/pandemonium.policies.DiffPolicy.html#pandemonium.policies.DiffPolicy.forward">(pandemonium.policies.DiffPolicy method)</a>
+</li>
       </ul></li>
   </ul></td>
 </tr></table>
@@ -346,6 +376,18 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pandemonium.gvf.GVF.html#pandemonium.gvf.GVF">GVF (class in pandemonium.gvf)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pandemonium.policies.HierarchicalPolicy.html#pandemonium.policies.HierarchicalPolicy">HierarchicalPolicy (class in pandemonium.policies)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pandemonium.horde.Horde.html#pandemonium.horde.Horde">Horde (class in pandemonium.horde)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -381,12 +423,22 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pandemonium.demons.SarsaN.html#pandemonium.demons.SarsaN.n_step_target">n_step_target() (pandemonium.demons.SarsaN method)</a>
+      <li><a href="api/pandemonium.demons.OC.html#pandemonium.demons.OC.n_step_target">n_step_target() (pandemonium.demons.OC method)</a>
 
       <ul>
+        <li><a href="api/pandemonium.demons.SarsaN.html#pandemonium.demons.SarsaN.n_step_target">(pandemonium.demons.SarsaN method)</a>
+</li>
         <li><a href="api/pandemonium.demons.TDn.html#pandemonium.demons.TDn.n_step_target">(pandemonium.demons.TDn method)</a>
 </li>
       </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pandemonium.demons.OC.html#pandemonium.demons.OC">OC (class in pandemonium.demons)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -403,17 +455,17 @@
 </li>
       <li><a href="package-ref.html#module-pandemonium.gvf">pandemonium.gvf (module)</a>
 </li>
-      <li><a href="package-ref.html#module-pandemonium.networks">pandemonium.networks (module)</a>
+      <li><a href="package-ref.html#module-pandemonium.horde">pandemonium.horde (module)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="package-ref.html#module-pandemonium.networks">pandemonium.networks (module)</a>
+</li>
       <li><a href="package-ref.html#module-pandemonium.policies">pandemonium.policies (module)</a>
 </li>
       <li><a href="package-ref.html#module-pandemonium.traces">pandemonium.traces (module)</a>
 </li>
       <li><a href="api/pandemonium.policies.Policy.html#pandemonium.policies.Policy">Policy (class in pandemonium.policies)</a>
-</li>
-      <li><a href="api/pandemonium.policies.PolicyGradient.html#pandemonium.policies.PolicyGradient">PolicyGradient (class in pandemonium.policies)</a>
 </li>
       <li><a href="api/pandemonium.demons.Demon.html#pandemonium.demons.Demon.predict">predict() (pandemonium.demons.Demon method)</a>
 </li>
@@ -428,6 +480,10 @@
       <li><a href="api/pandemonium.policies.randargmax.html#pandemonium.policies.randargmax">randargmax() (in module pandemonium.policies)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pandemonium.policies.Random.html#pandemonium.policies.Random">Random (class in pandemonium.policies)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="S">S</h2>
@@ -435,9 +491,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pandemonium.demons.Sarsa.html#pandemonium.demons.Sarsa">Sarsa (class in pandemonium.demons)</a>
 </li>
+      <li><a href="api/pandemonium.demons.SarsaN.html#pandemonium.demons.SarsaN">SarsaN (class in pandemonium.demons)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pandemonium.demons.SarsaN.html#pandemonium.demons.SarsaN">SarsaN (class in pandemonium.demons)</a>
+      <li><a href="api/pandemonium.continuations.SigmoidContinuation.html#pandemonium.continuations.SigmoidContinuation">SigmoidContinuation (class in pandemonium.continuations)</a>
+</li>
+      <li><a href="api/pandemonium.policies.SoftmaxPolicy.html#pandemonium.policies.SoftmaxPolicy">SoftmaxPolicy (class in pandemonium.policies)</a>
 </li>
       <li><a href="api/pandemonium.cumulants.Surprise.html#pandemonium.cumulants.Surprise">Surprise (class in pandemonium.cumulants)</a>
 </li>
@@ -453,9 +513,13 @@
 </li>
       <li><a href="api/pandemonium.demons.TD.html#pandemonium.demons.TD">TD (class in pandemonium.demons)</a>
 </li>
+      <li><a href="api/pandemonium.demons.TDn.html#pandemonium.demons.TDn">TDn (class in pandemonium.demons)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pandemonium.demons.TDn.html#pandemonium.demons.TDn">TDn (class in pandemonium.demons)</a>
+      <li><a href="api/pandemonium.policies.SoftmaxPolicy.html#pandemonium.policies.SoftmaxPolicy.temperature">temperature (pandemonium.policies.SoftmaxPolicy attribute)</a>
+</li>
+      <li><a href="api/pandemonium.continuations.TerminationCritic.html#pandemonium.continuations.TerminationCritic">TerminationCritic (class in pandemonium.continuations)</a>
 </li>
       <li><a href="api/pandemonium.policies.torch_argmax_mask.html#pandemonium.policies.torch_argmax_mask">torch_argmax_mask() (in module pandemonium.policies)</a>
 </li>

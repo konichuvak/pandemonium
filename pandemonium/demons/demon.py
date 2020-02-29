@@ -1,7 +1,6 @@
 import textwrap
 
 import torch
-
 from pandemonium import GVF
 from pandemonium.experience import Transitions
 from pandemonium.policies import Policy
@@ -151,3 +150,6 @@ class ControlDemon(Demon):
     def behavior_policy(self, state):
         # Control policies usually require access to value functions.
         return self.μ.dist(state, vf=self)
+
+
+__all__ = ['Demon', 'PredictionDemon', 'ControlDemon']

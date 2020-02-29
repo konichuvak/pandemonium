@@ -1,6 +1,6 @@
 from enum import IntEnum
 from pathlib import Path
-from typing import Union, NamedTuple
+from typing import Union, NamedTuple, Tuple
 
 import numpy as np
 import plotly
@@ -25,6 +25,8 @@ ACTIONS = {
     6: Action('done', '$\cross$'),
 }
 
+ACTION_NAMES = tuple(a.name for a in ACTIONS.values())
+
 
 class Directions(IntEnum):
     right = 0
@@ -42,32 +44,36 @@ class Plotter:
     def plot_env(self) -> go.Image:
         return go.Image(z=self.env_img)
 
-    def plot_value_function(self, figure_name: str,
-                            value_tensor: np.ndarray) -> go.Figure:
+    def plot_option_value_function(self,
+                                   figure_name: str,
+                                   q: np.ndarray,
+                                   option_ids: Tuple[str] = ACTION_NAMES
+                                   ) -> go.Figure:
         """ Plots V (Q) of an agent associated with a particular mini-grid.
 
         Creates a figure with DIRECTIONS x ACTION_SIZE subplots.
         """
-        assert len(value_tensor.shape) == 4
+        assert len(q.shape) == 4
 
-        actions, directions, w, h = value_tensor.shape
+        options, directions, w, h = q.shape
+        assert options == len(option_ids)
 
         fig = tools.make_subplots(
-            cols=actions, column_titles=[a.name for a in ACTIONS.values()],
+            cols=options, column_titles=option_ids,
             rows=directions, row_titles=[d.name for d in Directions]
         )
         fig = self.remove_tick_labels(fig)
 
         # Create a heatmap object
-        for action in range(actions):
+        for option, option_id in zip(range(options), option_ids):
             for dir in range(directions):
-                values = value_tensor[action, dir]
+                values = q[option, dir]
                 heatmap = go.Heatmap(
                     z=np.flip(values, axis=0),
                     coloraxis='coloraxis',
-                    name=f'{ACTIONS[action].name}, {Directions(dir).name}'
+                    name=f'{option_id}, {Directions(dir).name}'
                 )
-                fig.append_trace(heatmap, col=action + 1, row=dir + 1)
+                fig.append_trace(heatmap, col=option + 1, row=dir + 1)
 
         fig.update_layout(
             title=f'{figure_name}',
@@ -76,11 +82,80 @@ class Plotter:
         )
         return fig
 
+    def plot_option_continuation(self,
+                                 figure_name: str,
+                                 beta: np.ndarray,
+                                 option_ids: Tuple[str]
+                                 ) -> go.Figure:
+        assert len(beta.shape) == 4
+
+        options, directions, w, h = beta.shape
+        assert options == len(option_ids)
+
+        fig = tools.make_subplots(
+            cols=options, column_titles=option_ids,
+            rows=directions, row_titles=[d.name for d in Directions]
+        )
+        fig = self.remove_tick_labels(fig)
+
+        # Create a heatmap object
+        for option, option_id in zip(range(options), option_ids):
+            for dir in range(directions):
+                values = beta[option, dir]
+                heatmap = go.Heatmap(
+                    z=np.flip(values, axis=0),
+                    coloraxis='coloraxis',
+                    name=f'{option_id}, {Directions(dir).name}'
+                )
+                fig.append_trace(heatmap, col=option + 1, row=dir + 1)
+
+        fig.update_layout(
+            title=f'{figure_name}',
+            height=900, width=1900,
+            coloraxis={'colorscale': 'viridis'}
+        )
+        return fig
+
+    def plot_option_action_values(self,
+                                  figure_name: str,
+                                  pi: np.ndarray,
+                                  ) -> go.Figure:
+        assert len(pi.shape) == 5
+
+        options, actions, directions, w, h = pi.shape
+
+        figures = []
+        for option in range(options):
+            fig = tools.make_subplots(
+                cols=actions, column_titles=ACTION_NAMES,
+                rows=directions, row_titles=[d.name for d in Directions]
+            )
+            fig = self.remove_tick_labels(fig)
+
+            # Create a heatmap object
+            for action in range(actions):
+                for dir in range(directions):
+                    values = pi[option, action, dir]
+                    heatmap = go.Heatmap(
+                        z=np.flip(values, axis=0),
+                        coloraxis='coloraxis',
+                        name=f'{ACTIONS[action].name}, {Directions(dir).name}'
+                    )
+                    fig.append_trace(heatmap, col=action + 1, row=dir + 1)
+
+            fig.update_layout(
+                title=f'{figure_name}_option{option}',
+                height=900, width=1900,
+                coloraxis={'colorscale': 'viridis'}
+            )
+            figures.append(fig)
+        return figures
+
     @staticmethod
     def save_figure(fig: go.Figure,
-                     save_path: Union[Path, str],
-                     auto_open: bool = False,
-                     save_json: bool = False):
+                    save_path: Union[Path, str],
+                    auto_open: bool = False,
+                    save_json: bool = False):
         plotly.offline.plot(fig,
                             filename=f'{save_path}.html',
                             include_mathjax='cdn', auto_open=auto_open)

@@ -86,49 +86,79 @@ class SarsaN(TemporalDifference, ControlDemon):
 
 
 class DQN(TemporalDifference, ControlDemon):
+    """ Deep Q-Network
+
+    ... in all of its incarnations.
     """
 
-    .. todo::
-        - parametrize config
-        - add various options for replay buffer
-        - n-step returns
-
-    """
-
-    def __init__(self, replay_buffer: Replay, device: torch.device, **kwargs):
+    def __init__(self,
+                 replay_buffer: Replay,
+                 target_update_freq: int = 0,
+                 warm_up_period: int = 0,
+                 **kwargs):
         super().__init__(**kwargs)
 
-        self.i = 0  # batch counter
-        self.warmup = 10  # in batches
-        self.target_update_freq = 200  # in batches
+        self.update_counter = 0
+        self.warm_up_period = warm_up_period
+        self.target_update_freq = target_update_freq
 
         # Create a target network to stabilize training
-        self.target_feature_net = deepcopy(self.φ)
-        self.target_feature_net.load_state_dict(self.φ.state_dict())
+        if self.target_update_freq:
+            # TODO: The name of the parameters `target_net` might clash
+            #  with other DQN demons
+            self.target_feature_net = deepcopy(self.φ)
+            self.target_feature_net.load_state_dict(self.φ.state_dict())
 
-        self.target_net = deepcopy(self.value_head)
-        self.target_net.load_state_dict(self.value_head.state_dict())
+            # TODO: although φ is usually shared, the value head is not always
+            #  the same across different networks based on the DQN.
+            #  Thus need to make a better interface for the target net to
+            #  be identifiable.
+            self.target_net = deepcopy(self.value_head)
+            self.target_net.load_state_dict(self.value_head.state_dict())
 
-        # Set both feature and prediction nets to evaluation mode
-        # self.target_net.eval()
-        # self.target_feature_net.eval()
+            # Set both feature and prediction nets to evaluation mode
+            # self.target_net.eval()
+            # self.target_feature_net.eval()
+        else:
+            self.target_feature_net = self.φ
+            self.target_net = self.value_head
 
         # Use replay buffer for breaking correlation in the experience samples
         self.replay_buffer = replay_buffer
 
         self.optimizer = torch.optim.Adam(self.parameters(), 0.001)
-        self.to(device)
 
-    def delta(self, **kwargs):
-        batch = Trajectory.from_transitions(zip(*self.replay_buffer.sample()))
+    def sync_target(self):
+        if self.target_update_freq and self.update_counter % self.target_update_freq == 0:
+            self.target_feature_net.load_state_dict(self.φ.state_dict())
+            self.target_net.load_state_dict(self.value_head.state_dict())
 
-        q = self.predict(batch.s0).gather(1, batch.a.unsqueeze(1)).squeeze()
-        next_q = self.target_predict(batch.s1).max(1)[0]
+    def learn(self, transitions: Transitions):
+        self.update_counter += 1
+        self.replay_buffer.feed_batch(transitions)
+        self.sync_target()
 
-        gamma = self.gvf.continuation(batch)
-        target_q = batch.r + gamma * next_q
-        loss = torch.functional.F.smooth_l1_loss(q, target_q)
-        return loss, {}
+        if self.update_counter < self.warm_up_period:
+            return None, dict()
+
+        transitions = self.replay_buffer.sample()
+        trajectory = Trajectory.from_transitions(zip(*transitions))
+        return self.delta(trajectory)
+
+    def delta(self, traj: Trajectory) -> Loss:
+        values = self.predict(traj.s0).gather(1, traj.a.unsqueeze(1)).squeeze()
+        targets = self.n_step_target(traj)
+        loss = torch.functional.F.smooth_l1_loss(values, targets)
+        return loss, dict()
+
+    def n_step_target(self, traj: Trajectory):
+        γ = self.gvf.continuation(traj)
+        z = self.gvf.cumulant(traj)
+        targets = torch.empty_like(z, dtype=torch.float)
+        target = self.target_predict(traj.s1[-1, None]).max(1)[0]
+        for i in range(len(traj) - 1, -1, -1):
+            target = targets[i] = z[i] + γ[i] * target
+        return targets
 
     @torch.no_grad()
     def target_predict(self, s: torch.Tensor):
@@ -152,7 +182,7 @@ class DQN(TemporalDifference, ControlDemon):
         demon = ControlDemon.__str__(self)
         buffer = f'  (replay_buffer): {self.replay_buffer}'
         hyperparams = f'  (hyperparams):\n' \
-                      f'    (warmup): {self.warmup}\n' \
+                      f'    (warmup): {self.warm_up_period}\n' \
                       f'    (target_update_freq): {self.target_update_freq}\n'
 
         return f'{demon}\n' \

@@ -1,6 +1,7 @@
 from gym import Env
+from torch import nn
 
-from pandemonium.experience import Transition
+from pandemonium.experience import Transition, Trajectory
 from pandemonium.utilities.utilities import get_all_classes
 
 
@@ -33,6 +34,26 @@ class Fitness(Cumulant):
 
     def __str__(self):
         return f'Fitness({self.env.unwrapped.__class__.__name__})'
+
+
+class PixelChange(Cumulant):
+    """ A 2-dimensional cumulant tracking pixel change from frame to frame
+
+    Maximization of this cumulant is used as an auxiliary task in the
+    UNREAL architecture to help representational learning.
+    """
+
+    def __init__(self):
+        # self.pooler = nn.AvgPool2d(kernel_size=4, stride=0)
+        self.pooler = nn.AvgPool2d(kernel_size=1, stride=0)
+
+    def __call__(self, traj: Trajectory):
+        # crop = slice(2, -2)
+        crop = slice(None)
+        Δ = (traj.s0[..., crop, crop] - traj.s1[..., crop, crop]).abs()
+        Δ = Δ.mean(1)  # average over channels
+        z = self.pooler(Δ)  # average over pixels within patches
+        return z
 
 
 class FeatureCumulant(Cumulant):

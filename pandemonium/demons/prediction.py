@@ -1,8 +1,11 @@
 import torch
+import torch.nn.functional as F
+from torch import nn
 
-from pandemonium.demons.demon import PredictionDemon
+from pandemonium.demons.demon import PredictionDemon, Demon, Loss
 from pandemonium.demons.td import TemporalDifference
-from pandemonium.experience import Transition, Trajectory
+from pandemonium.experience import Transition, Trajectory, Transitions
+from pandemonium.utilities.replay import Replay
 from pandemonium.utilities.utilities import get_all_classes
 
 
@@ -20,11 +23,11 @@ class TD(TemporalDifference, PredictionDemon):
 
     """
 
-    def delta(self, t: Transition):
+    def delta(self, t: Transition) -> Loss:
         γ = self.gvf.continuation(t)
         e = self.λ(γ, t.x0)
         u = self.gvf.z(t) + γ * self.predict(t.s1)
-        return (u - self.predict(t.s0)) * e
+        return (u - self.predict(t.s0)) * e, dict()
 
 
 class TDn(TemporalDifference, PredictionDemon):
@@ -34,11 +37,11 @@ class TDn(TemporalDifference, PredictionDemon):
     $n$ is determined by the length of trajectory.
     """
 
-    def delta(self, traj: Trajectory):
+    def delta(self, traj: Trajectory) -> Loss:
         targets = self.n_step_target(traj)
-        values = self.predict(traj.s0)
+        values = self.predict(traj.s0).squeeze()
         loss = torch.functional.F.smooth_l1_loss(values, targets)
-        return loss
+        return loss, dict()
 
     def n_step_target(self, traj: Trajectory):
         γ = self.gvf.continuation(traj)

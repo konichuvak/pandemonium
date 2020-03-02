@@ -1,4 +1,5 @@
 import textwrap
+from typing import Tuple, Optional
 
 import torch
 
@@ -6,6 +7,8 @@ from pandemonium import GVF
 from pandemonium.experience import Transitions
 from pandemonium.policies import Policy
 from pandemonium.traces import EligibilityTrace
+
+Loss = Tuple[Optional[torch.Tensor], dict]
 
 
 class Demon(torch.nn.Module):
@@ -84,7 +87,7 @@ class Demon(torch.nn.Module):
         """
         return self.λ(s)
 
-    def delta(self, exp: Transitions):
+    def delta(self, exp: Transitions) -> Loss:
         """ Specifies the loss function, i.e. TD error """
         raise NotImplementedError
 
@@ -142,4 +145,4 @@ class ControlDemon(Demon):
         return self.μ.dist(state, vf=self)
 
 
-__all__ = ['Demon', 'PredictionDemon', 'ControlDemon']
+__all__ = ['Demon', 'PredictionDemon', 'ControlDemon', 'Loss']

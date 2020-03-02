@@ -2,9 +2,13 @@ from copy import deepcopy
 from typing import List
 
 import torch
-from pandemonium.demons import ControlDemon, Demon
+import torch.nn.functional as F
+from docutils.transforms.misc import Transitions
+from torch import nn
+
+from pandemonium.demons import ControlDemon, Demon, Loss
 from pandemonium.demons.td import TemporalDifference
-from pandemonium.experience import Transition, Trajectory, Transitions
+from pandemonium.experience import Transition, Trajectory
 from pandemonium.policies import HierarchicalPolicy
 from pandemonium.policies.gradient import DiffPolicy
 from pandemonium.utilities.replay import Replay
@@ -170,7 +174,7 @@ class AC(TemporalDifference, Demon):
     def behavior_policy(self, x):
         return self.μ(x, self.value_head)
 
-    def delta(self, traj: Trajectory):
+    def delta(self, traj: Trajectory) -> Loss:
         # Value gradient
         targets = self.n_step_target(traj).detach()
         x = self.feature(traj.s0)
@@ -227,11 +231,7 @@ class OC(AC):
         self.named_params = params
         self.optimizer = torch.optim.Adam(set(params.values()), 0.001)
 
-    @torch.no_grad()
-    def target_predict(self, s: torch.Tensor):
-        return self.target_net(self.target_feature_net(s))
-
-    def delta(self, traj: Trajectory):
+    def delta(self, traj: Trajectory) -> Loss:
         η = 0.001
         ω = traj.info['option'].unsqueeze(1)
         β = traj.info['beta']

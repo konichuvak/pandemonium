@@ -193,13 +193,12 @@ class DQN(TemporalDifference, ControlDemon):
 class AC(TemporalDifference, Demon):
     """ Actor-Critic architecture """
 
-    def __init__(self, actor: DiffPolicy, device, output_dim: int = 1,
+    def __init__(self, actor: DiffPolicy, output_dim: int = 1,
                  **kwargs):
-        super().__init__(behavior_policy=actor, output_dim=output_dim, **kwargs)
-
-        # This includes parameters for feature generator, actor and critic
-        self.optimizer = torch.optim.Adam(self.parameters(), 0.001)
-        self.to(device)
+        super().__init__(
+            behavior_policy=actor,
+            output_dim=output_dim,
+            **kwargs)
 
     def behavior_policy(self, x):
         return self.μ(x, self.value_head)
@@ -230,8 +229,8 @@ class AC(TemporalDifference, Demon):
         return targets
 
     def learn(self, transitions: Transitions):
-        traj = Trajectory.from_transitions(transitions)
-        return super().learn(traj)
+        trajectory = Trajectory.from_transitions(transitions)
+        return self.delta(trajectory)
 
 
 class OC(AC):

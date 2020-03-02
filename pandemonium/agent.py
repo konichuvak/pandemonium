@@ -43,10 +43,7 @@ class Agent:
                 s0, x0 = s1, x1
 
             # Learn from experience
-            logs = dict()
-            for demon in self.horde.demons:
-                log = demon.learn(transitions)
-                logs[id(demon)] = log
+            logs = self.horde.learn(transitions)
 
             # Record statistics
             steps += len(transitions)

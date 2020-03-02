@@ -1,6 +1,7 @@
 import textwrap
 
 import torch
+
 from pandemonium import GVF
 from pandemonium.experience import Transitions
 from pandemonium.policies import Policy
@@ -87,19 +88,8 @@ class Demon(torch.nn.Module):
         """ Specifies the loss function, i.e. TD error """
         raise NotImplementedError
 
-    def learn(self, transitions: Transitions):
-        """ Updates parameters of the network via auto-diff """
-        loss, info = self.delta(transitions)
-
-        # TODO: pass this to the monitoring system on the first pass
-        # make_dot(loss, params=dict(self.named_parameters()))
-
-        self.optimizer.zero_grad()
-        loss.backward()
-        # torch.nn.utils.clip_grad_norm_(self.parameters(), 5)
-        self.optimizer.step()
-
-        return info
+    def learn(self, *args, **kwargs):
+        raise NotImplementedError
 
     def __str__(self):
         Γ = textwrap.indent(str(self.gvf), "\t")

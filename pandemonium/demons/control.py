@@ -302,10 +302,49 @@ class OC(AC):
         }
 
     def learn(self, transitions: Transitions):
-        if self.batch_counter % self.target_update_freq == 0:
-            self.target_feature_net.load_state_dict(self.φ.state_dict())
-            self.target_net.load_state_dict(self.value_head.state_dict())
-        return super().learn(transitions)
+        self.update_counter += 1
+        self.sync_target()
+        trajectory = Trajectory.from_transitions(transitions)
+        return self.delta(trajectory)
+
+
+class PixelControl(DQN):
+    """ Duelling de-convolutional network for auxiliary pixel control task """
+
+    def __init__(self,
+                 output_dim: int,
+                 feature_dim: int = 256,
+                 **kwargs):
+        super().__init__(**kwargs)
+        self.pc_fc = nn.Linear(feature_dim, 6 * 6 * 32)
+        self.pc_deconv_value = nn.ConvTranspose2d(32, 1, 2, 1)
+        self.pc_deconv_advantage = nn.ConvTranspose2d(32, output_dim, 2, 1)
+        # deconv2d_size_out(6, 2, 1) == 7 (7x7 observation in minigrids)
+
+        # HACK: override pc target net
+        del self.target_net
+        self.target_net = self.predict
+
+        # HACK
+        del self.value_head
+
+    def predict(self, x: torch.Tensor):
+        x = self.pc_fc(x).view(-1, 32, 6, 6)
+        value = F.relu(self.pc_deconv_value(x), inplace=True)
+        advantage = F.relu(self.pc_deconv_advantage(x), inplace=True)
+        pc_q = value + advantage - advantage.mean(1, keepdim=True)
+        return pc_q
+
+    def delta(self, *args, **kwargs) -> Loss:
+        if not self.replay_buffer.is_full:
+            return None, dict()
+        transitions = self.replay_buffer.sample()
+        traj = Trajectory.from_transitions(zip(*transitions))
+        x = self.feature(traj.s0)
+        values = self.predict(x)[list(range(len(traj))), traj.a]
+        targets = self.n_step_target(traj)
+        loss = torch.functional.F.mse_loss(values, targets, reduction='mean')
+        return loss, dict()
 
 
 __all__ = get_all_classes(__name__)

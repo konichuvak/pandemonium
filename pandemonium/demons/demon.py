@@ -95,10 +95,13 @@ class Demon(torch.nn.Module):
         raise NotImplementedError
 
     def __str__(self):
-        Γ = textwrap.indent(str(self.gvf), "\t")
-        φ = textwrap.indent(str(self.φ), "\t\t")
-        μ = textwrap.indent(str(self.μ), "\t\t")
-        λ = textwrap.indent(str(self.λ), "\t\t")
+        return self.__class__.__name__
+
+    def __repr__(self):
+        Γ = textwrap.indent(repr(self.gvf), "\t")
+        φ = textwrap.indent(repr(self.φ), "\t\t")
+        μ = textwrap.indent(repr(self.μ), "\t\t")
+        λ = textwrap.indent(repr(self.λ), "\t\t")
         return f'{self.__class__.__name__}(\n' \
                f'{Γ}\n' \
                f'\t(φ):\n {φ}\n' \
@@ -133,12 +136,15 @@ class ControlDemon(Demon):
 
     def __init__(self,
                  behavior_policy: Policy,
+                 output_dim: int = None,
                  *args, **kwargs):
         from gym.spaces import Discrete
         if not isinstance(behavior_policy.action_space, Discrete):
             raise NotImplementedError
-        super().__init__(output_dim=behavior_policy.action_space.n,
-                         behavior_policy=behavior_policy, *args, **kwargs)
+        output_dim = output_dim or behavior_policy.action_space.n
+        super().__init__(output_dim=output_dim,
+                         behavior_policy=behavior_policy,
+                         *args, **kwargs)
 
     def behavior_policy(self, state):
         # Control policies usually require access to value functions.

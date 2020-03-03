@@ -125,10 +125,6 @@ class HierarchicalPolicy(Discrete):
 
     def act(self, state, vf):
         β = self.ω.continuation(state)
-        try:
-            β.item()
-        except Exception:
-            pass
         if round(β.item()) == 0:
             # TODO: initiation set check
             option_dist = self.dist(state, vf)

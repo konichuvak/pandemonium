@@ -164,22 +164,9 @@ class DQN(TemporalDifference, ControlDemon):
     def target_predict(self, s: torch.Tensor):
         return self.target_net(self.target_feature_net(s))
 
-    def learn(self, exp: List[Transition]):
-
-        self.i += 1
-        self.replay_buffer.feed_batch(exp)
-
-        if self.i == self.warmup:
-            print('learning_starts')
-        if self.i > self.warmup:
-            return super().learn(exp)
-        if self.i % self.target_update_freq == 0:
-            self.target_feature_net.load_state_dict(self.φ.state_dict())
-            self.target_net.load_state_dict(self.value_head.state_dict())
-
-    def __str__(self):
+    def __repr__(self):
         # model = torch.nn.Module.__str__(self)[:-2]
-        demon = ControlDemon.__str__(self)
+        demon = ControlDemon.__repr__(self)
         buffer = f'  (replay_buffer): {self.replay_buffer}'
         hyperparams = f'  (hyperparams):\n' \
                       f'    (warmup): {self.warm_up_period}\n' \
@@ -193,8 +180,7 @@ class DQN(TemporalDifference, ControlDemon):
 class AC(TemporalDifference, Demon):
     """ Actor-Critic architecture """
 
-    def __init__(self, actor: DiffPolicy, output_dim: int = 1,
-                 **kwargs):
+    def __init__(self, actor: DiffPolicy, output_dim: int = 1, **kwargs):
         super().__init__(
             behavior_policy=actor,
             output_dim=output_dim,
@@ -233,73 +219,84 @@ class AC(TemporalDifference, Demon):
         return self.delta(trajectory)
 
 
-class OC(AC):
+class OC(AC, DQN):
     """ DQN style Option-Critic architecture """
 
-    def __init__(self, actor: HierarchicalPolicy, **kwargs):
-        super().__init__(output_dim=len(actor.option_space), actor=actor,
-                         **kwargs)
-
-        self.batch_counter = 0
-        self.target_update_freq = 200  # in batches
-
-        # Create a target networks to stabilize training
-        self.target_feature_net = deepcopy(self.φ)
-        self.target_feature_net.load_state_dict(self.φ.state_dict())
-
-        self.target_net = deepcopy(self.value_head)
-        self.target_net.load_state_dict(self.value_head.state_dict())
+    def __init__(self,
+                 actor: HierarchicalPolicy,
+                 target_update_freq: int, **kwargs):
+        super().__init__(
+            output_dim=len(actor.option_space),
+            actor=actor,
+            replay_buffer=Replay(memory_size=0, batch_size=0),
+            target_update_freq=target_update_freq,
+            **kwargs
+        )
 
         # Collect parameters of all the options into one computational graph
-        params = dict(self.named_parameters())
+        # TODO: instead of manually collecting we can make HierarchicalPolicy
+        #  and OptionSpace subclass nn.Module
         for idx, o in self.μ.option_space.options.items():
-            for k, param in o.policy.named_parameters():
-                params[f'{idx}{k}'] = param
-            for k, param in o.continuation.named_parameters():
-                params[f'{idx}{k}'] = param
-        self.named_params = params
-        self.optimizer = torch.optim.Adam(set(params.values()), 0.001)
+            for k, param in o.policy.named_parameters(f'option_{idx}'):
+                self.register_parameter(k.replace('.', '_'), param)
+            for k, param in o.continuation.named_parameters(f'option_{idx}'):
+                self.register_parameter(k.replace('.', '_'), param)
 
     def delta(self, traj: Trajectory) -> Loss:
         η = 0.001
         ω = traj.info['option'].unsqueeze(1)
         β = traj.info['beta']
         π = traj.info['action_dist']
+
+        # ------------------------------------
+        # Value gradient
+        targets = self.n_step_target(traj).detach()
+        values = self.value_head(traj.x0).gather(1, ω).squeeze(1)
+        value_loss = torch.functional.F.smooth_l1_loss(values, targets)
+        values = values.detach()
+
+        # ------------------------------------
+        # Policy gradient
+        # TODO: re-compute targets with current net instead of target net?
+        #  see PLB p. 116
+        advantage = targets - values
+        log_probs = torch.cat([pi.log_prob(a) for pi, a in zip(π, traj.a)])
+        policy_grad = (-log_probs * advantage).mean(0)
+
+        entropy = torch.cat([pi.entropy() for pi in π])
+        entropy_reg = [o.policy.β for o in self.μ.option_space[ω.squeeze(1)]]
+        entropy_reg = torch.tensor(entropy_reg, device=entropy.device)
+        entropy_loss = (entropy_reg * entropy).mean(0)
+
+        policy_loss = policy_grad - entropy_loss
+
+        # ------------------------------------
+        # Termination gradient
+        termination_advantage = values - values.max()
+        beta_loss = (β * (termination_advantage + η)).mean()
+
+        loss = policy_loss + value_loss + beta_loss
+        return loss, {
+            'policy_grad': policy_loss.item(),
+            'entropy': entropy_loss.item(),
+            'policy_loss': policy_loss.item(),
+            'value_loss': value_loss.item(),
+            'beta_loss': beta_loss.item(),
+            'loss': loss.item(),
+        }
+
+    def n_step_target(self, traj: Trajectory):
+        ω = traj.info['option'].unsqueeze(1)
+        β = traj.info['beta']
         γ = self.gvf.continuation(traj)
         z = self.gvf.cumulant(traj)
 
-        # ------------------------------------
-        # Estimate target using n-step returns
         targets = torch.empty_like(z, dtype=torch.float)
         target = self.target_predict(traj.s1[-1, None]).squeeze()
         target = β[-1] * target[ω[-1]] + (1 - β[-1]) * target.max()
         for i in range(len(traj) - 1, -1, -1):
             target = targets[i] = z[i] + γ[i] * target
-        values = self.value_head(traj.x0).gather(1, ω).squeeze(1)
-        value_loss = torch.functional.F.smooth_l1_loss(values, targets.detach())
-
-        # -------------------------------------------
-        # Policy gradient
-        # TODO: re-compute targets with current net instead of target net?
-        #  see PLB p. 116
-        advantage = (targets - values).detach()
-        log_probs = torch.cat([pi.log_prob(a) for pi, a in zip(π, traj.a)])
-        entropy = torch.cat([pi.entropy() for pi in π])
-        entropy_reg = [o.policy.β for o in self.μ.option_space[ω.squeeze(1)]]
-        entropy_reg = torch.tensor(entropy_reg, device=entropy.device)
-        policy_loss = (-log_probs * advantage - entropy_reg * entropy).mean()
-
-        # ------------------------------------
-        # Termination gradient
-        termination_advantage = values - values.max()
-        beta_loss = (β * (termination_advantage.detach() + η)).mean()
-
-        loss = policy_loss + value_loss + beta_loss
-        return loss, {
-            'policy_loss': policy_loss.item(),
-            'value_loss': value_loss.item(),
-            'loss': loss.item(),
-        }
+        return targets
 
     def learn(self, transitions: Transitions):
         self.update_counter += 1
@@ -344,7 +341,7 @@ class PixelControl(DQN):
         values = self.predict(x)[list(range(len(traj))), traj.a]
         targets = self.n_step_target(traj)
         loss = torch.functional.F.mse_loss(values, targets, reduction='mean')
-        return loss, dict()
+        return loss, {'value_loss': loss.item()}
 
 
 __all__ = get_all_classes(__name__)

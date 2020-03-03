@@ -27,7 +27,8 @@ class TD(TemporalDifference, PredictionDemon):
         γ = self.gvf.continuation(t)
         e = self.λ(γ, t.x0)
         u = self.gvf.z(t) + γ * self.predict(t.s1)
-        return (u - self.predict(t.s0)) * e, dict()
+        δ = (u - self.predict(t.s0)) * e
+        return δ, {'value_loss': δ.item()}
 
 
 class TDn(TemporalDifference, PredictionDemon):
@@ -39,9 +40,9 @@ class TDn(TemporalDifference, PredictionDemon):
 
     def delta(self, traj: Trajectory) -> Loss:
         targets = self.n_step_target(traj)
-        values = self.predict(traj.s0).squeeze()
+        values = self.predict(traj.s0).squeeze(1)
         loss = torch.functional.F.smooth_l1_loss(values, targets)
-        return loss, dict()
+        return loss, {'value_loss': loss.item()}
 
     def n_step_target(self, traj: Trajectory):
         γ = self.gvf.continuation(traj)
@@ -82,15 +83,15 @@ class RewardPrediction(Demon):
         return self.reward_predictor(self.feature(state).view(1, -1))
 
     def delta(self, *args, **kwargs) -> Loss:
-        info = dict()
         if not self.replay_buffer.is_full:
-            return None, info
+            return None, dict()
         # TODO: special skewed sampling
         transitions = self.replay_buffer.sample(self.sequence_size)
         trajectory = Trajectory.from_transitions(zip(*transitions))
         values = self.predict(trajectory.s0)
         target = trajectory.r[-1]
-        return F.cross_entropy(values, (target > 0).unsqueeze(0).long()), info
+        loss = F.cross_entropy(values, (target > 0).unsqueeze(0).long())
+        return loss, {'value_loss': loss.item()}
 
     def learn(self, transitions: Transitions):
         trajectory = Trajectory.from_transitions(transitions)

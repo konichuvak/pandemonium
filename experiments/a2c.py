@@ -1,7 +1,6 @@
 from functools import reduce
 
 import torch
-from gym_minigrid.envs import EmptyEnv
 from gym_minigrid.wrappers import ImgObsWrapper
 from ray.rllib.utils.schedules import ConstantSchedule
 
@@ -19,7 +18,6 @@ from pandemonium.policies.gradient import VPG
 device = torch.device('cpu')
 
 __all__ = ['AGENT', 'ENV', 'WRAPPERS', 'BATCH_SIZE']
-
 
 # ------------------------------------------------------------------------------
 # Specify learning environment
@@ -55,7 +53,7 @@ target_policy = Egreedy(epsilon=ConstantSchedule(0.),
                         action_space=ENV.action_space)
 gvf = GVF(target_policy=target_policy,
           cumulant=Fitness(ENV),
-          continuation=ConstantContinuation(.8))
+          continuation=ConstantContinuation(.9))
 
 # ------------------------------------------------------------------------------
 # Specify learners that will be answering the question
@@ -82,11 +80,16 @@ BATCH_SIZE = 32
 prediction_demons = list()
 control_demon = AC(gvf=gvf, actor=policy, feature=feature_extractor)
 
+demon_weights = torch.tensor([1.], device=device)
 # ------------------------------------------------------------------------------
 # Specify agent that will be interacting with the environment
 # ------------------------------------------------------------------------------
 
-horde = Horde(control_demon=control_demon, prediction_demons=prediction_demons)
+
+horde = Horde(
+    control_demon=control_demon,
+    prediction_demons=prediction_demons,
+    aggregation_fn=lambda losses: demon_weights.dot(losses)
+)
 AGENT = Agent(feature_extractor=feature_extractor, horde=horde)
 print(horde)
-

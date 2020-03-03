@@ -1,13 +1,14 @@
 from functools import reduce
 
 import torch
-from gym_minigrid.envs import EmptyEnv
+from gym_minigrid.envs import EmptyEnv, MultiRoomEnv
 from gym_minigrid.wrappers import ImgObsWrapper
 from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness, PixelChange
 from pandemonium.demons.control import AC, PixelControl
 from pandemonium.demons.prediction import RewardPrediction, ValueReplay
+from pandemonium.envs import FourRooms
 from pandemonium.envs.wrappers import Torch
 from pandemonium.experience import Transitions
 from pandemonium.networks.bodies import ConvBody
@@ -26,10 +27,10 @@ device = torch.device('cpu')
 # ------------------------------------------------------------------------------
 
 envs = [
-    EmptyEnv(size=10),
+    # EmptyEnv(size=10),
     # FourRooms(),
     # DoorKeyEnv(size=7),
-    # MultiRoomEnv(4, 4),
+    MultiRoomEnv(4, 4),
     # CrossingEnv(),
 ]
 WRAPPERS = [
@@ -53,7 +54,7 @@ ENV.unwrapped.max_steps = float('inf')
 optimal_control = GVF(
     target_policy=π,
     cumulant=Fitness(ENV),
-    continuation=ConstantContinuation(1.)
+    continuation=ConstantContinuation(0.9)
 )
 
 # Tracks the color intensity over patches of pixels in the image
@@ -93,7 +94,7 @@ policy = VPG(feature_dim=feature_extractor.feature_dim,
 # ==================================
 # Learning Algorithm
 # ==================================
-BATCH_SIZE = 20
+BATCH_SIZE = 32
 
 # TODO: Skew the replay for reward prediction task
 replay = Replay(memory_size=2000, batch_size=BATCH_SIZE)
@@ -135,10 +136,16 @@ control_demon = UNREAL(gvf=optimal_control,
                        actor=policy,
                        feature=feature_extractor)
 
+demon_weights = torch.tensor([1], dtype=torch.float, device=device)
+
 # ------------------------------------------------------------------------------
 # Specify agent that will be interacting with the environment
 # ------------------------------------------------------------------------------
 
-horde = Horde(control_demon=control_demon, prediction_demons=prediction_demons)
+horde = Horde(
+    control_demon=control_demon,
+    prediction_demons=prediction_demons,
+    aggregation_fn=lambda losses: demon_weights.dot(losses)
+)
 AGENT = Agent(feature_extractor=feature_extractor, horde=horde)
 print(horde)

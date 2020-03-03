@@ -1,5 +1,5 @@
 import textwrap
-from typing import List
+from typing import List, Callable
 
 import torch
 from torchviz import make_dot
@@ -11,17 +11,17 @@ class Horde:
     r""" A horde of Demons
 
     Container class for all the demons of a particular agent.
-
-    # TODO: weights of individual demon losses (add a loss equation from UNREAL)
-    # TODO: lift the assumption of additive loss across demons and use a loss function instead
     """
 
     def __init__(self,
                  control_demon: ControlDemon,
-                 prediction_demons: List[PredictionDemon]):
+                 prediction_demons: List[PredictionDemon],
+                 aggregation_fn: Callable[[torch.Tensor], torch.Tensor],
+                 ):
         self.control_demon = control_demon
         self.prediction_demons = prediction_demons
         self.demons = [control_demon] + prediction_demons
+        self.aggregation_fn = aggregation_fn
 
         # Set up the optimizer that will be shared across all demons
         self.params = dict(self.control_demon.named_parameters())
@@ -37,15 +37,16 @@ class Horde:
 
         # TODO: thread / mp
 
+        losses = torch.empty(len(self.demons))
         logs = dict()
-        total_loss = torch.tensor([0.])
 
-        for demon in self.demons:
+        for i, demon in enumerate(self.demons):
             loss, info = demon.learn(transitions)
-            if loss is not None:
-                total_loss += loss.cpu()
-            logs.update({f'{id(demon)}_{k}': v for k, v in info.items()})
+            losses[i] = loss if loss is not None else 0
+            logs.update(
+                {f'{demon}{id(demon)}': {f'{k}': v for k, v in info.items()}})
 
+        total_loss = self.aggregation_fn(losses)
         self.optimizer.zero_grad()
         total_loss.backward()
         self.optimizer.step()
@@ -58,10 +59,10 @@ class Horde:
         logs.update({'total_loss': total_loss.item()})
         return logs
 
-    def __str__(self):
-        pred = [textwrap.indent(str(), "\t") for _ in self.prediction_demons]
+    def __repr__(self):
+        pred = [textwrap.indent(repr(_), "\t") for _ in self.prediction_demons]
         pred = '\n'.join(pred)
-        control = textwrap.indent(str(self.control_demon), "\t")
+        control = textwrap.indent(repr(self.control_demon), "\t")
         return f'Horde(\n' \
                f'\tControl:\n{control}\n' \
                f'\tPrediction:\n{pred}\n' \

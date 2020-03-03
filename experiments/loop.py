@@ -1,15 +1,15 @@
+from collections import deque
 from datetime import datetime
 
+import numpy as np
 import tensorboardX
 
-from pandemonium.experience import Trajectory
-from pandemonium.utilities.visualization import Plotter
-
 from experiments import EXPERIMENT_DIR, RLogger
-
 # from experiments.option_critic import *
 # from experiments.a2c import *
 from experiments.unreal import *
+from pandemonium.experience import Trajectory
+from pandemonium.utilities.visualization import Plotter
 
 
 def gen_pbar(stats):
@@ -28,6 +28,10 @@ def gen_pbar(stats):
     return metrics
 
 
+interval = BATCH_SIZE * 10
+reward_tracker = deque([], maxlen=interval)
+
+
 def trajectory_stats(traj: Trajectory):
     if not isinstance(traj, Trajectory):
         raise TypeError(type(traj))
@@ -38,11 +42,14 @@ def trajectory_stats(traj: Trajectory):
     pass
 
     # External reward
+    for r in list(traj.r.cpu().detach().numpy()):
+        reward_tracker.append(r)
+
     stats.update({
-        'max_reward': traj.r.max().item(),
-        'min_reward': traj.r.min().item(),
-        'mean_reward': traj.r.mean().item(),
-        'std_reward': traj.r.std().item(),
+        'max_reward': np.max(reward_tracker),
+        'min_reward': np.min(reward_tracker),
+        'mean_reward': np.mean(reward_tracker),
+        'std_reward': np.std(reward_tracker),
     })
     return stats
 
@@ -55,7 +62,12 @@ EXPERIMENT_PATH = EXPERIMENT_DIR / str(datetime.now().replace(microsecond=0))
 EXPERIMENT_PATH.mkdir()
 
 logger = RLogger()
+
+# Tensorboard set up
 tb_writer = tensorboardX.SummaryWriter(EXPERIMENT_PATH)
+tb_writers = dict()
+for demon in AGENT.horde.demons:
+    tb_writers[f'{demon}{id(demon)}'] = tensorboardX.SummaryWriter(EXPERIMENT_PATH / f'{demon}{id(demon)}')
 
 plotter = Plotter(ENV)
 
@@ -106,4 +118,8 @@ for episode in range(500 + 1):
             }
             for field, value in logs.items():
                 if field not in exclude_from_tb:
-                    tb_writer.add_scalar(f'info/{field}', value, step)
+                    if field in tb_writers:
+                        for f, v in value.items():
+                            tb_writers[field].add_scalar(f'info/{f}', v, step)
+                    else:
+                        tb_writer.add_scalar(f'info/{field}', value, step)

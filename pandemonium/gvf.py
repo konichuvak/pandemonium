@@ -36,12 +36,12 @@ class GVF:
 
     def __init__(self,
                  target_policy: Policy,
-                 termination: ContinuationFunction,
+                 continuation: ContinuationFunction,
                  cumulant: Cumulant):
         # Question about the agent's interactions with the environment
         self.z = cumulant
         self.π = target_policy
-        self.γ = termination
+        self.γ = continuation
 
     def target_policy(self, s) -> Distribution:
         r""" The policy, whose value we would like to learn
@@ -73,7 +73,7 @@ class GVF:
         """
         return self.z(s)
 
-    def __str__(self):
+    def __repr__(self):
         return f'GVF(\n' \
                f'\t(z): {self.z}\n' \
                f'\t(π): {self.π}\n' \

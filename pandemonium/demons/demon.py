@@ -43,16 +43,19 @@ class Demon(torch.nn.Module):
 
         self.value_head = torch.nn.Linear(feature.feature_dim, output_dim)
 
-    def forward(self, state: torch.Tensor) -> torch.Tensor:
-        return self.predict(state)
+    def forward(self, *args, **kwargs) -> torch.Tensor:
+        return self.predict(*args, **kwargs)
 
-    def predict(self, state: torch.Tensor) -> torch.Tensor:
+    def predict(self, state: torch.Tensor=None, features=None) -> torch.Tensor:
         r""" Approximate value of a state is linear wrt features
 
         .. math::
             \widetilde{V}(s) = \boldsymbol{\phi}(s)^{T}\boldsymbol{w}
 
         """
+        if features is not None:
+            assert state is None
+            return self.value_head(features)
         return self.value_head(self.feature(state))
 
     def feature(self, *args, **kwargs) -> torch.Tensor:
@@ -148,7 +151,7 @@ class ControlDemon(Demon):
 
     def behavior_policy(self, state):
         # Control policies usually require access to value functions.
-        return self.μ.dist(state, vf=self)
+        return self.μ(state, vf=self)
 
 
 __all__ = ['Demon', 'PredictionDemon', 'ControlDemon', 'Loss']

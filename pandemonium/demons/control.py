@@ -313,10 +313,11 @@ class PixelControl(DQN):
                  feature_dim: int = 256,
                  **kwargs):
         super().__init__(**kwargs)
-        self.pc_fc = nn.Linear(feature_dim, 6 * 6 * 32)
-        self.pc_deconv_value = nn.ConvTranspose2d(32, 1, 2, 1)
-        self.pc_deconv_advantage = nn.ConvTranspose2d(32, output_dim, 2, 1)
+        self.pc_fc = nn.Linear(feature_dim, 9 * 9 * 32)
+        self.pc_deconv_value = nn.ConvTranspose2d(32, 1, 4, 2)
+        self.pc_deconv_advantage = nn.ConvTranspose2d(32, output_dim, 4, 2)
         # deconv2d_size_out(6, 2, 1) == 7 (7x7 observation in minigrids)
+        # deconv2d_size_out(9, 4, 2) == 20 (20x20 avg pooled pixel change vals)
 
         # HACK: override pc target net
         del self.target_net
@@ -326,7 +327,7 @@ class PixelControl(DQN):
         del self.value_head
 
     def predict(self, x: torch.Tensor):
-        x = self.pc_fc(x).view(-1, 32, 6, 6)
+        x = self.pc_fc(x).view(-1, 32, 9, 9)
         value = F.relu(self.pc_deconv_value(x), inplace=True)
         advantage = F.relu(self.pc_deconv_advantage(x), inplace=True)
         pc_q = value + advantage - advantage.mean(1, keepdim=True)

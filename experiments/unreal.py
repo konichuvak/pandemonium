@@ -1,17 +1,17 @@
 from functools import reduce
 
 import torch
-from gym_minigrid.envs import EmptyEnv, MultiRoomEnv
-from gym_minigrid.wrappers import ImgObsWrapper
+from gym_minigrid.envs import EmptyEnv, MultiRoomEnv, DoorKeyEnv
+from gym_minigrid.wrappers import ImgObsWrapper, RGBImgPartialObsWrapper
 from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness, PixelChange
 from pandemonium.demons.control import AC, PixelControl
 from pandemonium.demons.prediction import RewardPrediction, ValueReplay
-from pandemonium.envs import FourRooms
-from pandemonium.envs.wrappers import Torch
+from pandemonium.envs import FourRooms, DeepmindLabEnv
+from pandemonium.envs.wrappers import Torch, ImageNormalizer
 from pandemonium.experience import Transitions
-from pandemonium.networks.bodies import ConvBody
+from pandemonium.networks.bodies import ConvBody, ConvLSTM
 from pandemonium.policies.discrete import Egreedy
 from pandemonium.policies.gradient import VPG
 from pandemonium.utilities.replay import Replay
@@ -27,10 +27,11 @@ device = torch.device('cpu')
 # ------------------------------------------------------------------------------
 
 envs = [
+    DeepmindLabEnv('seekavoid_arena_01'),
     # EmptyEnv(size=10),
     # FourRooms(),
     # DoorKeyEnv(size=7),
-    MultiRoomEnv(4, 4),
+    # MultiRoomEnv(4, 4),
     # CrossingEnv(),
 ]
 WRAPPERS = [
@@ -39,10 +40,12 @@ WRAPPERS = [
 
     # Observation wrappers
     # FullyObsWrapper,
-    ImgObsWrapper,
+    # RGBImgPartialObsWrapper,
+    # ImgObsWrapper,
     # OneHotObsWrapper,
     # FlatObsWrapper,
-    lambda e: Torch(e, device=device)
+    # lambda e: ImageNormalizer(e),
+    lambda e: Torch(e, device=device),
 ]
 ENV = reduce(lambda e, wrapper: wrapper(e), WRAPPERS, envs[0])
 ENV.unwrapped.max_steps = float('inf')
@@ -82,7 +85,8 @@ value_replay = optimal_control
 # Representation learning
 # ==================================
 obs = ENV.reset()
-feature_extractor = ConvBody(d=3, w=7, h=7, feature_dim=2 ** 8)
+# feature_extractor = ConvBody(d=3, w=7, h=7, feature_dim=2 ** 8)
+feature_extractor = ConvLSTM(*obs.shape[1:], feature_dim=2 ** 8)
 
 # ==================================
 # Behavioral Policy
@@ -104,15 +108,15 @@ prediction_demons = [
     #                  feature=feature_extractor,
     #                  behavior_policy=policy,
     #                  replay_buffer=replay),
-    # ValueReplay(gvf=value_replay,
-    #             feature=feature_extractor,
-    #             behavior_policy=policy,
-    #             replay_buffer=replay),
-    # PixelControl(gvf=pixel_control,
-    #              feature=feature_extractor,
-    #              behavior_policy=policy,
-    #              replay_buffer=replay,
-    #              output_dim=ENV.action_space.n),
+    ValueReplay(gvf=value_replay,
+                feature=feature_extractor,
+                behavior_policy=policy,
+                replay_buffer=replay),
+    PixelControl(gvf=pixel_control,
+                 feature=feature_extractor,
+                 behavior_policy=policy,
+                 replay_buffer=replay,
+                 output_dim=ENV.action_space.n),
 ]
 for d in prediction_demons:
     print(d)
@@ -136,7 +140,7 @@ control_demon = UNREAL(gvf=optimal_control,
                        actor=policy,
                        feature=feature_extractor)
 
-demon_weights = torch.tensor([1], dtype=torch.float, device=device)
+demon_weights = torch.tensor([1, 1, 0.01], dtype=torch.float, device=device)
 
 # ------------------------------------------------------------------------------
 # Specify agent that will be interacting with the environment

@@ -5,8 +5,8 @@ import numpy as np
 import tensorboardX
 
 from experiments import EXPERIMENT_DIR, RLogger
-# from experiments.option_critic import *
 # from experiments.a2c import *
+# from experiments.option_critic import *
 from experiments.unreal import *
 from pandemonium.experience import Trajectory
 from pandemonium.utilities.visualization import Plotter
@@ -38,12 +38,16 @@ def trajectory_stats(traj: Trajectory):
 
     stats = dict()
 
-    # Action frequencies
+    # TODO: Action frequencies
     pass
 
     # External reward
     for r in list(traj.r.cpu().detach().numpy()):
         reward_tracker.append(r)
+
+    # TODO: Discounts
+
+    # TODO: Epsilon / temperature
 
     stats.update({
         'max_reward': np.max(reward_tracker),
@@ -67,11 +71,11 @@ logger = RLogger()
 tb_writer = tensorboardX.SummaryWriter(EXPERIMENT_PATH)
 tb_writers = dict()
 for demon in AGENT.horde.demons:
-    tb_writers[f'{demon}{id(demon)}'] = tensorboardX.SummaryWriter(EXPERIMENT_PATH / f'{demon}{id(demon)}')
-
-plotter = Plotter(ENV)
+    tb_writers[f'{demon}{id(demon)}'] = tensorboardX.SummaryWriter(
+        EXPERIMENT_PATH / f'{demon}{id(demon)}')
 
 # Generate all possible states to query value functions for
+# plotter = Plotter(ENV)
 # test_env = deepcopy(ENV)
 # states = generate_all_states(test_env, WRAPPERS)
 # states = torch.stack([s[0] for s in states]).squeeze()
@@ -104,7 +108,7 @@ for episode in range(500 + 1):
             logs.update(**trajectory_stats(logs.pop('trajectory')))
 
             # {gen_pbar(logs)}
-            desc = f"E {episode:3} | STEP {step:7} | TIME {total_time + logs.pop('episode_time'):5}"
+            desc = f"E {episode:3} | STEP {step:7} | TIME {total_time + logs.pop('episode_time'):5} | {EXPERIMENT_PATH} | {ENV.unwrapped.__class__.__name__}"
             logger.info(desc)
 
             # Log a computational graph

@@ -44,12 +44,11 @@ class PixelChange(Cumulant):
     """
 
     def __init__(self):
-        # self.pooler = nn.AvgPool2d(kernel_size=4, stride=0)
-        self.pooler = nn.AvgPool2d(kernel_size=1, stride=0)
+        self.pooler = nn.AvgPool2d(kernel_size=4, stride=0)
 
     def __call__(self, traj: Trajectory):
-        # crop = slice(2, -2)
-        crop = slice(None)
+        crop = slice(2, -2)
+        # crop = slice(None)
         Δ = (traj.s0[..., crop, crop] - traj.s1[..., crop, crop]).abs()
         Δ = Δ.mean(1)  # average over channels
         z = self.pooler(Δ)  # average over pixels within patches

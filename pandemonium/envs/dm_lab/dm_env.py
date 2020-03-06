@@ -53,12 +53,10 @@ class DeepmindLabEnv(gym.Env):
 
     def step(self, action: int, frame_skip: int = 4):
         reward = self.lab.step(self.actions[action], num_steps=frame_skip)
-        terminal = not self.lab.is_running()
-        if not terminal:
-            obs = self.last_obs = self.lab.observations()[self._colors]
-        else:
-            obs = self.last_obs
-        return self._normalize_pixels(obs), reward, terminal, dict()
+        done = not self.lab.is_running()
+        obs = self.last_obs if done else self.lab.observations()[self._colors]
+        self.last_obs = self._normalize_pixels(obs)
+        return self.last_obs, reward, done, dict()
 
     def reset(self):
         self.lab.reset()

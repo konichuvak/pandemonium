@@ -2,14 +2,14 @@ from functools import reduce
 
 import torch
 from gym_minigrid.envs import EmptyEnv
-from gym_minigrid.wrappers import ImgObsWrapper
+from gym_minigrid.wrappers import ImgObsWrapper, FullyObsWrapper
 from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
 from pandemonium.demons.control import DQN
 from pandemonium.envs import FourRooms
-from pandemonium.envs.wrappers import Torch
-from pandemonium.networks.bodies import ConvBody
+from pandemonium.envs.wrappers import Torch, OneHotObsWrapper
+from pandemonium.networks.bodies import ConvBody, Identity
 from pandemonium.policies.discrete import Egreedy
 from pandemonium.utilities.replay import Replay
 from ray.rllib.utils.schedules import ConstantSchedule, LinearSchedule
@@ -35,9 +35,9 @@ WRAPPERS = [
     # SimplifyActionSpace,
 
     # Observation wrappers
-    # FullyObsWrapper,
-    ImgObsWrapper,
-    # OneHotObsWrapper,
+    FullyObsWrapper,
+    # ImgObsWrapper,
+    OneHotObsWrapper,
     # FlatObsWrapper,
     lambda e: Torch(e, device=device)
 ]
@@ -63,9 +63,9 @@ gvf = GVF(target_policy=target_policy,
 # Representation learning
 # ==================================
 obs = ENV.reset()
-feature_extractor = ConvBody(d=3, w=7, h=7, feature_dim=2 ** 8)
+# feature_extractor = ConvBody(d=3, w=7, h=7, feature_dim=2 ** 8)
 # feature_extractor = FCBody(state_dim=obs.shape[0], hidden_units=(256,))
-# feature_extractor = Identity(state_dim=obs.shape[0])
+feature_extractor = Identity(state_dim=obs.shape[0])
 
 # ==================================
 # Behavioral Policy
@@ -73,7 +73,7 @@ feature_extractor = ConvBody(d=3, w=7, h=7, feature_dim=2 ** 8)
 
 # TODO: tie the warmup period withe the annealed exploration period
 policy = Egreedy(
-    epsilon=LinearSchedule(schedule_timesteps=20000, final_p=0.1),
+    epsilon=LinearSchedule(schedule_timesteps=50000, final_p=0.1),
     action_space=ENV.action_space
 )
 
@@ -83,7 +83,7 @@ policy = Egreedy(
 BATCH_SIZE = 32
 prediction_demons = list()
 
-replay = Replay(memory_size=10000, batch_size=BATCH_SIZE)
+replay = Replay(memory_size=100000, batch_size=BATCH_SIZE)
 control_demon = DQN(
     gvf=gvf,
     feature=feature_extractor,

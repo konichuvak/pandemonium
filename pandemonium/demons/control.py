@@ -126,12 +126,13 @@ class DQN(TemporalDifference, ControlDemon):
         # Use replay buffer for breaking correlation in the experience samples
         self.replay_buffer = replay_buffer
 
-        self.optimizer = torch.optim.Adam(self.parameters(), 0.001)
-
     def sync_target(self):
         if self.target_update_freq and self.update_counter % self.target_update_freq == 0:
             self.target_feature_net.load_state_dict(self.φ.state_dict())
             self.target_net.load_state_dict(self.value_head.state_dict())
+
+    def predict_target(self, x: torch.Tensor):
+        return self.target_net(x)
 
     def learn(self, transitions: Transitions):
         self.update_counter += 1
@@ -149,20 +150,20 @@ class DQN(TemporalDifference, ControlDemon):
         values = self.predict(traj.s0).gather(1, traj.a.unsqueeze(1)).squeeze()
         targets = self.n_step_target(traj).detach()
         loss = torch.functional.F.smooth_l1_loss(values, targets)
-        return loss, dict()
+        return loss, {'value_loss': loss}
 
     def n_step_target(self, traj: Trajectory):
         γ = self.gvf.continuation(traj)
         z = self.gvf.cumulant(traj)
+        x = self.target_feature_net(traj.s1[-1, None])
+        # a = self.gvf.π(x, vf=self.target_net)
+        # TODO: Use actions `a` taken by the target policy instead of max
+        target = self.predict_target(x).max(1)[0]
         targets = torch.empty_like(z, dtype=torch.float)
-        target = self.target_predict(traj.s1[-1, None]).max(1)[0]
         for i in range(len(traj) - 1, -1, -1):
             target = targets[i] = z[i] + γ[i] * target
+        print(target.mean(), z.mean())
         return targets
-
-    @torch.no_grad()
-    def target_predict(self, s: torch.Tensor):
-        return self.target_net(self.target_feature_net(s))
 
     def __repr__(self):
         # model = torch.nn.Module.__str__(self)[:-2]
@@ -208,8 +209,10 @@ class AC(TemporalDifference, Demon):
     def n_step_target(self, traj: Trajectory):
         γ = self.gvf.continuation(traj)
         z = self.gvf.cumulant(traj)
+        x = self.feature(traj.s1[-1, None])  # preserving batch dim
+
         targets = torch.empty_like(z, dtype=torch.float)
-        target = self.predict(traj.s1[-1, None])  # preserving batch dim
+        target = self.predict(x)
         for i in range(len(traj) - 1, -1, -1):
             target = targets[i] = z[i] + γ[i] * target
         return targets
@@ -306,7 +309,12 @@ class OC(AC, DQN):
 
 
 class PixelControl(DQN):
-    """ Duelling de-convolutional network for auxiliary pixel control task """
+    """ Duelling de-convolutional network for auxiliary pixel control task
+
+    .. todo::
+        use ModuleDict or some other container for target networks
+
+    """
 
     def __init__(self,
                  output_dim: int,
@@ -314,30 +322,59 @@ class PixelControl(DQN):
                  **kwargs):
         super().__init__(**kwargs)
         self.pc_fc = nn.Linear(feature_dim, 9 * 9 * 32)
-        self.pc_deconv_value = nn.ConvTranspose2d(32, 1, 4, 2)
-        self.pc_deconv_advantage = nn.ConvTranspose2d(32, output_dim, 4, 2)
+        self.pc_deconv_v = nn.ConvTranspose2d(32, 1, 4, 2)
+        self.pc_deconv_a = nn.ConvTranspose2d(32, output_dim, 4, 2)
         # deconv2d_size_out(6, 2, 1) == 7 (7x7 observation in minigrids)
         # deconv2d_size_out(9, 4, 2) == 20 (20x20 avg pooled pixel change vals)
 
         # HACK: override pc target net
         del self.target_net
-        self.target_net = self.predict
-
-        # HACK
         del self.value_head
 
-    def predict(self, x: torch.Tensor):
-        x = self.pc_fc(x).view(-1, 32, 9, 9)
-        value = F.relu(self.pc_deconv_value(x), inplace=True)
-        advantage = F.relu(self.pc_deconv_advantage(x), inplace=True)
+        if self.target_update_freq:
+            self.target_feature_net = deepcopy(self.φ)
+            self.target_pc_fc = deepcopy(self.pc_fc)
+            self.target_pc_deconv_v = deepcopy(self.pc_deconv_v)
+            self.target_pc_deconv_a = deepcopy(self.pc_deconv_a)
+
+            self.target_feature_net.load_state_dict(self.φ.state_dict())
+            self.target_pc_fc.load_state_dict(self.pc_fc.state_dict())
+            self.target_pc_deconv_v.load_state_dict(
+                self.pc_deconv_v.state_dict())
+            self.target_pc_deconv_a.load_state_dict(
+                self.pc_deconv_a.state_dict())
+        else:
+            self.target_feature_net = self.φ
+            self.target_pc_fc = self.pc_fc
+            self.target_pc_deconv_v = self.pc_deconv_v
+            self.target_pc_deconv_a = self.pc_deconv_a
+
+    def sync_target(self):
+        if self.target_update_freq and self.update_counter % self.target_update_freq == 0:
+            self.target_feature_net.load_state_dict(self.φ.state_dict())
+            self.target_pc_fc.load_state_dict(self.pc_fc.state_dict())
+            self.target_pc_deconv_v.load_state_dict(
+                self.pc_deconv_v.state_dict())
+            self.target_pc_deconv_a.load_state_dict(
+                self.pc_deconv_a.state_dict())
+
+    def predict_target(self, x):
+        x = self.target_pc_fc(x).view(-1, 32, 9, 9)
+        value = F.relu(self.target_pc_deconv_v(x), inplace=True)
+        advantage = F.relu(self.target_pc_deconv_a(x), inplace=True)
         pc_q = value + advantage - advantage.mean(1, keepdim=True)
         return pc_q
 
-    def delta(self, *args, **kwargs) -> Loss:
+    def predict(self, x: torch.Tensor):
+        x = self.pc_fc(x).view(-1, 32, 9, 9)
+        value = F.relu(self.pc_deconv_v(x), inplace=True)
+        advantage = F.relu(self.pc_deconv_a(x), inplace=True)
+        pc_q = value + advantage - advantage.mean(1, keepdim=True)
+        return pc_q
+
+    def delta(self, traj: Trajectory) -> Loss:
         if not self.replay_buffer.is_full:
             return None, dict()
-        transitions = self.replay_buffer.sample()
-        traj = Trajectory.from_transitions(zip(*transitions))
         x = self.feature(traj.s0)
         values = self.predict(x)[list(range(len(traj))), traj.a]
         targets = self.n_step_target(traj).detach()

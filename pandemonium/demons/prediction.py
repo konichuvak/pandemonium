@@ -39,7 +39,7 @@ class TDn(TemporalDifference, PredictionDemon):
     """
 
     def delta(self, traj: Trajectory) -> Loss:
-        targets = self.n_step_target(traj)
+        targets = self.n_step_target(traj).detach()
         values = self.predict(traj.s0).squeeze(1)
         loss = torch.functional.F.smooth_l1_loss(values, targets)
         return loss, {'value_loss': loss.item()}

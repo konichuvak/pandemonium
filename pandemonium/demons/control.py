@@ -147,7 +147,7 @@ class DQN(TemporalDifference, ControlDemon):
 
     def delta(self, traj: Trajectory) -> Loss:
         values = self.predict(traj.s0).gather(1, traj.a.unsqueeze(1)).squeeze()
-        targets = self.n_step_target(traj)
+        targets = self.n_step_target(traj).detach()
         loss = torch.functional.F.smooth_l1_loss(values, targets)
         return loss, dict()
 
@@ -340,7 +340,7 @@ class PixelControl(DQN):
         traj = Trajectory.from_transitions(zip(*transitions))
         x = self.feature(traj.s0)
         values = self.predict(x)[list(range(len(traj))), traj.a]
-        targets = self.n_step_target(traj)
+        targets = self.n_step_target(traj).detach()
         loss = torch.functional.F.mse_loss(values, targets, reduction='mean')
         return loss, {'value_loss': loss.item()}
 

@@ -8,7 +8,11 @@ import numpy as np
 
 
 class Replay:
-    def __init__(self, memory_size, batch_size, drop_prob=0, to_np=False):
+    def __init__(self,
+                 memory_size: int,
+                 batch_size: int,
+                 drop_prob: float = 0,
+                 to_np: bool = False):
         self.memory_size = int(memory_size)
         self.batch_size = batch_size
         self.data = []
@@ -30,7 +34,7 @@ class Replay:
             self.feed(exp)
 
     def sample(self, batch_size=None):
-        if self.empty():
+        if self.is_empty:
             return None
         if batch_size is None:
             batch_size = self.batch_size
@@ -43,10 +47,16 @@ class Replay:
             sampled_data = list(map(lambda x: np.asarray(x), sampled_data))
         return sampled_data
 
+    @property
     def size(self):
         return len(self.data)
 
-    def empty(self):
+    @property
+    def is_full(self):
+        return len(self.data) == self.memory_size
+
+    @property
+    def is_empty(self):
         return not len(self.data)
 
     def shuffle(self):

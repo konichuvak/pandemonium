@@ -40,8 +40,8 @@ class VPG(DiffPolicy):
                       'entropy': entropy_loss.item(),
                       'policy_loss': loss.item()}
 
-    def __str__(self):
-        model = super().__str__()[:-2]
+    def __repr__(self):
+        model = super().__repr__()[:-2]
         return f'{model}\n' \
                f'  (β): {self.β}\n' \
                f')'

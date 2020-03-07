@@ -1,10 +1,14 @@
 import textwrap
+from typing import Tuple, Optional
 
 import torch
+
 from pandemonium import GVF
 from pandemonium.experience import Transitions
 from pandemonium.policies import Policy
 from pandemonium.traces import EligibilityTrace
+
+Loss = Tuple[Optional[torch.Tensor], dict]
 
 
 class Demon(torch.nn.Module):
@@ -39,17 +43,17 @@ class Demon(torch.nn.Module):
 
         self.value_head = torch.nn.Linear(feature.feature_dim, output_dim)
 
-    def forward(self, state: torch.Tensor) -> torch.Tensor:
-        return self.predict(state)
+    def forward(self, *args, **kwargs) -> torch.Tensor:
+        return self.predict(*args, **kwargs)
 
-    def predict(self, state: torch.Tensor) -> torch.Tensor:
+    def predict(self, x: torch.Tensor) -> torch.Tensor:
         r""" Approximate value of a state is linear wrt features
 
         .. math::
             \widetilde{V}(s) = \boldsymbol{\phi}(s)^{T}\boldsymbol{w}
 
         """
-        return self.value_head(self.feature(state))
+        return self.value_head(x)
 
     def feature(self, *args, **kwargs) -> torch.Tensor:
         r""" A mapping from MDP states to features
@@ -83,29 +87,21 @@ class Demon(torch.nn.Module):
         """
         return self.λ(s)
 
-    def delta(self, exp: Transitions):
+    def delta(self, exp: Transitions) -> Loss:
         """ Specifies the loss function, i.e. TD error """
         raise NotImplementedError
 
-    def learn(self, transitions: Transitions):
-        """ Updates parameters of the network via auto-diff """
-        loss, info = self.delta(transitions)
-
-        # TODO: pass this to the monitoring system on the first pass
-        # make_dot(loss, params=dict(self.named_parameters()))
-
-        self.optimizer.zero_grad()
-        loss.backward()
-        # torch.nn.utils.clip_grad_norm_(self.parameters(), 5)
-        self.optimizer.step()
-
-        return info
+    def learn(self, *args, **kwargs):
+        raise NotImplementedError
 
     def __str__(self):
-        Γ = textwrap.indent(str(self.gvf), "\t")
-        φ = textwrap.indent(str(self.φ), "\t\t")
-        μ = textwrap.indent(str(self.μ), "\t\t")
-        λ = textwrap.indent(str(self.λ), "\t\t")
+        return self.__class__.__name__
+
+    def __repr__(self):
+        Γ = textwrap.indent(repr(self.gvf), "\t")
+        φ = textwrap.indent(repr(self.φ), "\t\t")
+        μ = textwrap.indent(repr(self.μ), "\t\t")
+        λ = textwrap.indent(repr(self.λ), "\t\t")
         return f'{self.__class__.__name__}(\n' \
                f'{Γ}\n' \
                f'\t(φ):\n {φ}\n' \
@@ -140,16 +136,19 @@ class ControlDemon(Demon):
 
     def __init__(self,
                  behavior_policy: Policy,
+                 output_dim: int = None,
                  *args, **kwargs):
         from gym.spaces import Discrete
         if not isinstance(behavior_policy.action_space, Discrete):
             raise NotImplementedError
-        super().__init__(output_dim=behavior_policy.action_space.n,
-                         behavior_policy=behavior_policy, *args, **kwargs)
+        output_dim = output_dim or behavior_policy.action_space.n
+        super().__init__(output_dim=output_dim,
+                         behavior_policy=behavior_policy,
+                         *args, **kwargs)
 
     def behavior_policy(self, state):
         # Control policies usually require access to value functions.
-        return self.μ.dist(state, vf=self)
+        return self.μ(state, vf=self)
 
 
-__all__ = ['Demon', 'PredictionDemon', 'ControlDemon']
+__all__ = ['Demon', 'PredictionDemon', 'ControlDemon', 'Loss']

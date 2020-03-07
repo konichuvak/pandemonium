@@ -21,6 +21,7 @@ VERSION = '6.6.6'
 REQUIRED = [
     'ray',
     'torch',
+    'torchviz',
     'numpy',
     'tqdm',
     'plotly',

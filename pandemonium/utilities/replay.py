@@ -48,6 +48,10 @@ class Replay:
         return sampled_data
 
     @property
+    def capacity(self):
+        return self.memory_size
+
+    @property
     def size(self):
         return len(self.data)
 

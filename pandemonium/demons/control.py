@@ -3,16 +3,16 @@ from typing import List
 
 import torch
 import torch.nn.functional as F
-from docutils.transforms.misc import Transitions
-from torch import nn
-
-from pandemonium.demons import ControlDemon, Demon, Loss
+from pandemonium.demons import (ControlDemon, Demon, Loss, ParametricDemon,
+                                LinearDemon)
+from pandemonium.demons.prediction import TDn
 from pandemonium.demons.td import TemporalDifference
-from pandemonium.experience import Transition, Trajectory
+from pandemonium.experience import Transition, Trajectory, Transitions
 from pandemonium.policies import HierarchicalPolicy
 from pandemonium.policies.gradient import DiffPolicy
 from pandemonium.utilities.replay import Replay
 from pandemonium.utilities.utilities import get_all_classes
+from torch import nn
 
 
 class Sarsa(TemporalDifference, ControlDemon):
@@ -30,11 +30,11 @@ class Sarsa(TemporalDifference, ControlDemon):
 
         gamma = self.gvf.continuation(batch)
         target_q = batch.r + gamma * next_q
-        loss = torch.functional.F.smooth_l1_loss(q, target_q)
+        loss = F.smooth_l1_loss(q, target_q)
         return loss
 
 
-class SarsaN(TemporalDifference, ControlDemon):
+class SarsaN(ControlDemon, TDn):
     r""" :math:`n`-step semi-gradient :math:`SARSA` for estimating :math:`\tilde{q}`
 
     This is a classic on-policy control method suitable for episodic tasks.
@@ -55,47 +55,33 @@ class SarsaN(TemporalDifference, ControlDemon):
 
     """
 
-    def delta(self, transitions: List[Transition]):
-        traj = Trajectory.from_transitions(transitions)
-
+    def delta(self, traj: Trajectory):
         true_n_step = False
         if true_n_step:
             q = self.predict(traj.s0[0])[traj.a[0]]
-            targets = self.n_step_target(traj)[0]
+            u = self.n_step_target(traj)[0]
         else:
             q = self.predict(traj.s0).gather(1, traj.a.unsqueeze(1)).squeeze(1)
-            targets = self.n_step_target(traj)
+            u = self.n_step_target(traj)
 
-        loss = torch.functional.F.smooth_l1_loss(q, targets)
-        return loss
-
-    @torch.no_grad()
-    def n_step_target(self, traj: Trajectory):
-        γ = self.gvf.continuation(traj)
-
-        # Obtain estimate of the value function at the end of the trajectory
-        last_q = self.behavior_policy(traj.s1[-1]).sample()
-        target = self.predict(traj.s1[-1])[last_q]
-
-        # Recursively compute the target for each of the transition
-        targets = torch.empty_like(traj.r, dtype=torch.float)
-        for i in range(len(traj) - 1, -1, -1):
-            target = targets[i] = traj.r[i] + γ[i] * target
-
-        return targets
+        δ = F.smooth_l1_loss(q, u.detach())
+        return δ, {'value_loss', δ.item()}
 
 
-class DQN(TemporalDifference, ControlDemon):
+class DQN(TemporalDifference, ParametricDemon, ControlDemon):
     """ Deep Q-Network
 
     ... in all of its incarnations.
     """
+
+    # TODO: manually resolve inheritance order?
 
     def __init__(self,
                  replay_buffer: Replay,
                  target_update_freq: int = 0,
                  warm_up_period: int = 0,
                  **kwargs):
+
         super().__init__(**kwargs)
 
         self.update_counter = 0
@@ -104,35 +90,18 @@ class DQN(TemporalDifference, ControlDemon):
 
         # Create a target network to stabilize training
         if self.target_update_freq:
-            # TODO: The name of the parameters `target_net` might clash
-            #  with other DQN demons
-            self.target_feature_net = deepcopy(self.φ)
-            self.target_feature_net.load_state_dict(self.φ.state_dict())
-
-            # TODO: although φ is usually shared, the value head is not always
-            #  the same across different networks based on the DQN.
-            #  Thus need to make a better interface for the target net to
-            #  be identifiable.
-            self.target_net = deepcopy(self.value_head)
-            self.target_net.load_state_dict(self.value_head.state_dict())
-
-            # Set both feature and prediction nets to evaluation mode
-            # self.target_net.eval()
-            # self.target_feature_net.eval()
+            self.target_feature = deepcopy(self.φ)
+            self.target_avf = deepcopy(self.avf)
+            self.target_feature.load_state_dict(self.φ.state_dict())
+            self.target_avf = deepcopy(self.avf)
+            self.target_feature.eval()
+            self.target_avf.eval()
         else:
-            self.target_feature_net = self.φ
-            self.target_net = self.value_head
+            self.target_feature = self.φ
+            self.target = self.avf
 
         # Use replay buffer for breaking correlation in the experience samples
         self.replay_buffer = replay_buffer
-
-    def sync_target(self):
-        if self.target_update_freq and self.update_counter % self.target_update_freq == 0:
-            self.target_feature_net.load_state_dict(self.φ.state_dict())
-            self.target_net.load_state_dict(self.value_head.state_dict())
-
-    def predict_target(self, x: torch.Tensor):
-        return self.target_net(x)
 
     def learn(self, transitions: Transitions):
         self.update_counter += 1
@@ -149,21 +118,26 @@ class DQN(TemporalDifference, ControlDemon):
     def delta(self, traj: Trajectory) -> Loss:
         values = self.predict(traj.s0).gather(1, traj.a.unsqueeze(1)).squeeze()
         targets = self.n_step_target(traj).detach()
-        loss = torch.functional.F.smooth_l1_loss(values, targets)
+        loss = nn.functional.smooth_l1_loss(values, targets)
         return loss, {'value_loss': loss}
 
     def n_step_target(self, traj: Trajectory):
         γ = self.gvf.continuation(traj)
         z = self.gvf.cumulant(traj)
-        x = self.target_feature_net(traj.s1[-1, None])
+        x = self.target_feature(traj.s1[-1, None])
         # a = self.gvf.π(x, vf=self.target_net)
         # TODO: Use actions `a` taken by the target policy instead of max
-        target = self.predict_target(x).max(1)[0]
-        targets = torch.empty_like(z, dtype=torch.float)
+        v = self.target_avf(x).max(1)[0]
+        u = torch.empty_like(z, dtype=torch.float)
         for i in range(len(traj) - 1, -1, -1):
-            target = targets[i] = z[i] + γ[i] * target
-        print(target.mean(), z.mean())
-        return targets
+            v = u[i] = z[i] + γ[i] * v
+        print(v.mean(), z.mean())
+        return u.flip(0)
+
+    def sync_target(self):
+        if self.target_update_freq and self.update_counter % self.target_update_freq == 0:
+            self.target_feature.load_state_dict(self.φ.state_dict())
+            self.target_avf.load_state_dict(self.avf.state_dict())
 
     def __repr__(self):
         # model = torch.nn.Module.__str__(self)[:-2]
@@ -172,13 +146,12 @@ class DQN(TemporalDifference, ControlDemon):
         hyperparams = f'  (hyperparams):\n' \
                       f'    (warmup): {self.warm_up_period}\n' \
                       f'    (target_update_freq): {self.target_update_freq}\n'
-
         return f'{demon}\n' \
                f'{buffer}\n' \
                f'{hyperparams}\n)'
 
 
-class AC(TemporalDifference, Demon):
+class AC(TDn, LinearDemon):
     """ Actor-Critic architecture """
 
     def __init__(self, actor: DiffPolicy, output_dim: int = 1, **kwargs):
@@ -188,14 +161,14 @@ class AC(TemporalDifference, Demon):
             **kwargs)
 
     def behavior_policy(self, x):
-        return self.μ(x, self.value_head)
+        return self.μ(x, self.avf)
 
     def delta(self, traj: Trajectory) -> Loss:
         # Value gradient
         targets = self.n_step_target(traj).detach()
         x = self.feature(traj.s0)
-        values = self.value_head(x).squeeze(1)
-        value_loss = torch.functional.F.smooth_l1_loss(values, targets)
+        values = self.avf(x).squeeze(1)
+        value_loss = F.smooth_l1_loss(values, targets)
 
         # Policy gradient
         advantages = targets - values.detach()
@@ -205,17 +178,6 @@ class AC(TemporalDifference, Demon):
         loss = policy_loss + 0.5 * value_loss
         info.update({'value_loss': value_loss.item(), 'loss': loss.item()})
         return loss, info
-
-    def n_step_target(self, traj: Trajectory):
-        γ = self.gvf.continuation(traj)
-        z = self.gvf.cumulant(traj)
-        x = self.feature(traj.s1[-1, None])  # preserving batch dim
-
-        targets = torch.empty_like(z, dtype=torch.float)
-        target = self.predict(x)
-        for i in range(len(traj) - 1, -1, -1):
-            target = targets[i] = z[i] + γ[i] * target
-        return targets
 
     def learn(self, transitions: Transitions):
         trajectory = Trajectory.from_transitions(transitions)
@@ -255,7 +217,7 @@ class OC(AC, DQN):
         # Value gradient
         targets = self.n_step_target(traj).detach()
         values = self.value_head(traj.x0).gather(1, ω).squeeze(1)
-        value_loss = torch.functional.F.smooth_l1_loss(values, targets)
+        value_loss = F.smooth_l1_loss(values, targets)
         values = values.detach()
 
         # ------------------------------------
@@ -317,69 +279,42 @@ class PixelControl(DQN):
     """
 
     def __init__(self,
+                 feature,
+                 replay_buffer: Replay,
                  output_dim: int,
-                 feature_dim: int = 256,
                  **kwargs):
-        super().__init__(**kwargs)
-        self.pc_fc = nn.Linear(feature_dim, 9 * 9 * 32)
-        self.pc_deconv_v = nn.ConvTranspose2d(32, 1, 4, 2)
-        self.pc_deconv_a = nn.ConvTranspose2d(32, output_dim, 4, 2)
-        # deconv2d_size_out(6, 2, 1) == 7 (7x7 observation in minigrids)
-        # deconv2d_size_out(9, 4, 2) == 20 (20x20 avg pooled pixel change vals)
 
-        # HACK: override pc target net
-        del self.target_net
-        del self.value_head
+        class DeconvNet(nn.Module):
 
-        if self.target_update_freq:
-            self.target_feature_net = deepcopy(self.φ)
-            self.target_pc_fc = deepcopy(self.pc_fc)
-            self.target_pc_deconv_v = deepcopy(self.pc_deconv_v)
-            self.target_pc_deconv_a = deepcopy(self.pc_deconv_a)
+            def __init__(self):
+                super().__init__()
+                self.fc = nn.Linear(feature.feature_dim, 9 * 9 * 32)
+                self.deconv_v = nn.ConvTranspose2d(32, 1, 4, 2)
+                self.deconv_a = nn.ConvTranspose2d(32, output_dim, 4, 2)
+                # deconv2d_size_out(6, 2, 1) == 7 (7x7 observation in minigrids)
+                # deconv2d_size_out(9, 4, 2) == 20 (20x20 avg pooled pixel change vals)
 
-            self.target_feature_net.load_state_dict(self.φ.state_dict())
-            self.target_pc_fc.load_state_dict(self.pc_fc.state_dict())
-            self.target_pc_deconv_v.load_state_dict(
-                self.pc_deconv_v.state_dict())
-            self.target_pc_deconv_a.load_state_dict(
-                self.pc_deconv_a.state_dict())
-        else:
-            self.target_feature_net = self.φ
-            self.target_pc_fc = self.pc_fc
-            self.target_pc_deconv_v = self.pc_deconv_v
-            self.target_pc_deconv_a = self.pc_deconv_a
+            def forward(self, x: torch.Tensor):
+                x = self.fc(x).view(-1, 32, 9, 9)
+                value = F.relu(self.deconv_v(x))
+                advantage = F.relu(self.deconv_a(x))
+                pc_q = value + advantage - advantage.mean(1, keepdim=True)
+                return pc_q
 
-    def sync_target(self):
-        if self.target_update_freq and self.update_counter % self.target_update_freq == 0:
-            self.target_feature_net.load_state_dict(self.φ.state_dict())
-            self.target_pc_fc.load_state_dict(self.pc_fc.state_dict())
-            self.target_pc_deconv_v.load_state_dict(
-                self.pc_deconv_v.state_dict())
-            self.target_pc_deconv_a.load_state_dict(
-                self.pc_deconv_a.state_dict())
-
-    def predict_target(self, x):
-        x = self.target_pc_fc(x).view(-1, 32, 9, 9)
-        value = F.relu(self.target_pc_deconv_v(x), inplace=True)
-        advantage = F.relu(self.target_pc_deconv_a(x), inplace=True)
-        pc_q = value + advantage - advantage.mean(1, keepdim=True)
-        return pc_q
-
-    def predict(self, x: torch.Tensor):
-        x = self.pc_fc(x).view(-1, 32, 9, 9)
-        value = F.relu(self.pc_deconv_v(x), inplace=True)
-        advantage = F.relu(self.pc_deconv_a(x), inplace=True)
-        pc_q = value + advantage - advantage.mean(1, keepdim=True)
-        return pc_q
+        super().__init__(
+            avf=DeconvNet(),
+            feature=feature,
+            warm_up_period=replay_buffer.capacity // replay_buffer.batch_size,
+            replay_buffer=replay_buffer,
+            **kwargs
+        )
 
     def delta(self, traj: Trajectory) -> Loss:
-        if not self.replay_buffer.is_full:
-            return None, dict()
         x = self.feature(traj.s0)
-        values = self.predict(x)[list(range(len(traj))), traj.a]
-        targets = self.n_step_target(traj).detach()
-        loss = torch.functional.F.mse_loss(values, targets, reduction='mean')
-        return loss, {'value_loss': loss.item()}
+        v = self.predict(x)[list(range(len(traj))), traj.a]
+        u = self.n_step_target(traj).detach()
+        δ = F.mse_loss(v, u, reduction='mean')
+        return δ, {'value_loss': δ.item()}
 
 
 __all__ = get_all_classes(__name__)

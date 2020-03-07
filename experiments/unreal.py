@@ -87,7 +87,7 @@ value_replay = optimal_control
 obs = ENV.reset()
 print(obs.shape)
 feature_extractor = ConvBody(
-    *obs.shape.squeeze(), feature_dim=2 ** 8,
+    *obs.shape[1:], feature_dim=2 ** 8,
     channels=[32, 64, 64], kernels=[8, 4, 3], strides=[4, 2, 1]
 )
 

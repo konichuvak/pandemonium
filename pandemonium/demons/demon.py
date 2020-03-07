@@ -1,8 +1,8 @@
 import textwrap
-from typing import Tuple, Optional
+from abc import ABC
+from typing import Tuple, Optional, Callable
 
 import torch
-
 from pandemonium import GVF
 from pandemonium.experience import Transitions
 from pandemonium.policies import Policy
@@ -11,7 +11,7 @@ from pandemonium.traces import EligibilityTrace
 Loss = Tuple[Optional[torch.Tensor], dict]
 
 
-class Demon(torch.nn.Module):
+class Demon:
     r""" **General Value Function Approximator**
 
     Each demon is an independent reinforcement learning agent responsible
@@ -26,25 +26,29 @@ class Demon(torch.nn.Module):
         - $\lambda$ (eligibility trace): assigning credit to experiences
 
     """
+    __slots__ = 'gvf', 'avf', 'φ', 'μ', 'λ'
 
     def __init__(self,
                  gvf: GVF,
+                 avf: Callable,
                  feature,
                  behavior_policy: Policy,
                  eligibility: EligibilityTrace,
-                 output_dim: int,
                  ):
         super().__init__()
         self.gvf = gvf
+        self.avf = avf
 
         self.φ = feature
         self.μ = behavior_policy
         self.λ = eligibility
 
-        self.value_head = torch.nn.Linear(feature.feature_dim, output_dim)
+    def learn(self, *args, **kwargs):
+        raise NotImplementedError
 
-    def forward(self, *args, **kwargs) -> torch.Tensor:
-        return self.predict(*args, **kwargs)
+    def delta(self, exp: Transitions) -> Loss:
+        """ Specifies the update rule for approximate value function """
+        raise NotImplementedError
 
     def predict(self, x: torch.Tensor) -> torch.Tensor:
         r""" Approximate value of a state is linear wrt features
@@ -53,7 +57,7 @@ class Demon(torch.nn.Module):
             \widetilde{V}(s) = \boldsymbol{\phi}(s)^{T}\boldsymbol{w}
 
         """
-        return self.value_head(x)
+        return self.avf(x)
 
     def feature(self, *args, **kwargs) -> torch.Tensor:
         r""" A mapping from MDP states to features
@@ -87,13 +91,6 @@ class Demon(torch.nn.Module):
         """
         return self.λ(s)
 
-    def delta(self, exp: Transitions) -> Loss:
-        """ Specifies the loss function, i.e. TD error """
-        raise NotImplementedError
-
-    def learn(self, *args, **kwargs):
-        raise NotImplementedError
-
     def __str__(self):
         return self.__class__.__name__
 
@@ -110,45 +107,61 @@ class Demon(torch.nn.Module):
                f')'
 
 
-class PredictionDemon(Demon):
+class ParametricDemon(Demon, torch.nn.Module, ABC):
+    """ Parametrized Demons implemented in PyTorch subclass this. """
+
+    def forward(self, *args, **kwargs) -> torch.Tensor:
+        return self.predict(*args, **kwargs)
+
+
+class LinearDemon(ParametricDemon, ABC):
+
+    def __init__(self, feature, output_dim: int, *args, **kwargs):
+        super().__init__(
+            avf=torch.nn.Linear(feature.feature_dim, output_dim),
+            feature=feature, *args, **kwargs
+        )
+
+
+class PredictionDemon(Demon, ABC):
     r""" Collects factual knowledge about environment by learning to predict
 
     Can be thought of as an accumulator of declarative knowledge.
 
     .. note::
-        the output of a predictive demon is always a scalar, corresponding
+        the output of a predictive demon is usually a scalar, corresponding
         to the estimate of a value function at a state
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(output_dim=1, *args, **kwargs)
+    # def __init__(self, output_dim: int = 1, *args, **kwargs):
+    #     super().__init__(output_dim=output_dim, *args, **kwargs)
 
 
-class ControlDemon(Demon):
+class ControlDemon(Demon, ABC):
     r""" Learns the optimal policy while learning to predict
 
     Can be thought of as an accumulator of procedural knowledge.
+    Also goes by the name 'adaptive critic' in AC architectures.
 
     .. note::
-        the output of a control demon, on the other hand, is always a vector
-        corresponding to the estimate of action values under the target policy
+        the output of a control demon, in contrast to prediction demon,
+        is usually a vector corresponding to the estimate of action values
+        under the target policy
     """
 
-    def __init__(self,
-                 behavior_policy: Policy,
-                 output_dim: int = None,
-                 *args, **kwargs):
-        from gym.spaces import Discrete
-        if not isinstance(behavior_policy.action_space, Discrete):
-            raise NotImplementedError
-        output_dim = output_dim or behavior_policy.action_space.n
-        super().__init__(output_dim=output_dim,
-                         behavior_policy=behavior_policy,
-                         *args, **kwargs)
+    # def __init__(self,
+    #              behavior_policy: Policy,
+    #              output_dim: int = None,
+    #              *args, **kwargs):
+    #     output_dim = output_dim or behavior_policy.action_space.n
+    #     super().__init__(output_dim=output_dim,
+    #                      behavior_policy=behavior_policy,
+    #                      *args, **kwargs)
 
-    def behavior_policy(self, state):
+    def behavior_policy(self, x):
         # Control policies usually require access to value functions.
-        return self.μ(state, vf=self)
+        return self.μ(x, vf=self)
 
 
-__all__ = ['Demon', 'PredictionDemon', 'ControlDemon', 'Loss']
+__all__ = ['Demon', 'ParametricDemon', 'LinearDemon', 'PredictionDemon',
+           'ControlDemon', 'Loss']

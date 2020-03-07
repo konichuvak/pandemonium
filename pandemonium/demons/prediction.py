@@ -1,15 +1,14 @@
 import torch
 import torch.nn.functional as F
-from torch import nn
-
-from pandemonium.demons.demon import PredictionDemon, Demon, Loss
+from pandemonium.demons.demon import PredictionDemon, Loss, LinearDemon
 from pandemonium.demons.td import TemporalDifference
 from pandemonium.experience import Transition, Trajectory, Transitions
 from pandemonium.utilities.replay import Replay
 from pandemonium.utilities.utilities import get_all_classes
+from torch import nn
 
 
-class TD(TemporalDifference, PredictionDemon):
+class TD(TemporalDifference):
     r""" Semi-gradient TD:math:`\lambda` rule for estimating :math:`\tilde{v} ≈ v_{\pi}`
 
     .. math::
@@ -26,12 +25,12 @@ class TD(TemporalDifference, PredictionDemon):
     def delta(self, t: Transition) -> Loss:
         γ = self.gvf.continuation(t)
         e = self.λ(γ, t.x0)
-        u = self.gvf.z(t) + γ * self.predict(t.s1)
-        δ = (u - self.predict(t.s0)) * e
+        u = self.gvf.z(t) + γ * self.gvf.π(t.x1)
+        δ = (u - self.predict(t.x0)) * e
         return δ, {'value_loss': δ.item()}
 
 
-class TDn(TemporalDifference, PredictionDemon):
+class TDn(TemporalDifference):
     """ :math:`n`-step :math:`TD` for estimating :math:`V ≈ v_{\pi}`
 
     Targets are calculated using forward view from $n$-step returns, where
@@ -39,26 +38,30 @@ class TDn(TemporalDifference, PredictionDemon):
     """
 
     def delta(self, traj: Trajectory) -> Loss:
-        targets = self.n_step_target(traj).detach()
-        values = self.predict(traj.s0).squeeze(1)
-        loss = torch.functional.F.smooth_l1_loss(values, targets)
-        return loss, {'value_loss': loss.item()}
+        u = self.n_step_target(traj).detach()
+        v = self.predict(self.feature(traj.s0)).squeeze(1)
+        δ = F.smooth_l1_loss(v, u)
+        return δ, {'value_loss': δ.item()}
 
     def n_step_target(self, traj: Trajectory):
+        """
+        .. todo::
+            ActionVF:
+                a = self.gvf.π(traj.x1[-1])
+                v = self.target_avf(traj.x1[-1])[a]
+            VF:
+                v = self.target_avf(traj.x1[-1])
+        """
         γ = self.gvf.continuation(traj)
         z = self.gvf.cumulant(traj)
-        targets = torch.empty_like(z, dtype=torch.float)
-        target = self.predict(traj.s1[-1, None])  # preserving batch dim
+        v = self.avf(traj.x1[-1])
+        u = torch.empty_like(z, dtype=torch.float)
         for i in range(len(traj) - 1, -1, -1):
-            target = targets[i] = z[i] + γ[i] * target
-        return targets
-
-    def learn(self, transitions: Transitions):
-        trajectory = Trajectory.from_transitions(transitions)
-        return self.delta(trajectory)
+            v = u[i] = z[i] + γ[i] * v
+        return u.flip(0)
 
 
-class RewardPrediction(Demon):
+class RewardPrediction(LinearDemon):
     """ Classifies reward at the end of n-step sequence of states
 
      Used as an auxiliary task in UNREAL architecture as a 3 class classifier
@@ -74,31 +77,26 @@ class RewardPrediction(Demon):
         self.replay_buffer = replay_buffer
         self.sequence_size = sequence_size
         in_features = self.φ.feature_dim * sequence_size
+        self.avf = nn.Linear(in_features, output_dim)
 
-        # hack to avoid name collisions in the named parameters
-        del self.value_head
-        self.reward_predictor = nn.Linear(in_features, output_dim)
+    def delta(self, traj: Trajectory) -> Loss:
+        # TODO: special skewed sampling
+        # TODO: -1, 0, 1
+        x = self.feature(traj.s0).view(1, -1)  # stack features together
+        v = self.predict(x)
+        u = traj.r[-1]
+        δ = F.cross_entropy(v, (u > 0).unsqueeze(0).long())
+        return δ, {'value_loss': δ.item()}
 
-    def predict(self, state: torch.Tensor) -> torch.Tensor:
-        return self.reward_predictor(self.feature(state).view(1, -1))
-
-    def delta(self, *args, **kwargs) -> Loss:
+    def learn(self, *args, **kwargs):
         if not self.replay_buffer.is_full:
             return None, dict()
-        # TODO: special skewed sampling
         transitions = self.replay_buffer.sample(self.sequence_size)
-        trajectory = Trajectory.from_transitions(zip(*transitions))
-        values = self.predict(trajectory.s0)
-        target = trajectory.r[-1]
-        loss = F.cross_entropy(values, (target > 0).unsqueeze(0).long())
-        return loss, {'value_loss': loss.item()}
-
-    def learn(self, transitions: Transitions):
         trajectory = Trajectory.from_transitions(transitions)
         return self.delta(trajectory)
 
 
-class ValueReplay(TDn):
+class ValueReplay(LinearDemon, TDn):
     """ N-step TD performed on the past experiences from the replay buffer
 
     Used in UNREAL architecture as an auxiliary task that helps representation
@@ -107,21 +105,14 @@ class ValueReplay(TDn):
     """
 
     def __init__(self, replay_buffer: Replay, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(output_dim=1, **kwargs)
         self.replay_buffer = replay_buffer
 
-        # hack to avoid name collisions in the named parameters
-        self.value_replay = self.value_head
-        del self.value_head
-
-    def predict(self, state: torch.Tensor) -> torch.Tensor:
-        return self.value_replay(self.feature(state))
-
-    def delta(self, traj: Trajectory) -> Loss:
+    def learn(self, transitions: Transitions) -> Loss:
         if not self.replay_buffer.is_full:
             return None, dict()
-        batch = Trajectory.from_transitions(zip(*self.replay_buffer.sample()))
-        return super().delta(batch)
+        trajectory = Trajectory.from_transitions(transitions)
+        return self.delta(trajectory)
 
 
 __all__ = get_all_classes(__name__)

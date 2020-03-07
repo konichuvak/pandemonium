@@ -85,8 +85,11 @@ value_replay = optimal_control
 # Representation learning
 # ==================================
 obs = ENV.reset()
-# feature_extractor = ConvBody(d=3, w=7, h=7, feature_dim=2 ** 8)
-feature_extractor = ConvLSTM(*obs.shape[1:], feature_dim=2 ** 8)
+print(obs.shape)
+feature_extractor = ConvBody(
+    *obs.shape.squeeze(), feature_dim=2 ** 8,
+    channels=[32, 64, 64], kernels=[8, 4, 3], strides=[4, 2, 1]
+)
 
 # ==================================
 # Behavioral Policy
@@ -98,7 +101,7 @@ policy = VPG(feature_dim=feature_extractor.feature_dim,
 # ==================================
 # Learning Algorithm
 # ==================================
-BATCH_SIZE = 32
+BATCH_SIZE = 20
 
 # TODO: Skew the replay for reward prediction task
 replay = Replay(memory_size=2000, batch_size=BATCH_SIZE)
@@ -116,7 +119,8 @@ prediction_demons = [
                  feature=feature_extractor,
                  behavior_policy=policy,
                  replay_buffer=replay,
-                 output_dim=ENV.action_space.n),
+                 output_dim=ENV.action_space.n,
+                 target_update_freq=100),
 ]
 for d in prediction_demons:
     print(d)

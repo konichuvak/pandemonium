@@ -8,6 +8,7 @@ from experiments import EXPERIMENT_DIR, RLogger
 # from experiments.a2c import *
 # from experiments.option_critic import *
 from experiments.unreal import *
+# from experiments.dqn import *
 from pandemonium.experience import Trajectory
 from pandemonium.utilities.visualization import Plotter
 
@@ -86,7 +87,7 @@ for demon in AGENT.horde.demons:
 
 total_steps = total_time = total_updates = 0
 
-for episode in range(500 + 1):
+for episode in range(10000 + 1):
     for logs in AGENT.interact(BATCH_SIZE=BATCH_SIZE, env=ENV):
 
         done = logs.pop('done')

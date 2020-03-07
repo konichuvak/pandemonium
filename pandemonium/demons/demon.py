@@ -46,17 +46,14 @@ class Demon(torch.nn.Module):
     def forward(self, *args, **kwargs) -> torch.Tensor:
         return self.predict(*args, **kwargs)
 
-    def predict(self, state: torch.Tensor=None, features=None) -> torch.Tensor:
+    def predict(self, x: torch.Tensor) -> torch.Tensor:
         r""" Approximate value of a state is linear wrt features
 
         .. math::
             \widetilde{V}(s) = \boldsymbol{\phi}(s)^{T}\boldsymbol{w}
 
         """
-        if features is not None:
-            assert state is None
-            return self.value_head(features)
-        return self.value_head(self.feature(state))
+        return self.value_head(x)
 
     def feature(self, *args, **kwargs) -> torch.Tensor:
         r""" A mapping from MDP states to features

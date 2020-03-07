@@ -55,11 +55,22 @@ class Egreedy(Discrete):
         self.t = 0
         self.ε = schedule
 
-    def dist(self, state, vf) -> Categorical:
-        ε, q = self.epsilon, vf(state)
+    def dist(self, features, vf) -> Categorical:
+        """ Creates a Categorical distribution with :math:`\epsilon`-greedy support
+
+        Assumes that Q-values are of shape (batch, actions, states)
+        """
+        ε, q = self.epsilon, vf(features)
+        assert len(q.shape) > 1
+        assert q.shape[1] == self.action_space.n  # (batch, action, ...)
         probs = torch.empty_like(q).fill_(ε / (self.action_space.n - 1))
-        probs[torch_argmax_mask(q, len(q.shape) - 1)] = 1 - ε
+        probs[torch_argmax_mask(q, 1)] = 1 - ε
         return Categorical(probs=probs)
+
+    def act(self, *args, **kwargs):
+        dist = self.dist(*args, **kwargs)
+        return dist.sample(), {'action_dist': dist,
+                               'epsilon': self.ε.value(self.t)}
 
     def __str__(self):
         return f'ε-greedy({self.ε})'
@@ -82,9 +93,14 @@ class SoftmaxPolicy(Discrete):
         self.t = 0
         self.τ = schedule
 
-    def dist(self, state, vf) -> Categorical:
-        probs = (vf(state) / self.temperature).softmax(dim=2)
+    def dist(self, features, vf) -> Categorical:
+        probs = (vf(features) / self.temperature).softmax(dim=2)
         return Categorical(probs=probs)
+
+    def act(self, *args, **kwargs):
+        dist = self.dist(*args, **kwargs)
+        return dist.sample(), {'action_dist': dist,
+                               'temperature': self.τ.value(self.t)}
 
     def __str__(self):
         return f'Softmax({self.τ})'

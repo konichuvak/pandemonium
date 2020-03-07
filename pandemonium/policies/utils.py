@@ -24,18 +24,8 @@ def torch_argmax_mask(q: torch.Tensor, dim: int):
         # tensor([[False,  True],
         #         [False,  True],
         #         [ True, False]])
-
     """
     rand = torch.rand_like(q)
-    if dim == 0:
-        mask = rand * (q == q.max(dim)[0])
-        mask = mask == mask.max(dim)[0]
-        assert int(mask.sum()) == len(q.shape)
-    elif dim == 1:
-        mask = rand * (q == q.max(dim)[0].unsqueeze(1).expand(q.shape))
-        mask = mask == mask.max(dim)[0].unsqueeze(1).expand(q.shape)
-        assert int(mask.sum()) == int(q.shape[0])
-    else:
-        raise NotImplemented("Only vectors and matrices are supported")
-
+    mask = rand * (q == q.max(dim, keepdim=True)[0])
+    mask = mask == mask.max(dim, keepdim=True)[0]
     return mask

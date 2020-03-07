@@ -47,10 +47,17 @@ class Horde:
                 {f'{demon}{id(demon)}': {f'{k}': v for k, v in info.items()}})
 
         total_loss = self.aggregation_fn(losses)
-        self.optimizer.zero_grad()
-        total_loss.backward()
-        self.optimizer.step()
+        if total_loss.requires_grad:
+            self.optimizer.zero_grad()
+            total_loss.backward()
+            torch.nn.utils.clip_grad_norm_(set(self.params.values()), 1)
+            self.optimizer.step()
+        else:
+            print('???')
 
+        # TODO: deal with changes in computational graph over time
+        #   i.e. the graph will look different before and after experience
+        #   collection stage in DQN
         if self.first_pass:
             graph = make_dot(total_loss, params=self.params)
             self.first_pass = False

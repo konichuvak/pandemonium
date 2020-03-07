@@ -167,3 +167,17 @@ class Torch(gym.core.ObservationWrapper):
             t = t.transpose(0, 2)  # swap (w, h, dir) -> (dir, w, h)
             t = t.unsqueeze(0)  # add batch dim: (dir, w, h) -> (1, dir, w, h)
         return t
+
+
+class Scaler(Torch):
+    def __init__(self, coef: float = 1.0, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.coef = coef
+
+    def observation(self, obs):
+        return self.coef * obs
+
+
+class ImageNormalizer(Scaler):
+    def __init__(self, env):
+        super().__init__(coef=1 / 255, env=env)

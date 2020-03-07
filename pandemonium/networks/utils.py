@@ -6,6 +6,10 @@ def conv2d_size_out(size, kernel_size=2, stride=1):
     return (size - (kernel_size - 1) - 1) // stride + 1
 
 
+def deconv2d_size_out(size, kernel_size, stride, padding: int = 0):
+    return stride * (size - 1) + kernel_size - 2 * padding
+
+
 def layer_init(layer, scaling_factor: float = 1.0):
     torch.nn.init.orthogonal_(layer.weight.data)
     layer.weight.data.mul_(scaling_factor)

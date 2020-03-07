@@ -1,7 +1,7 @@
+import torch
+from pandemonium.networks.utils import layer_init, conv2d_size_out
 from torch import nn
 from torch.functional import F
-
-from pandemonium.networks.utils import layer_init, conv2d_size_out
 
 
 class Identity(nn.Module):
@@ -11,29 +11,6 @@ class Identity(nn.Module):
 
     def forward(self, x):
         return x
-
-
-class ConvBody(nn.Module):
-    def __init__(self, d: int, w: int, h: int, feature_dim: int = 256):
-        super().__init__()
-        self.feature_dim = feature_dim
-
-        self.conv1 = layer_init(nn.Conv2d(d, 8, 2, 1))
-        self.conv2 = layer_init(nn.Conv2d(8, 16, 2, 1))
-        self.conv3 = layer_init(nn.Conv2d(16, 32, 2, 1))
-
-        w = conv2d_size_out(conv2d_size_out(conv2d_size_out(w)))
-        h = conv2d_size_out(conv2d_size_out(conv2d_size_out(h)))
-
-        self.fc = layer_init(nn.Linear(w * h * 32, self.feature_dim))
-
-    def forward(self, x):
-        y = F.relu(self.conv1(x))
-        y = F.relu(self.conv2(y))
-        y = F.relu(self.conv3(y))
-        y = y.view(y.size(0), -1)
-        y = F.relu(self.fc(y))
-        return y
 
 
 class FCBody(nn.Module):
@@ -53,3 +30,63 @@ class FCBody(nn.Module):
 
     def forward(self, x):
         return self.ff(x)
+
+
+class ConvBody(nn.Module):
+    def __init__(self, d: int, w: int, h: int,
+                 feature_dim: int = 256,
+                 channels=(8, 16, 32),
+                 kernels=(2, 2, 2),
+                 strides=(1, 1, 1)):
+        super().__init__()
+        self.feature_dim = feature_dim
+
+        self.conv1 = layer_init(nn.Conv2d(
+            d, channels[0], kernels[1], strides[0]
+        ))
+        self.conv2 = layer_init(nn.Conv2d(
+            channels[0], channels[1], kernels[1], strides[1]
+        ))
+        self.conv3 = layer_init(nn.Conv2d(
+            channels[1], channels[2], kernels[2], strides[2]
+        ))
+
+        for i in range(3):
+            w = conv2d_size_out(w, kernels[i], strides[i])
+            h = conv2d_size_out(h, kernels[i], strides[i])
+
+        self.fc = layer_init(nn.Linear(w * h * channels[2], self.feature_dim))
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
+        x = F.relu(self.conv3(x))
+        x = x.view(x.size(0), -1)
+        x = F.relu(self.fc(x))
+        return x
+
+
+class ConvLSTM(nn.Module):
+    def __init__(self, d: int, w: int, h: int, feature_dim: int = 256):
+        super().__init__()
+        self.feature_dim = feature_dim
+
+        self.conv1 = layer_init(nn.Conv2d(d, 16, 8, 4))
+        self.conv2 = layer_init(nn.Conv2d(16, 32, 4, 2))
+
+        dim = conv2d_size_out(conv2d_size_out(w, 8, 4), 4, 2)
+
+        self.fc = layer_init(nn.Linear(dim ** 2 * 32, self.feature_dim))
+
+        self.lstm = nn.LSTM(input_size=256,
+                            hidden_size=256,
+                            num_layers=2,
+                            batch_first=True)
+
+    def forward(self, x: torch.Tensor, last_action_reward, lstm_state):
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
+        x = x.view(x.size(0), -1)
+        x = F.relu(self.fc(x))
+        x, lstm_state = self.lstm(x, lstm_state)
+        return x.squeeze(0), lstm_state

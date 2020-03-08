@@ -3,14 +3,13 @@ from datetime import datetime
 
 import numpy as np
 import tensorboardX
-
+import torch
 from experiments import EXPERIMENT_DIR, RLogger
 # from experiments.a2c import *
 # from experiments.option_critic import *
 from experiments.unreal import *
 # from experiments.dqn import *
 from pandemonium.experience import Trajectory
-from pandemonium.utilities.visualization import Plotter
 
 
 def gen_pbar(stats):
@@ -65,6 +64,19 @@ def trajectory_stats(traj: Trajectory):
 
 EXPERIMENT_PATH = EXPERIMENT_DIR / str(datetime.now().replace(microsecond=0))
 EXPERIMENT_PATH.mkdir()
+PARAMETER_DIR = EXPERIMENT_PATH / 'weights'
+PARAMETER_DIR.mkdir()
+
+# # Load the weights
+# experiment_id = '2020-03-07 16:01:16'
+# weight_name = '16.pt'
+# AGENT.horde.load_state_dict(
+#     state_dict=torch.load(
+#         f=EXPERIMENT_DIR / experiment_id / 'weights' / weight_name,
+#         map_location=device,
+#     ),
+#     strict=True
+# )
 
 logger = RLogger()
 
@@ -85,9 +97,20 @@ for demon in AGENT.horde.demons:
 # Learning and evaluation loop
 # ------------------------------------------------------------------------------
 
+SAVE_EVERY = 200
 total_steps = total_time = total_updates = 0
 
 for episode in range(10000 + 1):
+
+    # Save the weights
+    if episode and episode % SAVE_EVERY == 0:
+        torch.save(AGENT.horde.state_dict(), PARAMETER_DIR / f'{episode}.pt')
+
+    # Visualize this episode
+    # if episode % 50 == 0 and episode:
+    # viz()
+
+    # Play
     for logs in AGENT.interact(BATCH_SIZE=BATCH_SIZE, env=ENV):
 
         done = logs.pop('done')
@@ -98,10 +121,6 @@ for episode in range(10000 + 1):
 
             # Record per-episode averages
             pass
-
-            # Record value function
-            # if episode % 25 == 0 and episode:
-            #     viz(episode, states, plotter)
 
         else:
             # Generate progress bar
@@ -122,9 +141,11 @@ for episode in range(10000 + 1):
                 'episode_updates',
             }
             for field, value in logs.items():
-                if field not in exclude_from_tb:
-                    if field in tb_writers:
-                        for f, v in value.items():
+                if field in exclude_from_tb:
+                    continue
+                if field in tb_writers:
+                    for f, v in value.items():
+                        if isinstance(v, float) or (torch.is_tensor(v) and len(v.shape) == 0):
                             tb_writers[field].add_scalar(f'info/{f}', v, step)
-                    else:
-                        tb_writer.add_scalar(f'info/{field}', value, step)
+                else:
+                    tb_writer.add_scalar(f'info/{field}', value, step)

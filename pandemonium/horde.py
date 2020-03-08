@@ -3,42 +3,42 @@ from typing import List, Callable
 
 import torch
 from pandemonium.demons import ControlDemon, PredictionDemon
+from torch import nn
 from torchviz import make_dot
 
 
-class Horde:
+class Horde(torch.nn.Module):
     r""" A horde of Demons
 
     Container class for all the demons of a particular agent.
 
+    Auto-registers parameters of all the demons through ModuleDict container.
 
-    Let's say there are 2 linear TD demons one for 2 different termination
-    signals. Each of them uses same feature generator φ. However, they all have
-    different last layer of the net, i.e. `value_head` which appears to be the
-    same when we are fetching `named_parameters` at the `Horde` level. The
-    problem now becomes, how do we differentiate between two demons?
+    .. note::
+        calling state_dict() will return duplicate parameters, i.e. a convnet
+        shared across demons can appear multiple times, which increases memory
+        overhead.
+        however, named_parameters() handles the duplicates somehow!
+
     """
 
     def __init__(self,
                  control_demon: ControlDemon,
                  prediction_demons: List[PredictionDemon],
                  aggregation_fn: Callable[[torch.Tensor], torch.Tensor],
+                 device: torch.device,
                  ):
-        self.control_demon = control_demon
-        self.prediction_demons = prediction_demons
-        self.demons = [control_demon] + prediction_demons
-        self.demon_name_by_id = {id(demon): str(demon) for demon in self.demons}
+        super().__init__()
+        self.demons = nn.ModuleList([control_demon] + prediction_demons)
 
         # Determines how the total loss is weighted across demons
         self.aggregation_fn = aggregation_fn
 
         # Set up the optimizer that will be shared across all demons
-        self.params = {v: k for demon in self.demons for k, v in
-                       demon.named_parameters(prefix=str(id(demon)))}
-        self.params = {k: v for v, k in self.params.items()}
-        self.optimizer = torch.optim.Adam(self.params.values(), 0.001)
-
+        self.optimizer = torch.optim.Adam(self.parameters(), 0.001)
         self.first_pass = True
+
+        self.to(device)
 
     def learn(self, transitions) -> dict:
 
@@ -57,7 +57,7 @@ class Horde:
         if total_loss.requires_grad:
             self.optimizer.zero_grad()
             total_loss.backward()
-            torch.nn.utils.clip_grad_norm_(self.params.values(), 1)
+            torch.nn.utils.clip_grad_norm_(self.parameters(), 1)
             self.optimizer.step()
         else:
             print('???')
@@ -66,7 +66,7 @@ class Horde:
         #   i.e. the graph will look different before and after experience
         #   collection stage in DQN
         # if self.first_pass:
-        graph = make_dot(total_loss, params=self.params)
+        graph = make_dot(total_loss, params=dict(self.named_parameters()))
         # self.first_pass = False
         logs.update({'graph': graph})
 
@@ -74,13 +74,9 @@ class Horde:
         return logs
 
     def __repr__(self):
-        pred = [textwrap.indent(repr(_), "\t") for _ in self.prediction_demons]
-        pred = '\n'.join(pred)
-        control = textwrap.indent(repr(self.control_demon), "\t")
-        return f'Horde(\n' \
-               f'\tControl:\n{control}\n' \
-               f'\tPrediction:\n{pred}\n' \
-               f')'
+        s = [textwrap.indent(repr(d), "\t") for d in self.demons]
+        s = '\n'.join(s)
+        return f"Horde(\n{s}\n)"
 
 
 __all__ = ['Horde']

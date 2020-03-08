@@ -42,7 +42,6 @@ class Replay:
         sampled_indices = [np.random.randint(0, len(self.data)) for _ in
                            range(batch_size)]
         sampled_data = [self.data[ind] for ind in sampled_indices]
-        sampled_data = zip(*sampled_data)
         if self.to_np:
             sampled_data = list(map(lambda x: np.asarray(x), sampled_data))
         return sampled_data

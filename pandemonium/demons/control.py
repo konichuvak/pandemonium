@@ -112,14 +112,14 @@ class DQN(TemporalDifference, ParametricDemon, ControlDemon):
             return None, dict()
 
         transitions = self.replay_buffer.sample()
-        trajectory = Trajectory.from_transitions(zip(*transitions))
+        trajectory = Trajectory.from_transitions(transitions)
         return self.delta(trajectory)
 
     def delta(self, traj: Trajectory) -> Loss:
-        values = self.predict(traj.s0).gather(1, traj.a.unsqueeze(1)).squeeze()
-        targets = self.n_step_target(traj).detach()
-        loss = nn.functional.smooth_l1_loss(values, targets)
-        return loss, {'value_loss': loss}
+        v = self.predict(traj.s0).gather(1, traj.a.unsqueeze(1)).squeeze()
+        u = self.n_step_target(traj).detach()
+        δ = nn.functional.smooth_l1_loss(v, u)
+        return δ, {'value_loss': δ.item()}
 
     def n_step_target(self, traj: Trajectory):
         γ = self.gvf.continuation(traj)
@@ -131,7 +131,6 @@ class DQN(TemporalDifference, ParametricDemon, ControlDemon):
         u = torch.empty_like(z, dtype=torch.float)
         for i in range(len(traj) - 1, -1, -1):
             v = u[i] = z[i] + γ[i] * v
-        print(v.mean(), z.mean())
         return u.flip(0)
 
     def sync_target(self):
@@ -314,7 +313,7 @@ class PixelControl(DQN):
         v = self.predict(x)[list(range(len(traj))), traj.a]
         u = self.n_step_target(traj).detach()
         δ = F.mse_loss(v, u, reduction='mean')
-        return δ, {'value_loss': δ.item()}
+        return δ, {'value_loss': δ.item(), 'pc_v': v}
 
 
 __all__ = get_all_classes(__name__)

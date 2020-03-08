@@ -1,11 +1,12 @@
 import torch
 import torch.nn.functional as F
-from pandemonium.demons.demon import PredictionDemon, Loss, LinearDemon
+from torch import nn
+
+from pandemonium.demons.demon import Loss, LinearDemon
 from pandemonium.demons.td import TemporalDifference
-from pandemonium.experience import Transition, Trajectory, Transitions
+from pandemonium.experience import Transition, Trajectory
 from pandemonium.utilities.replay import Replay
 from pandemonium.utilities.utilities import get_all_classes
-from torch import nn
 
 
 class TD(TemporalDifference):
@@ -93,7 +94,8 @@ class RewardPrediction(LinearDemon):
             return None, dict()
         transitions = self.replay_buffer.sample(self.sequence_size)
         trajectory = Trajectory.from_transitions(transitions)
-        return self.delta(trajectory)
+        loss, info = self.delta(trajectory)
+        return loss, {**info, **{'rp_traj': trajectory}}
 
 
 class ValueReplay(LinearDemon, TDn):
@@ -101,18 +103,20 @@ class ValueReplay(LinearDemon, TDn):
 
     Used in UNREAL architecture as an auxiliary task that helps representation
     learning. This demon re-samples recent historical sequences from the
-    behaviour policy distribution and performs extra value function regression.
+    behavior policy distribution and performs extra value function regression.
     """
 
     def __init__(self, replay_buffer: Replay, **kwargs):
         super().__init__(output_dim=1, **kwargs)
         self.replay_buffer = replay_buffer
 
-    def learn(self, transitions: Transitions) -> Loss:
+    def learn(self, *args, **kwargs) -> Loss:
         if not self.replay_buffer.is_full:
             return None, dict()
+        transitions = self.replay_buffer.sample()
         trajectory = Trajectory.from_transitions(transitions)
-        return self.delta(trajectory)
+        loss, info = self.delta(trajectory)
+        return loss, {**info, **{'vr_traj': trajectory}}
 
 
 __all__ = get_all_classes(__name__)

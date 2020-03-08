@@ -22,7 +22,7 @@ class Demon:
     setting of the three question functions: $π$, $γ$, and $z$. The tools that
     the demon uses to learn the approximation are called answers functions:
         - $\phi$ (feature generator): learning useful state representations
-        - $\mu$ (behaviour policy) : collecting experience
+        - $\mu$ (behavior policy) : collecting experience
         - $\lambda$ (eligibility trace): assigning credit to experiences
 
     """
@@ -73,7 +73,7 @@ class Demon:
         return self.φ(*args, **kwargs)
 
     def behavior_policy(self, s):
-        r""" Specifies behaviour of the agent
+        r""" Specifies behavior of the agent
 
         .. math::
             \mu: \mathcal{S} \times \mathcal{A} \mapsto [0, 1]

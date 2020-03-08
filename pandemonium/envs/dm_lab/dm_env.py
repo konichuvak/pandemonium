@@ -6,6 +6,7 @@ import numpy as np
 from gym.spaces import Box
 
 from pandemonium.envs.dm_lab import LEVELS
+from pandemonium.envs.dm_lab.display import DeepmindLabDisplay
 
 
 def _action(*entries):
@@ -13,7 +14,10 @@ def _action(*entries):
 
 
 class DeepmindLabEnv(gym.Env):
-    metadata = {'render.modes': ['rgb_array']}
+    metadata = {
+        'render.modes': ['human', 'rgb_array'],
+        'video.frames_per_second': 60
+    }
 
     class Actions(NamedTuple):
         LOOK_LEFT: np.ndarray = _action(-20, 0, 0, 0, 0, 0, 0)
@@ -29,7 +33,9 @@ class DeepmindLabEnv(gym.Env):
         # CROUCH: np.ndarray = _action(0, 0, 0, 0, 0, 0, 1)
 
     def __init__(self, level: str, colors: str = 'RGB_INTERLEAVED',
-                 width: int = 84, height: int = 84, fps: int = 60, **kwargs):
+                 width: int = 84, height: int = 84, fps: int = 60,
+                 display_size=(600, 400),
+                 **kwargs):
         super().__init__(**kwargs)
 
         if level not in LEVELS:
@@ -51,6 +57,8 @@ class DeepmindLabEnv(gym.Env):
 
         self.last_obs = None
 
+        self.display = DeepmindLabDisplay(display_size, env=self)
+
     def step(self, action: int, frame_skip: int = 4):
         reward = self.lab.step(self.actions[action], num_steps=frame_skip)
         done = not self.lab.is_running()
@@ -70,13 +78,13 @@ class DeepmindLabEnv(gym.Env):
     def close(self):
         self.lab.close()
 
-    def render(self, mode='rgb_array', close=False):
-        if mode == 'rgb_array':
-            return self.lab.observations()[self._colors]
-        # elif mode is 'human':
-        #   pop up a window and render
+    def render(self, mode='human', close=False, **kwargs):
+        if mode is 'human':
+            self.display.show_image(self.last_obs)
+        elif mode is 'rgb_array':
+            return self.last_obs
         else:
-            super(DeepmindLabEnv, self).render(mode=mode)
+            raise TypeError(mode)
 
     @staticmethod
     def _normalize_pixels(image):

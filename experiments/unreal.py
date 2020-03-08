@@ -1,23 +1,24 @@
+from collections import deque
 from functools import reduce
 
+import pygame
 import torch
-from gym_minigrid.envs import EmptyEnv, MultiRoomEnv, DoorKeyEnv
-from gym_minigrid.wrappers import ImgObsWrapper, RGBImgPartialObsWrapper
+from ray.rllib.utils.schedules import ConstantSchedule
+
 from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness, PixelChange
 from pandemonium.demons.control import AC, PixelControl
-from pandemonium.demons.prediction import RewardPrediction, ValueReplay
-from pandemonium.envs import FourRooms, DeepmindLabEnv
-from pandemonium.envs.wrappers import Torch, ImageNormalizer
-from pandemonium.experience import Transitions
-from pandemonium.networks.bodies import ConvBody, ConvLSTM
+from pandemonium.demons.prediction import ValueReplay, RewardPrediction
+from pandemonium.envs import DeepmindLabEnv
+from pandemonium.envs.wrappers import Torch
+from pandemonium.experience import Transitions, Transition, Trajectory
+from pandemonium.networks.bodies import ConvBody
 from pandemonium.policies.discrete import Egreedy
 from pandemonium.policies.gradient import VPG
 from pandemonium.utilities.replay import Replay
-from ray.rllib.utils.schedules import ConstantSchedule
 
-__all__ = ['AGENT', 'ENV', 'WRAPPERS', 'BATCH_SIZE']
+__all__ = ['AGENT', 'ENV', 'WRAPPERS', 'BATCH_SIZE', 'device', 'viz']
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = torch.device('cpu')
@@ -64,7 +65,7 @@ optimal_control = GVF(
 pixel_control = GVF(
     target_policy=π,
     cumulant=PixelChange(),
-    continuation=ConstantContinuation(1.),
+    continuation=ConstantContinuation(0.9),
 )
 
 # Auxiliary task of maximizing un-discounted n-step return
@@ -106,24 +107,20 @@ BATCH_SIZE = 20
 # TODO: Skew the replay for reward prediction task
 replay = Replay(memory_size=2000, batch_size=BATCH_SIZE)
 
-prediction_demons = [
-    # RewardPrediction(gvf=reward_prediction,
-    #                  feature=feature_extractor,
-    #                  behavior_policy=policy,
-    #                  replay_buffer=replay),
-    ValueReplay(gvf=value_replay,
-                feature=feature_extractor,
-                behavior_policy=policy,
-                replay_buffer=replay),
-    PixelControl(gvf=pixel_control,
+rp = RewardPrediction(gvf=reward_prediction,
+                      feature=feature_extractor,
+                      behavior_policy=policy,
+                      replay_buffer=replay)
+vr = ValueReplay(gvf=value_replay,
                  feature=feature_extractor,
                  behavior_policy=policy,
-                 replay_buffer=replay,
-                 output_dim=ENV.action_space.n,
-                 target_update_freq=100),
-]
-for d in prediction_demons:
-    print(d)
+                 replay_buffer=replay)
+pc = PixelControl(gvf=pixel_control,
+                  feature=feature_extractor,
+                  behavior_policy=policy,
+                  replay_buffer=replay,
+                  output_dim=ENV.action_space.n,
+                  target_update_freq=100)
 
 
 class UNREAL(AC):
@@ -144,7 +141,7 @@ control_demon = UNREAL(gvf=optimal_control,
                        actor=policy,
                        feature=feature_extractor)
 
-demon_weights = torch.tensor([1, 1, 0.01], dtype=torch.float, device=device)
+demon_weights = torch.tensor([1, 1, 1, 0.5], dtype=torch.float, device=device)
 
 # ------------------------------------------------------------------------------
 # Specify agent that will be interacting with the environment
@@ -152,8 +149,81 @@ demon_weights = torch.tensor([1, 1, 0.01], dtype=torch.float, device=device)
 
 horde = Horde(
     control_demon=control_demon,
-    prediction_demons=prediction_demons,
-    aggregation_fn=lambda losses: demon_weights.dot(losses)
+    prediction_demons=[rp, vr, pc],
+    aggregation_fn=lambda losses: demon_weights.dot(losses),
+    device=device,
 )
 AGENT = Agent(feature_extractor=feature_extractor, horde=horde)
 print(horde)
+
+# ------------------------------------------------------------------------------
+FPS = 60
+display_env = Torch(
+    env=DeepmindLabEnv(
+        level='seekavoid_arena_01',
+        width=600,
+        height=600,
+        fps=FPS,
+        display_size=(900, 600)
+    ),
+    device=device
+)
+
+
+def viz():
+    clock = pygame.time.Clock()
+
+    display = display_env.display
+    display_env.reset()
+    s0 = ENV.reset()
+    x0 = feature_extractor(s0)
+    v = control_demon(x0)
+
+    # Simple circular buffers for displaying value trace and reward predictions
+    states = deque([s0], maxlen=rp.sequence_size)
+    values = deque([v], maxlen=100)
+
+    for _ in range(300):
+
+        # Step in the actual environment with the AC demon
+        a, policy_info = policy(x0)
+        s1, reward, done, info = ENV.step(a)
+        x1 = feature_extractor(s1)
+        t = Transition(s0, a, reward, s1, done, x0, x1, info=info)
+        traj = Trajectory.from_transitions([t])
+
+        # Step in the hi-res env for display purposes
+        display_env.step(a)
+
+        # Reset canvas
+        display.surface.fill((0, 0, 0))
+
+        # Display agent's observation
+        display.show_image(display_env.last_obs)
+
+        # Display rolling value of states
+        values.append(control_demon.predict(x1))
+        display.show_value(torch.tensor(list(values)).cpu().detach().numpy())
+
+        # Display reward prediction bar
+        states.append(s0)
+        if len(states) != states.maxlen:
+            continue
+        x = rp.feature(torch.cat(list(states)))
+        v = rp.predict(x.view(1, -1)).softmax(1)
+        v = v.squeeze().cpu().detach().numpy()
+        display.show_reward_prediction(reward=reward, rp_c=v)
+
+        # Display pixel change
+        z = pc.gvf.cumulant(traj).squeeze()
+        x = pc.feature(traj.s0)
+        v = pc.predict(x)[[0], traj.a]
+        v = v.squeeze().cpu().detach().numpy()
+        z = z.squeeze().cpu().detach().numpy()
+        display.show_pixel_change(z, display.obs_shape[0], 0, 3.0, "PC")
+        display.show_pixel_change(v, display.obs_shape[0] + 100, 0, 0.4, "PC Q")
+
+        # Update surface, states and tick
+        pygame.display.update()
+        s0, x0 = s1, x1
+        clock.tick(FPS)

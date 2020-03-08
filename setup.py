@@ -26,7 +26,8 @@ REQUIRED = [
     'tqdm',
     'plotly',
     'termcolor',
-    'colorlog'
+    'colorlog',
+    'pygame'
 ]
 
 # What packages are optional?

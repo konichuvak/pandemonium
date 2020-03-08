@@ -1,13 +1,23 @@
 from enum import IntEnum
+from functools import partial
 from pathlib import Path
 from typing import Union, NamedTuple, Tuple
 
 import numpy as np
 import plotly
 import plotly.graph_objs as go
+import plotly.subplots as tools
+
 from gym_minigrid.minigrid import MiniGridEnv
-from pandemonium.utilities.visualization import tools
-from pandemonium.utilities.visualization.utilities import plotlyfig2json
+from pandemonium.envs.display import Display
+from pandemonium.envs.minigrid.utilities import plotlyfig2json
+
+tools.make_subplots = partial(
+    tools.make_subplots,
+    horizontal_spacing=0.005,
+    vertical_spacing=0.005,
+    print_grid=False
+)
 
 
 class Action(NamedTuple):
@@ -35,11 +45,7 @@ class Directions(IntEnum):
     up = 3
 
 
-class Plotter:
-
-    def __init__(self, env: MiniGridEnv):
-        self.env = env
-        self.env_img = self.env.render(close=True)
+class MinigridDisplay(Display):
 
     def plot_env(self) -> go.Image:
         return go.Image(z=self.env_img)

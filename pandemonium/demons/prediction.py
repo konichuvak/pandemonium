@@ -71,7 +71,7 @@ class RewardPrediction(LinearDemon):
 
     def __init__(self,
                  replay_buffer: Replay,
-                 output_dim: int = 2,
+                 output_dim: int = 3,
                  sequence_size: int = 3,
                  **kwargs):
         super().__init__(eligibility=None, output_dim=output_dim, **kwargs)
@@ -82,12 +82,11 @@ class RewardPrediction(LinearDemon):
 
     def delta(self, traj: Trajectory) -> Loss:
         # TODO: special skewed sampling
-        # TODO: -1, 0, 1
         x = self.feature(traj.s0).view(1, -1)  # stack features together
         v = self.predict(x)
-        u = traj.r[-1]
-        δ = F.cross_entropy(v, (u > 0).unsqueeze(0).long())
-        return δ, {'value_loss': δ.item()}
+        u = traj.r[-1].long() + 1  # (-1, 0, 1) -> (0, 1, 2) in dm-lab
+        δ = F.cross_entropy(v, u.unsqueeze(0))
+        return δ, {'value_loss': δ.item(), 'rp': v.softmax(0)}
 
     def learn(self, *args, **kwargs):
         if not self.replay_buffer.is_full:

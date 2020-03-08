@@ -11,7 +11,7 @@ from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
 from pandemonium.demons.control import OC
-from pandemonium.envs.wrappers import Torch
+from pandemonium.envs.minigrid.wrappers import Torch
 from pandemonium.networks.bodies import ConvBody
 from pandemonium.policies.discrete import Egreedy, EgreedyOverOptions
 from pandemonium.utilities.spaces import create_option_space

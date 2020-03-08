@@ -2,17 +2,18 @@ from functools import reduce
 
 import torch
 from gym_minigrid.envs import EmptyEnv
-from gym_minigrid.wrappers import ImgObsWrapper, FullyObsWrapper
+from gym_minigrid.wrappers import FullyObsWrapper
+from ray.rllib.utils.schedules import ConstantSchedule, LinearSchedule
+
 from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
 from pandemonium.demons.control import DQN
-from pandemonium.envs import FourRooms
-from pandemonium.envs.wrappers import Torch, OneHotObsWrapper
-from pandemonium.networks.bodies import ConvBody, Identity
+from pandemonium.envs.minigrid.wrappers import OneHotObsWrapper
+from pandemonium.envs.wrappers import Torch
+from pandemonium.networks.bodies import Identity
 from pandemonium.policies.discrete import Egreedy
 from pandemonium.utilities.replay import Replay
-from ray.rllib.utils.schedules import ConstantSchedule, LinearSchedule
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = torch.device('cpu')

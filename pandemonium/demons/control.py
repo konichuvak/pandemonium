@@ -1,80 +1,22 @@
+from collections import Callable, OrderedDict
 from copy import deepcopy
-from typing import List
 
 import torch
-import torch.nn.functional as F
-from pandemonium.demons import (ControlDemon, Demon, Loss, ParametricDemon,
-                                LinearDemon)
-from pandemonium.demons.prediction import TDn
-from pandemonium.demons.td import TemporalDifference
-from pandemonium.experience import Transition, Trajectory, Transitions
-from pandemonium.policies import HierarchicalPolicy
+from pandemonium.demons import (ControlDemon, Loss, ParametricDemon)
+from pandemonium.demons.td import (OfflineTD, SARSA, QLearning, SARSE,
+                                   OfflineTDControl, TTD, TDn,
+                                   OfflineTDPrediction)
+from pandemonium.experience import Trajectory, Transitions
+from pandemonium.networks import Reshape
+from pandemonium.policies import Policy, HierarchicalPolicy
 from pandemonium.policies.gradient import DiffPolicy
 from pandemonium.utilities.replay import Replay
 from pandemonium.utilities.utilities import get_all_classes
 from torch import nn
 
 
-class Sarsa(TemporalDifference, ControlDemon):
-    r""" One-step semi-gradient :math:`SARSA` for estimating :math:`\tilde{q}`
-
-    On-policy control method suitable for episodic tasks.
-    """
-
-    def delta(self, exp: List[Transition]):
-        batch = Trajectory.from_transitions(exp)
-
-        q = self.predict(batch.s0).gather(1, batch.a.unsqueeze(1)).squeeze(1)
-        next_a = self.behavior_policy(batch.s1).sample().unsqueeze(1)
-        next_q = self.predict(batch.s1).gather(1, next_a).squeeze(1)
-
-        gamma = self.gvf.continuation(batch)
-        target_q = batch.r + gamma * next_q
-        loss = F.smooth_l1_loss(q, target_q)
-        return loss
-
-
-class SarsaN(ControlDemon, TDn):
-    r""" :math:`n`-step semi-gradient :math:`SARSA` for estimating :math:`\tilde{q}`
-
-    This is a classic on-policy control method suitable for episodic tasks.
-
-    .. note::
-        $n$-step returns are calculated in an unusual way!
-        Each $(S, A)$ tuple in the trajectory gets updated towards a different
-        $n$-step return where each $\{n, n-1, \dots, 1\}$ $(S, A)$ of the
-        trajectory is updated using $\{1, 2, \dots, n\}$-step returns
-        respectively.
-
-    .. todo::
-        - implement true n-step return (each state gets updated towards n-step
-        return)
-        - alternatively, subdivide the trajectory into n-batches instead of
-        assuming that n = batch size
-
-
-    """
-
-    def delta(self, traj: Trajectory):
-        true_n_step = False
-        if true_n_step:
-            q = self.predict(traj.s0[0])[traj.a[0]]
-            u = self.n_step_target(traj)[0]
-        else:
-            q = self.predict(traj.s0).gather(1, traj.a.unsqueeze(1)).squeeze(1)
-            u = self.n_step_target(traj)
-
-        δ = F.smooth_l1_loss(q, u.detach())
-        return δ, {'value_loss', δ.item()}
-
-
-class DQN(TemporalDifference, ParametricDemon, ControlDemon):
-    """ Deep Q-Network
-
-    ... in all of its incarnations.
-    """
-
-    # TODO: manually resolve inheritance order?
+class DeepOfflineTD(OfflineTD, ParametricDemon):
+    """ Mixin for offline :math:`\text{TD}` methods with non-linear FA """
 
     def __init__(self,
                  replay_buffer: Replay,
@@ -91,14 +33,21 @@ class DQN(TemporalDifference, ParametricDemon, ControlDemon):
         # Create a target network to stabilize training
         if self.target_update_freq:
             self.target_feature = deepcopy(self.φ)
-            self.target_avf = deepcopy(self.avf)
             self.target_feature.load_state_dict(self.φ.state_dict())
-            self.target_avf = deepcopy(self.avf)
             self.target_feature.eval()
+
+            self.target_avf = deepcopy(self.avf)
+            self.target_avf.load_state_dict(self.avf.state_dict())
             self.target_avf.eval()
+
+            self.target_aqf = deepcopy(self.aqf)
+            self.target_aqf.load_state_dict(self.aqf.state_dict())
+            self.target_aqf.eval()
+
         else:
             self.target_feature = self.φ
-            self.target = self.avf
+            self.target_avf = self.avf
+            self.target_aqf = self.aqf
 
         # Use replay buffer for breaking correlation in the experience samples
         self.replay_buffer = replay_buffer
@@ -114,24 +63,6 @@ class DQN(TemporalDifference, ParametricDemon, ControlDemon):
         transitions = self.replay_buffer.sample()
         trajectory = Trajectory.from_transitions(transitions)
         return self.delta(trajectory)
-
-    def delta(self, traj: Trajectory) -> Loss:
-        v = self.predict(traj.s0).gather(1, traj.a.unsqueeze(1)).squeeze()
-        u = self.n_step_target(traj).detach()
-        δ = nn.functional.smooth_l1_loss(v, u)
-        return δ, {'value_loss': δ.item()}
-
-    def n_step_target(self, traj: Trajectory):
-        γ = self.gvf.continuation(traj)
-        z = self.gvf.cumulant(traj)
-        x = self.target_feature(traj.s1[-1, None])
-        # a = self.gvf.π(x, vf=self.target_net)
-        # TODO: Use actions `a` taken by the target policy instead of max
-        v = self.target_avf(x).max(1)[0]
-        u = torch.empty_like(z, dtype=torch.float)
-        for i in range(len(traj) - 1, -1, -1):
-            v = u[i] = z[i] + γ[i] * v
-        return u.flip(0)
 
     def sync_target(self):
         if self.target_update_freq and self.update_counter % self.target_update_freq == 0:
@@ -150,50 +81,119 @@ class DQN(TemporalDifference, ParametricDemon, ControlDemon):
                f'{hyperparams}\n)'
 
 
-class AC(TDn, LinearDemon):
-    """ Actor-Critic architecture """
+class DeepOfflineTDControl(DeepOfflineTD, OfflineTDControl):
 
-    def __init__(self, actor: DiffPolicy, output_dim: int = 1, **kwargs):
+    def __init__(self, duelling: bool = False, *args, **kwargs):
+        self.duelling = duelling
+        super().__init__(*args, **kwargs)
+
+    def predict_q(self, x: torch.Tensor) -> torch.Tensor:
+        r"""
+
+        In the duelling case we treat 'aqf' as an advantage estimator?
+        """
+        if self.duelling:
+            v, q = self.avf(x), self.aqf(x)
+            return q - (q - v).mean(1, keepdim=True)
+        return self.aqf(x)
+
+
+class DeepSARSA(DeepOfflineTDControl, SARSA):
+    pass
+
+
+class DeepSARSE(DeepOfflineTDControl, SARSE):
+    pass
+
+
+class DQN(DeepOfflineTDControl, QLearning, TDn):
+    """ Deep Q-Network """
+
+    def q_target(self, trajectory: Trajectory, target_fn: Callable = None):
+        q = self.predict_q(trajectory.x1)
+        v = q.max(1, keepdim=True)[0]
+        return v
+
+
+class AC(ParametricDemon):
+    """ Base class for Actor-Critic architectures that operate on batches
+
+    https://hadovanhasselt.files.wordpress.com/2016/01/pg1.pdf
+    """
+
+    def __init__(self, actor: DiffPolicy, **kwargs):
+        super().__init__(behavior_policy=actor, **kwargs)
+
+    def critic_loss(self, trajectory: Trajectory):
+        raise NotImplementedError
+
+    def actor_loss(self, trajectory: Trajectory, weights):
+        x = self.feature(trajectory.s0)
+        return self.μ.delta(x, trajectory.a, weights)
+
+    def delta(self, trajectory: Trajectory) -> Loss:
+        stats = dict()
+        critic_loss, weights, info = self.critic_loss(trajectory)
+        stats.update(**info)
+        # TODO: what happens if we do not detach?
+        actor_loss, info = self.actor_loss(trajectory, weights.detach())
+        stats.update(**info)
+        loss = actor_loss + 0.5 * critic_loss
+        return loss, stats
+
+
+class A2C(AC, ControlDemon):
+    """ Advantage Actor Critic
+
+    Using two demons to approximate $v_{\pi_{\theta}}(s)$ and $q_{\pi_{\theta}}(s, a)$
+    at the same time.
+    """
+
+    def __init__(self, feature, actor, **kwargs):
         super().__init__(
-            behavior_policy=actor,
-            output_dim=output_dim,
-            **kwargs)
+            avf=nn.Linear(feature.feature_dim, 1),
+            aqf=nn.Linear(feature.feature_dim, actor.action_space.n),
+            actor=actor,
+            feature=feature, **kwargs
+        )
 
-    def behavior_policy(self, x):
-        return self.μ(x, self.avf)
+    def critic_loss(self, trajectory: Trajectory):
+        raise NotImplementedError
+        # v = self.predict(trajectory.x0)
+        # u = self.target(trajectory).detach()
+        # δ = F.smooth_l1_loss(v, u)
+        # return δ, u - v
 
-    def delta(self, traj: Trajectory) -> Loss:
-        # Value gradient
-        targets = self.n_step_target(traj).detach()
-        x = self.feature(traj.s0)
-        values = self.avf(x).squeeze(1)
-        value_loss = F.smooth_l1_loss(values, targets)
 
-        # Policy gradient
-        advantages = targets - values.detach()
-        policy_loss, info = self.μ.delta(x, traj.a, advantages)
+class QAC(AC):
+    pass
 
-        # Weighted loss
-        loss = policy_loss + 0.5 * value_loss
-        info.update({'value_loss': value_loss.item(), 'loss': loss.item()})
-        return loss, info
 
-    def learn(self, transitions: Transitions):
-        trajectory = Trajectory.from_transitions(transitions)
-        return self.delta(trajectory)
+class TDAC(AC, OfflineTDPrediction, TTD):
+    r""" A variation of AC that approximates advantage with :math:`\delta`
+
+    This version is using truncated $\lamda$ returns to compute $\delta$, i.e.
+
+    .. math::
+        \Delta \theta = (v^{\lambda}_t - v_t(s)) \nabla_{\theta}log\pi_{\theta}(s_t, a_t)
+
+    """
+
+    def critic_loss(self, trajectory: Trajectory):
+        δ, info = OfflineTDPrediction.delta(self, trajectory)
+        return δ, δ.clone(), info
 
 
 class OC(AC, DQN):
     """ DQN style Option-Critic architecture """
 
-    def __init__(self,
-                 actor: HierarchicalPolicy,
-                 target_update_freq: int, **kwargs):
+    def __init__(self, actor: HierarchicalPolicy, **kwargs):
         super().__init__(
             output_dim=len(actor.option_space),
             actor=actor,
+            # TODO: make a sequential replay that samples last
+            #  BATCH_SIZE transitions in order
             replay_buffer=Replay(memory_size=0, batch_size=0),
-            target_update_freq=target_update_freq,
             **kwargs
         )
 
@@ -206,6 +206,12 @@ class OC(AC, DQN):
             for k, param in o.continuation.named_parameters(f'option_{idx}'):
                 self.register_parameter(k.replace('.', '_'), param)
 
+    def learn(self, transitions: Transitions):
+        self.update_counter += 1
+        self.sync_target()
+        trajectory = Trajectory.from_transitions(transitions)
+        return self.delta(trajectory)
+
     def delta(self, traj: Trajectory) -> Loss:
         η = 0.001
         ω = traj.info['option'].unsqueeze(1)
@@ -214,9 +220,13 @@ class OC(AC, DQN):
 
         # ------------------------------------
         # Value gradient
+        # TODO: should we pass through feature generator again?
+        #   if yes, just use: value_loss, info = super(DQN, self).delta(traj)
+        #   with actions replaced by options
+        x = traj.x0
+        values = self.predict(x)[torch.arange(x.size(0)), ω]
         targets = self.n_step_target(traj).detach()
-        values = self.value_head(traj.x0).gather(1, ω).squeeze(1)
-        value_loss = F.smooth_l1_loss(values, targets)
+        value_loss = self.criterion(values, targets)
         values = values.detach()
 
         # ------------------------------------
@@ -254,66 +264,58 @@ class OC(AC, DQN):
         β = traj.info['beta']
         γ = self.gvf.continuation(traj)
         z = self.gvf.cumulant(traj)
+        q = self.target_avf(traj.x1[-1])
 
         targets = torch.empty_like(z, dtype=torch.float)
-        target = self.target_predict(traj.s1[-1, None]).squeeze()
-        target = β[-1] * target[ω[-1]] + (1 - β[-1]) * target.max()
+        u = β[-1] * q[ω[-1]] + (1 - β[-1]) * q.max()
         for i in range(len(traj) - 1, -1, -1):
-            target = targets[i] = z[i] + γ[i] * target
+            u = targets[i] = z[i] + γ[i] * u
         return targets
-
-    def learn(self, transitions: Transitions):
-        self.update_counter += 1
-        self.sync_target()
-        trajectory = Trajectory.from_transitions(transitions)
-        return self.delta(trajectory)
 
 
 class PixelControl(DQN):
-    """ Duelling de-convolutional network for auxiliary pixel control task
-
-    .. todo::
-        use ModuleDict or some other container for target networks
-
-    """
+    """ Duelling de-convolutional network for auxiliary pixel control task """
 
     def __init__(self,
                  feature,
-                 replay_buffer: Replay,
-                 output_dim: int,
+                 behavior_policy: Policy,
+                 channels: int = 32,
+                 kernel: int = 4,
+                 stride: int = 2,
                  **kwargs):
-
-        class DeconvNet(nn.Module):
-
-            def __init__(self):
-                super().__init__()
-                self.fc = nn.Linear(feature.feature_dim, 9 * 9 * 32)
-                self.deconv_v = nn.ConvTranspose2d(32, 1, 4, 2)
-                self.deconv_a = nn.ConvTranspose2d(32, output_dim, 4, 2)
-                # deconv2d_size_out(6, 2, 1) == 7 (7x7 observation in minigrids)
-                # deconv2d_size_out(9, 4, 2) == 20 (20x20 avg pooled pixel change vals)
-
-            def forward(self, x: torch.Tensor):
-                x = self.fc(x).view(-1, 32, 9, 9)
-                value = F.relu(self.deconv_v(x))
-                advantage = F.relu(self.deconv_a(x))
-                pc_q = value + advantage - advantage.mean(1, keepdim=True)
-                return pc_q
-
-        super().__init__(
-            avf=DeconvNet(),
-            feature=feature,
-            warm_up_period=replay_buffer.capacity // replay_buffer.batch_size,
-            replay_buffer=replay_buffer,
-            **kwargs
+        # deconv2d_size_out(6, 2, 1) == 7 (7x7 observation in minigrids)
+        # deconv2d_size_out(9, 4, 2) == 20 (20x20 avg pooled pixel change vals)
+        # TODO: remove redundant second pass through FC through `feature` method
+        fc_reshape = nn.Sequential(
+            nn.Linear(feature.feature_dim, 9 * 9 * channels),
+            Reshape(-1, channels, 9, 9),
+            nn.ReLU()
         )
+        action_dim = behavior_policy.action_space.n
+        avf = nn.Sequential(OrderedDict({
+            'fc_reshape': fc_reshape,
+            'deconv_v': nn.ConvTranspose2d(channels, 1, kernel, stride)
+        }))
+        aqf = nn.Sequential(OrderedDict({
+            'fc_reshape': fc_reshape,
+            'deconv_q': nn.ConvTranspose2d(channels, action_dim, kernel, stride)
+        }))
+        super().__init__(duelling=True, avf=avf, aqf=aqf, feature=feature,
+                         behavior_policy=behavior_policy, **kwargs)
 
-    def delta(self, traj: Trajectory) -> Loss:
-        x = self.feature(traj.s0)
-        v = self.predict(x)[list(range(len(traj))), traj.a]
-        u = self.n_step_target(traj).detach()
-        δ = F.mse_loss(v, u, reduction='mean')
-        return δ, {'value_loss': δ.item(), 'pc_v': v}
+
+class UNREAL(TDAC, TDn):
+    """ A version of AC that stores experience in the replay buffer """
+
+    def __init__(self, feature, actor, replay_buffer: Replay, **kwargs):
+        avf = nn.Linear(feature.feature_dim, 1)
+        super().__init__(avf=avf, feature=feature, actor=actor, **kwargs)
+        self.replay_buffer = replay_buffer
+
+    def learn(self, transitions: Transitions) -> Loss:
+        loss, info = super().learn(transitions)
+        self.replay_buffer.feed_batch(transitions)
+        return loss, info
 
 
 __all__ = get_all_classes(__name__)

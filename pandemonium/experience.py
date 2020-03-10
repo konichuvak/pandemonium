@@ -1,7 +1,11 @@
-from typing import NamedTuple, Union, Collection, Iterator
+from typing import NamedTuple, Union, List
 
 import torch
+from pandemonium.utilities.utilities import get_all_classes
 from torch.distributions import Distribution
+
+Experience = Union['Transition', 'Trajectory']
+Transitions = Union[List['Transition']]
 
 
 class Transition(NamedTuple):
@@ -24,9 +28,6 @@ class Transition(NamedTuple):
     a_dist: Distribution = None  # distribution from which `a` was generated
     o: 'Option' = None  # an option that was followed during transition
     info: dict = dict()
-
-
-Transitions = Union[Collection[Transition], Iterator[Collection[Transition]]]
 
 
 class Trajectory(Transition):
@@ -73,4 +74,4 @@ class Trajectory(Transition):
         return self.s0.shape[0]
 
 
-__all__ = ['Trajectory', 'Transition']
+__all__ = get_all_classes(__name__)

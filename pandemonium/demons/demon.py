@@ -4,7 +4,7 @@ from typing import Tuple, Optional, Callable
 
 import torch
 from pandemonium import GVF
-from pandemonium.experience import Transitions
+from pandemonium.experience import Experience
 from pandemonium.policies import Policy
 from pandemonium.traces import EligibilityTrace
 
@@ -18,9 +18,10 @@ class Demon:
     for learning one piece of predictive knowledge about the main agent’s
     interaction with its environment.
 
-    Each demon learns an approximation to the GVF that corresponds to the
-    setting of the three question functions: $π$, $γ$, and $z$. The tools that
-    the demon uses to learn the approximation are called answers functions:
+    Demon learns an approximate value function $\tilde{V}$ (avf), to the
+    general value function (gvf) that corresponds to the setting of the
+    three question functions: $π$, $γ$, and $z$. The tools that the demon uses
+    to learn the approximation are called answers functions:
         - $\phi$ (feature generator): learning useful state representations
         - $\mu$ (behavior policy) : collecting experience
         - $\lambda$ (eligibility trace): assigning credit to experiences
@@ -33,7 +34,7 @@ class Demon:
                  avf: Callable,
                  feature,
                  behavior_policy: Policy,
-                 eligibility: EligibilityTrace,
+                 eligibility: Optional[EligibilityTrace],
                  ):
         super().__init__()
         self.gvf = gvf
@@ -46,18 +47,17 @@ class Demon:
     def learn(self, *args, **kwargs):
         raise NotImplementedError
 
-    def delta(self, exp: Transitions) -> Loss:
-        """ Specifies the update rule for approximate value function """
+    def delta(self, experience: Experience) -> Loss:
+        """ Specifies the update rule for approximate value function (avf)
+
+        Depending on whether the algorithm is online or offline, the demon will
+        be learning from a single `Transition` vs a `Trajectory` of experiences.
+        """
         raise NotImplementedError
 
-    def predict(self, x: torch.Tensor) -> torch.Tensor:
-        r""" Approximate value of a state is linear wrt features
-
-        .. math::
-            \widetilde{V}(s) = \boldsymbol{\phi}(s)^{T}\boldsymbol{w}
-
-        """
-        return self.avf(x)
+    def predict(self, x):
+        r""" Predict the value of the state """
+        raise NotImplementedError
 
     def feature(self, *args, **kwargs) -> torch.Tensor:
         r""" A mapping from MDP states to features
@@ -108,13 +108,18 @@ class Demon:
 
 
 class ParametricDemon(Demon, torch.nn.Module, ABC):
-    """ Parametrized Demons implemented in PyTorch subclass this. """
+    """ Parametrized Demons implemented in PyTorch subclass this """
 
     def forward(self, *args, **kwargs) -> torch.Tensor:
         return self.predict(*args, **kwargs)
 
 
 class LinearDemon(ParametricDemon, ABC):
+    r""" Approximates state-values using linear projection
+
+    .. math::
+        \widetilde{V}(s) = \boldsymbol{x}(s)^{T}\boldsymbol{w}
+    """
 
     def __init__(self, feature, output_dim: int, *args, **kwargs):
         super().__init__(
@@ -127,40 +132,41 @@ class PredictionDemon(Demon, ABC):
     r""" Collects factual knowledge about environment by learning to predict
 
     Can be thought of as an accumulator of declarative knowledge.
-
-    .. note::
-        the output of a predictive demon is usually a scalar, corresponding
-        to the estimate of a value function at a state
     """
 
-    # def __init__(self, output_dim: int = 1, *args, **kwargs):
-    #     super().__init__(output_dim=output_dim, *args, **kwargs)
+    def predict(self, x):
+        return self.avf(x)
 
 
 class ControlDemon(Demon, ABC):
     r""" Learns the optimal policy while learning to predict
 
     Can be thought of as an accumulator of procedural knowledge.
-    Also goes by the name 'adaptive critic' in AC architectures.
 
-    .. note::
-        the output of a control demon, in contrast to prediction demon,
-        is usually a vector corresponding to the estimate of action values
-        under the target policy
+    In addition to the approximate value function (avf), has a an approximate
+    q-value function (aqf) that produces estimates for state-action pairs.
     """
+    __slots__ = 'aqf'
 
-    # def __init__(self,
-    #              behavior_policy: Policy,
-    #              output_dim: int = None,
-    #              *args, **kwargs):
-    #     output_dim = output_dim or behavior_policy.action_space.n
-    #     super().__init__(output_dim=output_dim,
-    #                      behavior_policy=behavior_policy,
-    #                      *args, **kwargs)
+    def __init__(self, aqf: Callable, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.aqf = aqf
 
-    def behavior_policy(self, x):
+    def predict(self, x):
+        """ Computes value of a given state """
+        return self.avf(x)
+
+    def predict_q(self, x):
+        """ Computes action-values in a given state """
+        return self.aqf(x)
+
+    def predict_adv(self, x):
+        """ Computes the advantage in a given state """
+        return self.aqf(x) - self.avf(x)
+
+    def behavior_policy(self, x: torch.Tensor):
         # Control policies usually require access to value functions.
-        return self.μ(x, vf=self)
+        return self.μ(x, vf=self.aqf)
 
 
 __all__ = ['Demon', 'ParametricDemon', 'LinearDemon', 'PredictionDemon',

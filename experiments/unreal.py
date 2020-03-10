@@ -3,20 +3,19 @@ from functools import reduce
 
 import pygame
 import torch
-from ray.rllib.utils.schedules import ConstantSchedule
-
 from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness, PixelChange
-from pandemonium.demons.control import AC, PixelControl
+from pandemonium.demons.control import UNREAL, PixelControl
 from pandemonium.demons.prediction import ValueReplay, RewardPrediction
 from pandemonium.envs import DeepmindLabEnv
 from pandemonium.envs.wrappers import Torch
-from pandemonium.experience import Transitions, Transition, Trajectory
+from pandemonium.experience import Transition, Trajectory
 from pandemonium.networks.bodies import ConvBody
 from pandemonium.policies.discrete import Egreedy
 from pandemonium.policies.gradient import VPG
 from pandemonium.utilities.replay import Replay
+from ray.rllib.utils.schedules import ConstantSchedule
 
 __all__ = ['AGENT', 'ENV', 'WRAPPERS', 'BATCH_SIZE', 'device', 'viz']
 
@@ -102,10 +101,12 @@ policy = VPG(feature_dim=feature_extractor.feature_dim,
 # ==================================
 # Learning Algorithm
 # ==================================
+
+
 BATCH_SIZE = 20
 
 # TODO: Skew the replay for reward prediction task
-replay = Replay(memory_size=2000, batch_size=BATCH_SIZE)
+replay = Replay(memory_size=100, batch_size=BATCH_SIZE)
 
 rp = RewardPrediction(gvf=reward_prediction,
                       feature=feature_extractor,
@@ -115,33 +116,21 @@ vr = ValueReplay(gvf=value_replay,
                  feature=feature_extractor,
                  behavior_policy=policy,
                  replay_buffer=replay)
+
 pc = PixelControl(gvf=pixel_control,
                   feature=feature_extractor,
                   behavior_policy=policy,
                   replay_buffer=replay,
-                  output_dim=ENV.action_space.n,
-                  target_update_freq=100)
-
-
-class UNREAL(AC):
-    """ A version of AC that stores experience in the replay buffer """
-
-    def __init__(self, replay_buffer: Replay, **kwargs):
-        super().__init__(**kwargs)
-        self.replay_buffer = replay_buffer
-
-    def learn(self, transitions: Transitions) -> dict:
-        info = super().learn(transitions)
-        self.replay_buffer.feed_batch(transitions)
-        return info
-
+                  warm_up_period=replay.capacity // replay.batch_size,
+                  target_update_freq=0
+                  )
 
 control_demon = UNREAL(gvf=optimal_control,
                        replay_buffer=replay,
                        actor=policy,
                        feature=feature_extractor)
 
-demon_weights = torch.tensor([1, 1, 1, 0.5], dtype=torch.float, device=device)
+demon_weights = torch.tensor([1, 1, 0.5], dtype=torch.float, device=device)
 
 # ------------------------------------------------------------------------------
 # Specify agent that will be interacting with the environment
@@ -149,11 +138,11 @@ demon_weights = torch.tensor([1, 1, 1, 0.5], dtype=torch.float, device=device)
 
 horde = Horde(
     control_demon=control_demon,
-    prediction_demons=[rp, vr, pc],
+    prediction_demons=[vr, pc],
     aggregation_fn=lambda losses: demon_weights.dot(losses),
     device=device,
 )
-AGENT = Agent(feature_extractor=feature_extractor, horde=horde)
+AGENT = Agent(feature_extractor, policy, horde)
 print(horde)
 
 # ------------------------------------------------------------------------------

@@ -5,9 +5,9 @@ import numpy as np
 import tensorboardX
 import torch
 from experiments import EXPERIMENT_DIR, RLogger
-# from experiments.a2c import *
+from experiments.a2c import *
 # from experiments.option_critic import *
-from experiments.unreal import *
+# from experiments.unreal import *
 # from experiments.dqn import *
 from pandemonium.experience import Trajectory
 
@@ -83,8 +83,8 @@ logger = RLogger()
 # Tensorboard set up
 tb_writer = tensorboardX.SummaryWriter(EXPERIMENT_PATH)
 tb_writers = dict()
-for demon in AGENT.horde.demons:
-    tb_writers[f'{demon}{id(demon)}'] = tensorboardX.SummaryWriter(
+for d, demon in AGENT.horde.demons.items():
+    tb_writers[f'{d}{id(demon)}'] = tensorboardX.SummaryWriter(
         EXPERIMENT_PATH / f'{demon}{id(demon)}')
 
 # Generate all possible states to query value functions for
@@ -140,6 +140,7 @@ for episode in range(10000 + 1):
             exclude_from_tb = {
                 'episode_updates',
             }
+
             for field, value in logs.items():
                 if field in exclude_from_tb:
                     continue

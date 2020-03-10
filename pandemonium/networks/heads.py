@@ -1,6 +1,5 @@
-from torch import nn
-
 from pandemonium.networks.utils import layer_init
+from torch import nn
 
 
 class LinearNet(nn.Module):
@@ -11,3 +10,12 @@ class LinearNet(nn.Module):
 
     def forward(self, x):
         return self.head(self.body(x))
+
+
+class Reshape(nn.Module):
+    def __init__(self, *args):
+        super(Reshape, self).__init__()
+        self.shape = args
+
+    def forward(self, x):
+        return x.view(self.shape)

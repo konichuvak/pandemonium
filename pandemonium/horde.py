@@ -29,7 +29,9 @@ class Horde(torch.nn.Module):
                  device: torch.device,
                  ):
         super().__init__()
-        self.demons = nn.ModuleList([control_demon] + prediction_demons)
+        demons = {str(demon): demon for demon in prediction_demons}
+        demons.update({str(control_demon): control_demon})
+        self.demons = nn.ModuleDict(demons)
 
         # Determines how the total loss is weighted across demons
         self.aggregation_fn = aggregation_fn
@@ -47,17 +49,16 @@ class Horde(torch.nn.Module):
         losses = torch.empty(len(self.demons))
         logs = dict()
 
-        for i, demon in enumerate(self.demons):
+        for i, (d, demon) in enumerate(self.demons.items()):
             loss, info = demon.learn(transitions)
             losses[i] = loss if loss is not None else 0
-            logs.update(
-                {f'{demon}{id(demon)}': {f'{k}': v for k, v in info.items()}})
+            logs.update({f'{d}{id(demon)}': {f'{k}': v for k, v in info.items()}})
 
         total_loss = self.aggregation_fn(losses)
         if total_loss.requires_grad:
             self.optimizer.zero_grad()
             total_loss.backward()
-            torch.nn.utils.clip_grad_norm_(self.parameters(), 1)
+            # torch.nn.utils.clip_grad_norm_(self.parameters(), 1)
             self.optimizer.step()
         else:
             print('???')
@@ -73,8 +74,13 @@ class Horde(torch.nn.Module):
         logs.update({'total_loss': total_loss.item()})
         return logs
 
+    def __str__(self):
+        s = [textwrap.indent(repr(d), "\t") for d in self.demons.keys()]
+        s = '\n'.join(s)
+        return f"Horde(\n{s}\n)"
+
     def __repr__(self):
-        s = [textwrap.indent(repr(d), "\t") for d in self.demons]
+        s = [textwrap.indent(repr(d), "\t") for d in self.demons.values()]
         s = '\n'.join(s)
         return f"Horde(\n{s}\n)"
 

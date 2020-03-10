@@ -103,10 +103,10 @@ policy = VPG(feature_dim=feature_extractor.feature_dim,
 # ==================================
 
 
-BATCH_SIZE = 20
+BATCH_SIZE = 32
 
 # TODO: Skew the replay for reward prediction task
-replay = Replay(memory_size=100, batch_size=BATCH_SIZE)
+replay = Replay(memory_size=2000, batch_size=BATCH_SIZE)
 
 rp = RewardPrediction(gvf=reward_prediction,
                       feature=feature_extractor,
@@ -122,8 +122,7 @@ pc = PixelControl(gvf=pixel_control,
                   behavior_policy=policy,
                   replay_buffer=replay,
                   warm_up_period=replay.capacity // replay.batch_size,
-                  target_update_freq=0
-                  )
+                  target_update_freq=200)
 
 control_demon = UNREAL(gvf=optimal_control,
                        replay_buffer=replay,
@@ -146,7 +145,7 @@ AGENT = Agent(feature_extractor, policy, horde)
 print(horde)
 
 # ------------------------------------------------------------------------------
-FPS = 60
+FPS = 120
 display_env = Torch(
     env=DeepmindLabEnv(
         level='seekavoid_arena_01',
@@ -172,7 +171,7 @@ def viz():
     states = deque([s0], maxlen=rp.sequence_size)
     values = deque([v], maxlen=100)
 
-    for _ in range(300):
+    for _ in range(1000):
 
         # Step in the actual environment with the AC demon
         a, policy_info = policy(x0)
@@ -206,7 +205,7 @@ def viz():
         # Display pixel change
         z = pc.gvf.cumulant(traj).squeeze()
         x = pc.feature(traj.s0)
-        v = pc.predict(x)[[0], traj.a]
+        v = pc.predict_q(x)[[0], traj.a]
         v = v.squeeze().cpu().detach().numpy()
         z = z.squeeze().cpu().detach().numpy()
         display.show_pixel_change(z, display.obs_shape[0], 0, 3.0, "PC")

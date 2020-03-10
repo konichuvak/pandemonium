@@ -5,9 +5,9 @@ import numpy as np
 import tensorboardX
 import torch
 from experiments import EXPERIMENT_DIR, RLogger
-from experiments.a2c import *
+# from experiments.a2c import *
 # from experiments.option_critic import *
-# from experiments.unreal import *
+from experiments.unreal import *
 # from experiments.dqn import *
 from pandemonium.experience import Trajectory
 
@@ -28,7 +28,7 @@ def gen_pbar(stats):
     return metrics
 
 
-interval = BATCH_SIZE * 10
+interval = BATCH_SIZE * 100
 reward_tracker = deque([], maxlen=interval)
 
 
@@ -68,15 +68,15 @@ PARAMETER_DIR = EXPERIMENT_PATH / 'weights'
 PARAMETER_DIR.mkdir()
 
 # # Load the weights
-# experiment_id = '2020-03-07 16:01:16'
-# weight_name = '16.pt'
-# AGENT.horde.load_state_dict(
-#     state_dict=torch.load(
-#         f=EXPERIMENT_DIR / experiment_id / 'weights' / weight_name,
-#         map_location=device,
-#     ),
-#     strict=True
-# )
+experiment_id = '2020-03-09 22:26:57'
+weight_name = '1000.pt'
+AGENT.horde.load_state_dict(
+    state_dict=torch.load(
+        f=EXPERIMENT_DIR / experiment_id / 'weights' / weight_name,
+        map_location=device,
+    ),
+    strict=True
+)
 
 logger = RLogger()
 
@@ -100,7 +100,7 @@ for d, demon in AGENT.horde.demons.items():
 SAVE_EVERY = 200
 total_steps = total_time = total_updates = 0
 
-for episode in range(10000 + 1):
+for episode in range(1000, 10000 + 1):
 
     # Save the weights
     if episode and episode % SAVE_EVERY == 0:
@@ -108,7 +108,7 @@ for episode in range(10000 + 1):
 
     # Visualize this episode
     # if episode % 50 == 0 and episode:
-    # viz()
+    viz()
 
     # Play
     for logs in AGENT.interact(BATCH_SIZE=BATCH_SIZE, env=ENV):

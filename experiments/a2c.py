@@ -26,7 +26,7 @@ __all__ = ['AGENT', 'ENV', 'WRAPPERS', 'BATCH_SIZE']
 # ------------------------------------------------------------------------------
 
 envs = [
-    EmptyEnv(size=7),
+    EmptyEnv(size=10),
     # FourRooms(),
     # DoorKeyEnv(size=7),
     # MultiRoomEnv(4, 4),
@@ -39,7 +39,7 @@ WRAPPERS = [
     # Observation wrappers
     # FullyObsWrapper,
     ImgObsWrapper,
-    OneHotObsWrapper,
+    # OneHotObsWrapper,
     # FlatObsWrapper,
     lambda e: Torch(e, device=device)
 ]
@@ -65,9 +65,9 @@ gvf = GVF(target_policy=target_policy,
 # Representation learning
 # ==================================
 obs = ENV.reset()
-# feature_extractor = ConvBody(d=3, w=7, h=7, feature_dim=2 ** 8)
+feature_extractor = ConvBody(d=3, w=7, h=7, feature_dim=2 ** 8)
 # feature_extractor = FCBody(state_dim=obs.shape[0], hidden_units=(256,))
-feature_extractor = Identity(state_dim=obs.shape[0])
+# feature_extractor = Identity(state_dim=obs.shape[0])
 
 # ==================================
 # Behavioral Policy
@@ -78,7 +78,7 @@ policy = VPG(feature_dim=feature_extractor.feature_dim,
 # ==================================
 # Learning Algorithm
 # ==================================
-BATCH_SIZE = 10
+BATCH_SIZE = 32
 prediction_demons = list()
 
 

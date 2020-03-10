@@ -129,7 +129,7 @@ class AC(ParametricDemon):
 
     def actor_loss(self, trajectory: Trajectory, weights):
         x = self.feature(trajectory.s0)
-        return self.μ.delta(x, trajectory.a, weights)
+        return self.μ.delta(x, trajectory.a, weights.squeeze())
 
     def delta(self, trajectory: Trajectory) -> Loss:
         stats = dict()
@@ -180,8 +180,11 @@ class TDAC(AC, OfflineTDPrediction, TTD):
     """
 
     def critic_loss(self, trajectory: Trajectory):
-        δ, info = OfflineTDPrediction.delta(self, trajectory)
-        return δ, δ.clone(), info
+        x = self.feature(trajectory.s0)
+        v = self.predict(x)
+        u = self.target(trajectory).detach()
+        δ = self.criterion(v, u)
+        return δ, u - v, {'td': δ.item()}
 
 
 class OC(AC, DQN):

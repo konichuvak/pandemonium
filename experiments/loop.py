@@ -29,6 +29,9 @@ def gen_pbar(stats):
 
 
 interval = BATCH_SIZE * 100
+episodic_metrics = {
+    'reward_per_episode': 0,
+}
 reward_tracker = deque([], maxlen=interval)
 
 
@@ -38,10 +41,12 @@ def trajectory_stats(traj: Trajectory):
 
     stats = dict()
 
-    # TODO: Action frequencies
-    pass
+    # TODO: Action / option frequencies
+
+    # TODO: gradient norm
 
     # External reward
+    episodic_metrics['reward_per_episode'] += traj.r.sum().item()
     for r in list(traj.r.cpu().detach().numpy()):
         reward_tracker.append(r)
 
@@ -68,15 +73,15 @@ PARAMETER_DIR = EXPERIMENT_PATH / 'weights'
 PARAMETER_DIR.mkdir()
 
 # # Load the weights
-experiment_id = '2020-03-09 22:26:57'
-weight_name = '1000.pt'
-AGENT.horde.load_state_dict(
-    state_dict=torch.load(
-        f=EXPERIMENT_DIR / experiment_id / 'weights' / weight_name,
-        map_location=device,
-    ),
-    strict=True
-)
+# experiment_id = '2020-03-09 22:26:57'
+# weight_name = '1000.pt'
+# AGENT.horde.load_state_dict(
+#     state_dict=torch.load(
+#         f=EXPERIMENT_DIR / experiment_id / 'weights' / weight_name,
+#         map_location=device,
+#     ),
+#     strict=True
+# )
 
 logger = RLogger()
 
@@ -100,7 +105,7 @@ for d, demon in AGENT.horde.demons.items():
 SAVE_EVERY = 200
 total_steps = total_time = total_updates = 0
 
-for episode in range(1000, 10000 + 1):
+for episode in range(10000 + 1):
 
     # Save the weights
     if episode and episode % SAVE_EVERY == 0:
@@ -108,7 +113,7 @@ for episode in range(1000, 10000 + 1):
 
     # Visualize this episode
     # if episode % 50 == 0 and episode:
-    viz()
+    #     viz()
 
     # Play
     for logs in AGENT.interact(BATCH_SIZE=BATCH_SIZE, env=ENV):
@@ -119,9 +124,16 @@ for episode in range(1000, 10000 + 1):
             total_time += logs['episode_time']
             total_updates += logs['episode_updates']
 
+            # Update per-episode counters
+            for field, value in episodic_metrics.items():
+                tb_writer.add_scalar(f'info/{field}', value, total_steps)
+
+            episodic_metrics = {
+                'reward_per_episode': 0,
+            }
+
             # Record per-episode averages
             pass
-
         else:
             # Generate progress bar
             step = total_steps + logs.pop('episode_steps')
@@ -146,7 +158,8 @@ for episode in range(1000, 10000 + 1):
                     continue
                 if field in tb_writers:
                     for f, v in value.items():
-                        if isinstance(v, float) or (torch.is_tensor(v) and len(v.shape) == 0):
+                        if isinstance(v, float) or (
+                                torch.is_tensor(v) and len(v.shape) == 0):
                             tb_writers[field].add_scalar(f'info/{f}', v, step)
                 else:
                     tb_writer.add_scalar(f'info/{field}', value, step)

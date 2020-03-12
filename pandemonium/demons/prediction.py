@@ -1,16 +1,15 @@
 import torch.nn.functional as F
 from pandemonium.demons.demon import Loss, LinearDemon, ParametricDemon
-from pandemonium.demons.td import OfflineTD, TDn, OfflineTDPrediction
+from pandemonium.demons.offline_td import TDn, OfflineTDPrediction
 from pandemonium.experience import Trajectory
 from pandemonium.networks import Reshape
-from pandemonium.policies import Policy
 from pandemonium.utilities.replay import Replay
 from pandemonium.utilities.utilities import get_all_classes
 from torch import nn
 
 
 class RewardPrediction(ParametricDemon, OfflineTDPrediction):
-    """ Classifies reward at the end of n-step sequence of states
+    """ Classifies reward at the end of a state sequence
 
      Used as an auxiliary task in UNREAL architecture.
      """
@@ -51,7 +50,7 @@ class RewardPrediction(ParametricDemon, OfflineTDPrediction):
 
 
 class ValueReplay(LinearDemon, OfflineTDPrediction, TDn):
-    r""" :math:`n`-step :math:`|text{TD}` performed on the past experiences
+    r""" :math:`n`-step :math:`\text{TD}` performed on the past experiences
 
     This demon re-samples recent historical sequences from the behavior policy
     distribution and performs extra value function regression. It is used
@@ -59,13 +58,8 @@ class ValueReplay(LinearDemon, OfflineTDPrediction, TDn):
     learning.
     """
 
-    def __init__(self,
-                 replay_buffer: Replay,
-                 behavior_policy: Policy,
-                 **kwargs):
-        super().__init__(output_dim=behavior_policy.action_space.n,
-                         behavior_policy=behavior_policy,
-                         **kwargs)
+    def __init__(self, replay_buffer: Replay, **kwargs):
+        super().__init__(output_dim=1, **kwargs)
         self.replay_buffer = replay_buffer
 
     def learn(self, *args, **kwargs) -> Loss:

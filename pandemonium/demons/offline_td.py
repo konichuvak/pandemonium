@@ -5,8 +5,9 @@ import torch
 import torch.nn.functional as F
 
 from pandemonium.demons import (Demon, Loss, ControlDemon, PredictionDemon,
-                                ParametricDemon, Replay)
+                                ParametricDemon)
 from pandemonium.experience import Trajectory, Transitions
+from pandemonium.utilities.replay import Replay
 
 
 class OfflineTD(Demon):

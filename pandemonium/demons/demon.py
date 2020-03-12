@@ -115,7 +115,7 @@ class ParametricDemon(Demon, torch.nn.Module, ABC):
 
 
 class LinearDemon(ParametricDemon, ABC):
-    r""" Approximates state-values using linear projection
+    r""" Approximates state or state-action values using linear projection
 
     .. math::
         \widetilde{V}(s) = \boldsymbol{x}(s)^{T}\boldsymbol{w}

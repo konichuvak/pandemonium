@@ -108,10 +108,10 @@ BATCH_SIZE = 32
 # TODO: Skew the replay for reward prediction task
 replay = Replay(memory_size=2000, batch_size=BATCH_SIZE)
 
-rp = RewardPrediction(gvf=reward_prediction,
-                      feature=feature_extractor,
-                      behavior_policy=policy,
-                      replay_buffer=replay)
+# rp = RewardPrediction(gvf=reward_prediction,
+#                       feature=feature_extractor,
+#                       behavior_policy=policy,
+#                       replay_buffer=replay)
 vr = ValueReplay(gvf=value_replay,
                  feature=feature_extractor,
                  behavior_policy=policy,

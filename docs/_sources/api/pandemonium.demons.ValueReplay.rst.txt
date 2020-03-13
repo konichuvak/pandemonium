@@ -1,0 +1,25 @@
+ValueReplay
+===========
+
+.. currentmodule:: pandemonium.demons
+
+.. autoclass:: ValueReplay
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~ValueReplay.avf
+      ~ValueReplay.gvf
+      ~ValueReplay.λ
+      ~ValueReplay.μ
+      ~ValueReplay.φ
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: avf
+   .. autoattribute:: gvf
+   .. autoattribute:: λ
+   .. autoattribute:: μ
+   .. autoattribute:: φ

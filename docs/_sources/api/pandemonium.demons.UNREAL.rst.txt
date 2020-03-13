@@ -1,0 +1,25 @@
+UNREAL
+======
+
+.. currentmodule:: pandemonium.demons
+
+.. autoclass:: UNREAL
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~UNREAL.avf
+      ~UNREAL.gvf
+      ~UNREAL.λ
+      ~UNREAL.μ
+      ~UNREAL.φ
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: avf
+   .. autoattribute:: gvf
+   .. autoattribute:: λ
+   .. autoattribute:: μ
+   .. autoattribute:: φ

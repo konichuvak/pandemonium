@@ -6,14 +6,20 @@ AC
 .. autoclass:: AC
    :show-inheritance:
 
-   .. rubric:: Methods Summary
+   .. rubric:: Attributes Summary
 
    .. autosummary::
 
-      ~AC.delta
-      ~AC.learn
+      ~AC.avf
+      ~AC.gvf
+      ~AC.λ
+      ~AC.μ
+      ~AC.φ
 
-   .. rubric:: Methods Documentation
+   .. rubric:: Attributes Documentation
 
-   .. automethod:: delta
-   .. automethod:: learn
+   .. autoattribute:: avf
+   .. autoattribute:: gvf
+   .. autoattribute:: λ
+   .. autoattribute:: μ
+   .. autoattribute:: φ

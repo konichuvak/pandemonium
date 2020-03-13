@@ -1,0 +1,27 @@
+<map id="inheritance5570beae7d" name="inheritance5570beae7d">
+<area shape="rect" id="node1" title="Advantage Actor Critic" alt="" coords="435,159,492,179"/>
+<area shape="rect" id="node2" title="Base class for Actor&#45;Critic architectures that operate on batches" alt="" coords="275,237,332,257"/>
+<area shape="rect" id="node16" title="DQN style Option&#45;Critic architecture" alt="" coords="696,233,752,253"/>
+<area shape="rect" id="node23" title="A variation of AC that approximates advantage with :math:`delta`" alt="" coords="435,237,492,257"/>
+<area shape="rect" id="node21" title=":math:`n`&#45;step semi&#45;gradient :math:`text{SARSA}`" alt="" coords="435,43,492,63"/>
+<area shape="rect" id="node22" title=":math:`n`&#45;step semi&#45;gradient expected :math:`text{SARSA}`" alt="" coords="435,4,492,24"/>
+<area shape="rect" id="node4" title="Helper class that provides a standard way to create an ABC using" alt="" coords="4,237,61,257"/>
+<area shape="rect" id="node5" title="Parametrized Demons implemented in PyTorch subclass this" alt="" coords="98,276,207,295"/>
+<area shape="rect" id="node6" title="Learns the optimal policy while learning to predict" alt="" coords="107,159,199,179"/>
+<area shape="rect" id="node14" title="Approximates state or state&#45;action values using linear projection" alt="" coords="260,355,346,375"/>
+<area shape="rect" id="node18" title="Collects factual knowledge about environment by learning to predict" alt="" coords="100,237,206,257"/>
+<area shape="rect" id="node12" title="Mixin for offline :math:`	ext{TD}` methods with non&#45;linear FA" alt="" coords="257,159,349,179"/>
+<area shape="rect" id="node20" title="Classifies reward at the end of a state sequence" alt="" coords="411,356,517,376"/>
+<area shape="rect" id="node7" title="**General Value Function Approximator**" alt="" coords="4,198,61,218"/>
+<area shape="rect" id="node13" title="Base class for forward&#45;view :math:`text{TD}` methods." alt="" coords="120,198,185,218"/>
+<area shape="rect" id="node8" title="Deep Q&#45;Network" alt="" coords="578,150,634,170"/>
+<area shape="rect" id="node19" title="Duelling de&#45;convolutional network for auxiliary pixel control task" alt="" coords="684,150,764,170"/>
+<area shape="rect" id="node11" title=":math:`text{n&#45;step TD}` for estimating :math:`V ≈ v_{pi}`" alt="" coords="435,198,492,218"/>
+<area shape="rect" id="node25" title="A version of AC that stores experience in the replay buffer" alt="" coords="577,218,635,238"/>
+<area shape="rect" id="node26" title=":math:`n`&#45;step :math:`|text{TD}` performed on the past experiences" alt="" coords="566,316,646,336"/>
+<area shape="rect" id="node17" title="Offline :math:`text{TD}(
+ambda)` for prediction tasks" alt="" coords="245,276,361,295"/>
+<area shape="rect" id="node24" title="Truncated :math:`text{TD}(
+ambda)`" alt="" coords="275,198,332,218"/>
+<area shape="rect" id="node15" title="Base class for all neural network modules." alt="" coords="4,276,61,295"/>
+</map>

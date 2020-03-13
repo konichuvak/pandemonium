@@ -1,0 +1,19 @@
+DiffPolicy
+==========
+
+.. currentmodule:: pandemonium.policies
+
+.. autoclass:: DiffPolicy
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~DiffPolicy.dist
+      ~DiffPolicy.forward
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: dist
+   .. automethod:: forward

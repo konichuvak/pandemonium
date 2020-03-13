@@ -201,18 +201,27 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.policies.Policy.act" title="pandemonium.policies.Policy.act"><code class="xref py py-obj docutils literal notranslate"><span class="pre">act</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.policies.Policy.__call__" title="pandemonium.policies.Policy.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Call self as a function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.policies.Policy.act" title="pandemonium.policies.Policy.act"><code class="xref py py-obj docutils literal notranslate"><span class="pre">act</span></code></a>(*args, **kwargs)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.policies.Policy.action_filter" title="pandemonium.policies.Policy.action_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">action_filter</span></code></a>(state)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.policies.Policy.action_filter" title="pandemonium.policies.Policy.action_filter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">action_filter</span></code></a>(state)</p></td>
 <td><p>Filters the actions available at a given state</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.policies.Policy.dist" title="pandemonium.policies.Policy.dist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dist</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.policies.Policy.dist" title="pandemonium.policies.Policy.dist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dist</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Returns a distribution over actions</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="pandemonium.policies.Policy.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.Policy.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call self as a function.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="pandemonium.policies.Policy.act">
 <code class="sig-name descname">act</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; Tuple[Action, Dict[str, torch.distributions.distribution.Distribution]]<a class="headerlink" href="#pandemonium.policies.Policy.act" title="Permalink to this definition">¶</a></dt>

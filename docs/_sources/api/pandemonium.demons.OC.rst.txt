@@ -1,0 +1,7 @@
+OC
+==
+
+.. currentmodule:: pandemonium.demons
+
+.. autoclass:: OC
+   :show-inheritance:

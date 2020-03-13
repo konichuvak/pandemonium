@@ -10,12 +10,14 @@ Policy
 
    .. autosummary::
 
+      ~Policy.__call__
       ~Policy.act
       ~Policy.action_filter
       ~Policy.dist
 
    .. rubric:: Methods Documentation
 
+   .. automethod:: __call__
    .. automethod:: act
    .. automethod:: action_filter
    .. automethod:: dist

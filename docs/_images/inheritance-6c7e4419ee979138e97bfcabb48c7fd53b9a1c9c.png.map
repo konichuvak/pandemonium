@@ -1,0 +1,11 @@
+<map id="inheritance9af3c4af6c" name="inheritance9af3c4af6c">
+<area shape="rect" id="node2" title="Base abstract class for decision making rules" alt="" coords="5,153,77,179"/>
+<area shape="rect" id="node3" title="Base class for parametrized policies" alt="" coords="131,203,215,228"/>
+<area shape="rect" id="node5" title="Base class for discrete policies" alt="" coords="135,104,211,129"/>
+<area shape="rect" id="node11" title="Vanilla Policy Gradient" alt="" coords="301,203,373,228"/>
+<area shape="rect" id="node4" title="Base class for all neural network modules." alt="" coords="5,203,77,228"/>
+<area shape="rect" id="node6" title=":math:`epsilon`&#45;greedy policy for discrete action spaces." alt="" coords="300,55,375,80"/>
+<area shape="rect" id="node8" title="A decision rule for discrete option spaces." alt="" coords="268,104,407,129"/>
+<area shape="rect" id="node9" title="Picks an option at random" alt="" coords="299,153,375,179"/>
+<area shape="rect" id="node7" title=":math:`epsilon`&#45;greedy policy over options." alt="" coords="455,80,611,105"/>
+</map>

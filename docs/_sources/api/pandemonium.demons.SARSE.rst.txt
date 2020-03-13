@@ -1,0 +1,7 @@
+SARSE
+=====
+
+.. currentmodule:: pandemonium.demons
+
+.. autoclass:: SARSE
+   :show-inheritance:

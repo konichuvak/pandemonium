@@ -6,24 +6,20 @@ Demon
 .. autoclass:: Demon
    :show-inheritance:
 
-   .. rubric:: Methods Summary
+   .. rubric:: Attributes Summary
 
    .. autosummary::
 
-      ~Demon.behavior_policy
-      ~Demon.delta
-      ~Demon.eligibility
-      ~Demon.feature
-      ~Demon.forward
-      ~Demon.learn
-      ~Demon.predict
+      ~Demon.avf
+      ~Demon.gvf
+      ~Demon.λ
+      ~Demon.μ
+      ~Demon.φ
 
-   .. rubric:: Methods Documentation
+   .. rubric:: Attributes Documentation
 
-   .. automethod:: behavior_policy
-   .. automethod:: delta
-   .. automethod:: eligibility
-   .. automethod:: feature
-   .. automethod:: forward
-   .. automethod:: learn
-   .. automethod:: predict
+   .. autoattribute:: avf
+   .. autoattribute:: gvf
+   .. autoattribute:: λ
+   .. autoattribute:: μ
+   .. autoattribute:: φ

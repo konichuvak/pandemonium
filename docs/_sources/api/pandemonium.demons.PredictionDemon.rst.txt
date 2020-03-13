@@ -5,3 +5,21 @@ PredictionDemon
 
 .. autoclass:: PredictionDemon
    :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~PredictionDemon.avf
+      ~PredictionDemon.gvf
+      ~PredictionDemon.λ
+      ~PredictionDemon.μ
+      ~PredictionDemon.φ
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: avf
+   .. autoattribute:: gvf
+   .. autoattribute:: λ
+   .. autoattribute:: μ
+   .. autoattribute:: φ

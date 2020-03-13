@@ -1,0 +1,7 @@
+QLearning
+=========
+
+.. currentmodule:: pandemonium.demons
+
+.. autoclass:: QLearning
+   :show-inheritance:

@@ -1,0 +1,25 @@
+RewardPrediction
+================
+
+.. currentmodule:: pandemonium.demons
+
+.. autoclass:: RewardPrediction
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~RewardPrediction.avf
+      ~RewardPrediction.gvf
+      ~RewardPrediction.λ
+      ~RewardPrediction.μ
+      ~RewardPrediction.φ
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: avf
+   .. autoattribute:: gvf
+   .. autoattribute:: λ
+   .. autoattribute:: μ
+   .. autoattribute:: φ

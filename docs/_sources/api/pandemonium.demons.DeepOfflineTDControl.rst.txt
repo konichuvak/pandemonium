@@ -1,0 +1,7 @@
+DeepOfflineTDControl
+====================
+
+.. currentmodule:: pandemonium.demons
+
+.. autoclass:: DeepOfflineTDControl
+   :show-inheritance:

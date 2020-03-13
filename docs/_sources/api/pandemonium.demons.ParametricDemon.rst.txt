@@ -1,0 +1,25 @@
+ParametricDemon
+===============
+
+.. currentmodule:: pandemonium.demons
+
+.. autoclass:: ParametricDemon
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~ParametricDemon.avf
+      ~ParametricDemon.gvf
+      ~ParametricDemon.λ
+      ~ParametricDemon.μ
+      ~ParametricDemon.φ
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: avf
+   .. autoattribute:: gvf
+   .. autoattribute:: λ
+   .. autoattribute:: μ
+   .. autoattribute:: φ

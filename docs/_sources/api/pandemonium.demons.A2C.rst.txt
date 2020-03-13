@@ -1,0 +1,7 @@
+A2C
+===
+
+.. currentmodule:: pandemonium.demons
+
+.. autoclass:: A2C
+   :show-inheritance:

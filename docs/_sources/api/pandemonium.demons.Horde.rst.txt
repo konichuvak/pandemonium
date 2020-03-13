@@ -1,7 +1,0 @@
-Horde
-=====
-
-.. currentmodule:: pandemonium.demons
-
-.. autoclass:: Horde
-   :show-inheritance:

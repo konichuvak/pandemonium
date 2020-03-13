@@ -5,13 +5,3 @@ ControlDemon
 
 .. autoclass:: ControlDemon
    :show-inheritance:
-
-   .. rubric:: Methods Summary
-
-   .. autosummary::
-
-      ~ControlDemon.behavior_policy
-
-   .. rubric:: Methods Documentation
-
-   .. automethod:: behavior_policy

@@ -1,0 +1,25 @@
+TDAC
+====
+
+.. currentmodule:: pandemonium.demons
+
+.. autoclass:: TDAC
+   :show-inheritance:
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+
+      ~TDAC.avf
+      ~TDAC.gvf
+      ~TDAC.λ
+      ~TDAC.μ
+      ~TDAC.φ
+
+   .. rubric:: Attributes Documentation
+
+   .. autoattribute:: avf
+   .. autoattribute:: gvf
+   .. autoattribute:: λ
+   .. autoattribute:: μ
+   .. autoattribute:: φ

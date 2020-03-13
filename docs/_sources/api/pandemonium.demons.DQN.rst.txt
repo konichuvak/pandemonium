@@ -5,17 +5,3 @@ DQN
 
 .. autoclass:: DQN
    :show-inheritance:
-
-   .. rubric:: Methods Summary
-
-   .. autosummary::
-
-      ~DQN.delta
-      ~DQN.learn
-      ~DQN.target_predict
-
-   .. rubric:: Methods Documentation
-
-   .. automethod:: delta
-   .. automethod:: learn
-   .. automethod:: target_predict

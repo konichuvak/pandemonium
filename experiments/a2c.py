@@ -65,9 +65,12 @@ gvf = GVF(target_policy=target_policy,
 # Representation learning
 # ==================================
 obs = ENV.reset()
-feature_extractor = ConvBody(d=3, w=7, h=7, feature_dim=2 ** 8)
-# feature_extractor = FCBody(state_dim=obs.shape[0], hidden_units=(256,))
-# feature_extractor = Identity(state_dim=obs.shape[0])
+feature_extractor = ConvBody(
+    *obs.shape[1:], feature_dim=2 ** 8,
+    channels=(8, 16, 32), kernels=(2, 2, 2), strides=(1, 1, 1)
+)
+# feature_extractor = FCBody(state_dim=obs.shape[1], hidden_units=(256,))
+# feature_extractor = Identity(state_dim=obs.shape[1])
 
 # ==================================
 # Behavioral Policy

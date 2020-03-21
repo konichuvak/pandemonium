@@ -33,60 +33,55 @@ class FCBody(nn.Module):
 
 
 class ConvBody(nn.Module):
+    """ A convolutional neural network, also known as `nature CNN` in RL """
+
     def __init__(self, d: int, w: int, h: int,
                  feature_dim: int = 256,
                  channels=(8, 16, 32),
                  kernels=(2, 2, 2),
                  strides=(1, 1, 1)):
-        super().__init__()
-        self.feature_dim = feature_dim
+        assert len(channels) == len(kernels) == len(strides)
 
-        self.conv1 = layer_init(nn.Conv2d(
-            d, channels[0], kernels[1], strides[0]
-        ))
-        self.conv2 = layer_init(nn.Conv2d(
-            channels[0], channels[1], kernels[1], strides[1]
-        ))
-        self.conv3 = layer_init(nn.Conv2d(
-            channels[1], channels[2], kernels[2], strides[2]
-        ))
-
-        for i in range(3):
+        ch = (d,) + channels
+        conv = list()
+        for i in range(len(channels)):
+            l = layer_init(nn.Conv2d(ch[i], ch[i + 1], kernels[i], strides[i]))
+            conv += [l, nn.ReLU()]
             w = conv2d_size_out(w, kernels[i], strides[i])
             h = conv2d_size_out(h, kernels[i], strides[i])
 
-        self.fc = layer_init(nn.Linear(w * h * channels[2], self.feature_dim))
-
-    def forward(self, x):
-        x = F.relu(self.conv1(x))
-        x = F.relu(self.conv2(x))
-        x = F.relu(self.conv3(x))
-        x = x.view(x.size(0), -1)
-        x = F.relu(self.fc(x))
-        return x
-
-
-class ConvLSTM(nn.Module):
-    def __init__(self, d: int, w: int, h: int, feature_dim: int = 256):
         super().__init__()
+        self.conv = nn.Sequential(*conv)
+        self.fc = layer_init(nn.Linear(w * h * ch[len(channels)], feature_dim))
         self.feature_dim = feature_dim
 
-        self.conv1 = layer_init(nn.Conv2d(d, 16, 8, 4))
-        self.conv2 = layer_init(nn.Conv2d(16, 32, 4, 2))
-
-        dim = conv2d_size_out(conv2d_size_out(w, 8, 4), 4, 2)
-
-        self.fc = layer_init(nn.Linear(dim ** 2 * 32, self.feature_dim))
-
-        self.lstm = nn.LSTM(input_size=256,
-                            hidden_size=256,
-                            num_layers=2,
-                            batch_first=True)
-
-    def forward(self, x: torch.Tensor, last_action_reward, lstm_state):
-        x = F.relu(self.conv1(x))
-        x = F.relu(self.conv2(x))
+    def forward(self, x):
+        x = self.conv(x)
         x = x.view(x.size(0), -1)
         x = F.relu(self.fc(x))
         x, lstm_state = self.lstm(x, lstm_state)
-        return x.squeeze(0), lstm_state
+        return x.squeeze(0)
+
+    @property
+    def lstm_state(self):
+        return self.hidden_state, self.memory_state
+
+    @lstm_state.setter
+    def lstm_state(self, other: Tuple[torch.Tensor, torch.Tensor]):
+        self.hidden_state, self.memory_state = other
+
+    @property
+    def hidden_state(self):
+        return self._hidden_state
+
+    @hidden_state.setter
+    def hidden_state(self, other: torch.Tensor):
+        self._hidden_state = other
+
+    @property
+    def memory_state(self):
+        return self._memory_state
+
+    @memory_state.setter
+    def memory_state(self, other: torch.Tensor):
+        self._memory_state = other

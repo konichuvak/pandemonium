@@ -40,13 +40,14 @@ class Horde(torch.nn.Module):
         self.optimizer = torch.optim.Adam(self.parameters(), 0.001)
         self.first_pass = True
 
+        self.device = device
         self.to(device)
 
     def learn(self, transitions) -> dict:
 
         # TODO: thread / mp
 
-        losses = torch.empty(len(self.demons))
+        losses = torch.empty(len(self.demons), device=self.device)
         logs = dict()
 
         for i, (d, demon) in enumerate(self.demons.items()):

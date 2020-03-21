@@ -34,14 +34,14 @@ class Replay:
             self.feed(exp)
 
     def sample(self, batch_size=None):
+        """ Randomly draws a contiguous batch of transitions """
         if self.is_empty:
             return None
         if batch_size is None:
             batch_size = self.batch_size
 
-        sampled_indices = [np.random.randint(0, len(self.data)) for _ in
-                           range(batch_size)]
-        sampled_data = [self.data[ind] for ind in sampled_indices]
+        ix = np.random.randint(0, self.size - batch_size)
+        sampled_data = self.data[ix:ix + batch_size]
         if self.to_np:
             sampled_data = list(map(lambda x: np.asarray(x), sampled_data))
         return sampled_data

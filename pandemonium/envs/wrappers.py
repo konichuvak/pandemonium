@@ -13,7 +13,7 @@ class Torch(ObservationWrapper):
         t = torch.tensor(obs, device=self.device, dtype=torch.float32)
         if len(t.shape) == 3:
             t = t.permute(2, 0, 1)  # swap (w, h, dir) -> (dir, w, h)
-            t = t.unsqueeze(0)  # add batch dim: (dir, w, h) -> (1, dir, w, h)
+        t = t.unsqueeze(0)  # add batch dim: (dir, w, h) -> (1, dir, w, h)
         return t
 
 

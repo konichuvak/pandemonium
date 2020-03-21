@@ -1,9 +1,7 @@
 from copy import deepcopy
-from typing import Callable
 
 import torch
 import torch.nn.functional as F
-
 from pandemonium.demons import (Demon, Loss, ControlDemon, PredictionDemon,
                                 ParametricDemon)
 from pandemonium.experience import Trajectory, Transitions
@@ -114,6 +112,11 @@ class DeepOfflineTD(OfflineTD, ParametricDemon):
 class OfflineTDPrediction(OfflineTD, PredictionDemon):
     r""" Offline :math:`\text{TD}(\lambda)` for prediction tasks """
 
+    @torch.no_grad()
+    def v_target(self, trajectory: Trajectory):
+        """ Computes value targets from states in the trajectory """
+        raise NotImplementedError
+
     def delta(self, trajectory: Trajectory) -> Loss:
         x = self.feature(trajectory.s0)
         v = self.predict(x)
@@ -122,18 +125,20 @@ class OfflineTDPrediction(OfflineTD, PredictionDemon):
         return δ, {'td': δ.item()}
 
     def target(self, trajectory: Trajectory):
-        return super().target(trajectory, v=self.avf(trajectory.x1))
+        return super().target(trajectory, v=self.v_target(trajectory))
 
 
 class OfflineTDControl(OfflineTD, ControlDemon):
 
-    def q_target(self, trajectory: Trajectory, target_fn: Callable = None):
-        """ Computes targets for action-value pairs in the trajectory """
+    @torch.no_grad()
+    def q_target(self, trajectory: Trajectory):
+        """ Computes value targets from action-value pairs in the trajectory """
         raise NotImplementedError
 
     def delta(self, trajectory: Trajectory) -> Loss:
         x = self.feature(trajectory.s0)
-        v = self.predict_q(x)[torch.arange(x.size(0)), trajectory.a][:, None]
+        a = torch.arange(x.size(0)), trajectory.a
+        v = self.predict_q(x)[a].unsqueeze(-1)
         u = self.target(trajectory).detach()
         δ = self.criterion(v, u)
         return δ, {'td': δ.item()}

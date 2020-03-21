@@ -1,19 +1,19 @@
-from functools import reduce
+from functools import reduce, partial
 
 import torch
 from gym_minigrid.envs import EmptyEnv
-from gym_minigrid.wrappers import FullyObsWrapper
-from ray.rllib.utils.schedules import ConstantSchedule, LinearSchedule
-
+from gym_minigrid.wrappers import FullyObsWrapper, ImgObsWrapper
 from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
 from pandemonium.demons.control import DQN
+from pandemonium.envs import FourRooms
 from pandemonium.envs.minigrid.wrappers import OneHotObsWrapper
 from pandemonium.envs.wrappers import Torch
-from pandemonium.networks.bodies import Identity
+from pandemonium.networks.bodies import Identity, ConvBody
 from pandemonium.policies.discrete import Egreedy
 from pandemonium.utilities.replay import Replay
+from ray.rllib.utils.schedules import ConstantSchedule, LinearSchedule
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = torch.device('cpu')
@@ -25,8 +25,8 @@ __all__ = ['AGENT', 'ENV', 'WRAPPERS', 'BATCH_SIZE']
 # ------------------------------------------------------------------------------
 
 envs = [
-    EmptyEnv(size=10),
-    # FourRooms(),
+    # EmptyEnv(size=10),
+    FourRooms(),
     # DoorKeyEnv(size=7),
     # MultiRoomEnv(4, 4),
     # CrossingEnv(),
@@ -37,8 +37,8 @@ WRAPPERS = [
 
     # Observation wrappers
     FullyObsWrapper,
-    # ImgObsWrapper,
-    OneHotObsWrapper,
+    ImgObsWrapper,
+    # OneHotObsWrapper,
     # FlatObsWrapper,
     lambda e: Torch(e, device=device)
 ]
@@ -77,9 +77,11 @@ feature_extractor = ConvBody(
 
 # TODO: tie the warmup period withe the annealed exploration period
 policy = Egreedy(
-    epsilon=LinearSchedule(schedule_timesteps=50000, final_p=0.1),
+    epsilon=LinearSchedule(schedule_timesteps=1000000, final_p=0.1),
     action_space=ENV.action_space
 )
+aqf = torch.nn.Linear(feature_extractor.feature_dim, ENV.action_space.n)
+policy.act = partial(policy.act, vf=aqf)
 
 # ==================================
 # Learning Algorithm
@@ -90,13 +92,18 @@ prediction_demons = list()
 replay = Replay(memory_size=100000, batch_size=BATCH_SIZE)
 control_demon = DQN(
     gvf=gvf,
+    aqf=aqf,
+    avf=torch.nn.Linear(feature_extractor.feature_dim, 1),
     feature=feature_extractor,
     behavior_policy=policy,
     replay_buffer=replay,
     target_update_freq=200,
     warm_up_period=100,
+    double=True,
+    duelling=True,
 )
 
+demon_weights = torch.tensor([1.], device=device)
 # ------------------------------------------------------------------------------
 # Specify agent that will be interacting with the environment
 # ------------------------------------------------------------------------------
@@ -105,7 +112,8 @@ control_demon = DQN(
 horde = Horde(
     control_demon=control_demon,
     prediction_demons=prediction_demons,
-    aggregation_fn=lambda loss: loss,
+    aggregation_fn=lambda losses: demon_weights.dot(losses),
+    device=device
 )
-AGENT = Agent(feature_extractor=feature_extractor, horde=horde)
+AGENT = Agent(feature_extractor, policy, horde)
 print(horde)

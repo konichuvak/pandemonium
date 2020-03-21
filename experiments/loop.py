@@ -5,9 +5,9 @@ import numpy as np
 import tensorboardX
 import torch
 from experiments import EXPERIMENT_DIR, RLogger
-# from experiments.a2c import *
+from experiments.a2c import *
 # from experiments.option_critic import *
-from experiments.unreal import *
+# from experiments.unreal import *
 # from experiments.dqn import *
 from pandemonium.experience import Trajectory
 
@@ -73,8 +73,8 @@ PARAMETER_DIR = EXPERIMENT_PATH / 'weights'
 PARAMETER_DIR.mkdir()
 
 # # Load the weights
-# experiment_id = '2020-03-09 22:26:57'
-# weight_name = '1000.pt'
+# experiment_id = '2020-03-19 14:58:10'
+# weight_name = '1600.pt'
 # AGENT.horde.load_state_dict(
 #     state_dict=torch.load(
 #         f=EXPERIMENT_DIR / experiment_id / 'weights' / weight_name,
@@ -113,7 +113,7 @@ for episode in range(10000 + 1):
 
     # Visualize this episode
     # if episode % 50 == 0 and episode:
-    #     viz()
+    # viz()
 
     # Play
     for logs in AGENT.interact(BATCH_SIZE=BATCH_SIZE, env=ENV):
@@ -123,6 +123,8 @@ for episode in range(10000 + 1):
             total_steps += logs['episode_steps']
             total_time += logs['episode_time']
             total_updates += logs['episode_updates']
+            episodic_metrics['steps_per_episode'] = logs['episode_steps']
+            episodic_metrics['episode_count'] = episode
 
             # Update per-episode counters
             for field, value in episodic_metrics.items():

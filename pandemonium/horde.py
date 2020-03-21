@@ -50,29 +50,29 @@ class Horde(torch.nn.Module):
         losses = torch.empty(len(self.demons), device=self.device)
         logs = dict()
 
+        # Aggregate losses from each demon
         for i, (d, demon) in enumerate(self.demons.items()):
             loss, info = demon.learn(transitions)
             losses[i] = loss if loss is not None else 0
-            logs.update({f'{d}{id(demon)}': {f'{k}': v for k, v in info.items()}})
+            logs.update(
+                {f'{d}{id(demon)}': {f'{k}': v for k, v in info.items()}})
 
+        # Optimize joint objective
         total_loss = self.aggregation_fn(losses)
-        if total_loss.requires_grad:
+        if not total_loss.requires_grad:
+            # Sometimes (e.g. in experience collection stage) there is no
+            # gradient step to be performed
+            pass
+        else:
             self.optimizer.zero_grad()
             total_loss.backward()
             # torch.nn.utils.clip_grad_norm_(self.parameters(), 1)
             self.optimizer.step()
-        else:
-            print('???')
 
-        # TODO: deal with changes in computational graph over time
-        #   i.e. the graph will look different before and after experience
-        #   collection stage in DQN
-        # if self.first_pass:
+        # Create a schematic of computational graph
         graph = make_dot(total_loss, params=dict(self.named_parameters()))
-        # self.first_pass = False
-        logs.update({'graph': graph})
 
-        logs.update({'total_loss': total_loss.item()})
+        logs.update({'total_loss': total_loss.item(), 'graph': graph})
         return logs
 
     def __str__(self):

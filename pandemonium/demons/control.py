@@ -1,4 +1,4 @@
-from collections import Callable, OrderedDict
+from collections import OrderedDict
 
 import torch
 from pandemonium.demons import (Loss, ParametricDemon)
@@ -9,72 +9,72 @@ from pandemonium.experience import Trajectory, Transitions
 from pandemonium.networks import Reshape
 from pandemonium.policies import Policy, HierarchicalPolicy
 from pandemonium.policies.gradient import DiffPolicy
+from pandemonium.policies.utils import torch_argmax_mask
 from pandemonium.utilities.replay import Replay
 from pandemonium.utilities.utilities import get_all_classes
 from torch import nn
 
 
-class SARSA(OfflineTDControl):
-    r""" :math:`n`-step semi-gradient :math:`\text{SARSA}` """
-
-    def q_target(self, trajectory: Trajectory, target_fn: Callable = None):
-        if target_fn is None:
-            target_fn = self.aqf
-        q = target_fn(trajectory.x1)
-        a = self.gvf.π(trajectory.x1, vf=target_fn)
-        v = q[torch.arange(q.size(0)), a]
-        return v
-
-
-class SARSE(OfflineTDControl):
-    r""" :math:`n`-step semi-gradient expected :math:`\text{SARSA}` """
-
-    def q_target(self, trajectory: Trajectory, target_fn: Callable = None):
-        if target_fn is None:
-            target_fn = self.aqf
-        q = target_fn(trajectory.x1)
-        dist = self.gvf.π.dist(trajectory.x1, vf=target_fn)
-        v = q * dist.probs
-        return v
-
-
-class QLearning(OfflineTDControl):
-
-    def q_target(self, trajectory: Trajectory, target_fn: Callable = None):
-        if target_fn is None:
-            target_fn = self.aqf
-        # TODO: To re-compute or not to re-compute x?
-        x = self.feature(trajectory.s1)
-        # x = trajectory.x1
-        q = target_fn(x)
-        v = q.max(1, keepdim=True)[0]
-        return v
-
-
 class DeepOfflineTDControl(DeepOfflineTD, OfflineTDControl):
 
-    def __init__(self, duelling: bool = False, *args, **kwargs):
+    def __init__(self,
+                 duelling: bool = False,
+                 double: bool = False,
+                 *args, **kwargs):
         self.duelling = duelling
+        self.double = double
         super().__init__(*args, **kwargs)
 
-    def predict_q(self, x: torch.Tensor) -> torch.Tensor:
+    def predict_q(self, x: torch.Tensor, target: bool = False) -> torch.Tensor:
         r"""
 
         See Dueling Network Architectures for Deep Reinforcement Learning
         by Wang et al. 2016
         """
-        if self.duelling:
-            v, q = self.avf(x), self.aqf(x)
-            return q - (q - v).mean(1, keepdim=True)
-        return self.aqf(x)
+        if target:
+            if self.duelling:
+                v, q = self.target_avf(x), self.target_aqf(x)
+                return q - (q - v).mean(1, keepdim=True)
+            return self.target_aqf(x)
+        else:
+            if self.duelling:
+                v, q = self.avf(x), self.aqf(x)
+                return q - (q - v).mean(1, keepdim=True)
+            return self.aqf(x)
 
 
-class DQN(DeepOfflineTDControl, QLearning, TDn):
-    """ Deep Q-Network """
+class DQN(DeepOfflineTDControl, TDn):
+    """ Deep Q-Network based on Watkins Q-learning rule """
 
-    def q_target(self, trajectory: Trajectory, target_fn: Callable = None):
+    @torch.no_grad()
+    def q_target(self, trajectory: Trajectory):
+        q = self.predict_q(trajectory.x1, target=True)
+        if self.double:
+            v = q[torch_argmax_mask(self.aqf(trajectory.x1), 1)].unsqueeze(-1)
+        else:
+            v = q.max(1, keepdim=True)[0]
+        return v
+
+
+class DeepSARSA(OfflineTDControl):
+    r""" :math:`n`-step semi-gradient :math:`\text{SARSA}` """
+
+    @torch.no_grad()
+    def q_target(self, trajectory: Trajectory):
         q = self.predict_q(trajectory.x1)
-        v = q.max(1, keepdim=True)[0]
+        a = self.gvf.π(trajectory.x1, vf=self.aqf)
+        v = q[torch.arange(q.size(0)), a]
+        return v
+
+
+class DeepSARSE(OfflineTDControl):
+    r""" :math:`n`-step semi-gradient expected :math:`\text{SARSA}` """
+
+    @torch.no_grad()
+    def q_target(self, trajectory: Trajectory):
+        q = self.predict_q(trajectory.x1)
+        dist = self.gvf.π.dist(trajectory.x1, vf=self.aqf)
+        v = q * dist.probs
         return v
 
 
@@ -186,7 +186,7 @@ class UNREAL(TDAC, TDn):
         self.replay_buffer = replay_buffer
 
     def learn(self, transitions: Transitions) -> Loss:
-        self.replay_buffer.feed_batch(transitions)
+        # self.replay_buffer.feed_batch(transitions)
         return super().learn(transitions)
 
 

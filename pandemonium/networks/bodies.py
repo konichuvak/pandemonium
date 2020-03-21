@@ -1,3 +1,5 @@
+from typing import Tuple, Optional
+
 import torch
 from pandemonium.networks.utils import layer_init, conv2d_size_out
 from torch import nn
@@ -59,6 +61,32 @@ class ConvBody(nn.Module):
         x = self.conv(x)
         x = x.view(x.size(0), -1)
         x = F.relu(self.fc(x))
+        return x
+
+
+class ConvLSTM(ConvBody):
+    """ A convolutional neural net with a recurrent LSTM layer on top
+
+    Used for tackling partial observability in the environment.
+    A comprehensive example is given in https://arxiv.org/pdf/1507.06527.pdf
+    `Deep Recurrent Q-Learning for Partially Observable MDPs`.
+    """
+
+    def __init__(self,
+                 hidden_units: int = 256,
+                 lstm_layers: int = 1,
+                 *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.lstm = nn.LSTM(input_size=self.feature_dim,
+                            hidden_size=hidden_units,
+                            num_layers=lstm_layers)
+        self._hidden_state = torch.zeros(1, 1, self.feature_dim)
+        self._memory_state = torch.zeros(1, 1, self.feature_dim)
+
+    def forward(self,
+                x: torch.Tensor,
+                lstm_state: Optional[tuple] = None):
+        x = ConvBody.forward(self, x).unsqueeze(0)
         x, lstm_state = self.lstm(x, lstm_state)
         return x.squeeze(0)
 

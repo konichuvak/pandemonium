@@ -2,10 +2,11 @@ from copy import deepcopy
 
 import torch
 import torch.nn.functional as F
+from pandemonium.experience.replay import Replay
+
 from pandemonium.demons import (Demon, Loss, ControlDemon, PredictionDemon,
                                 ParametricDemon)
 from pandemonium.experience import Trajectory, Transitions
-from pandemonium.utilities.replay import Replay
 
 
 class OfflineTD(Demon):
@@ -20,7 +21,7 @@ class OfflineTD(Demon):
         self.criterion = criterion  # loss function for regression
 
     def delta(self, trajectory: Trajectory) -> Loss:
-        """ Updates a value of a state using information collected offline """
+        """ Updates a value of a state using information in the trajectory """
         raise NotImplementedError
 
     def target(self, *args, **kwargs):
@@ -30,9 +31,9 @@ class OfflineTD(Demon):
     def learn(self, transitions: Transitions):
         """
 
-        As opposed to the online case, where we learn on individual transitions,
-        in the offline case we learn on a sequence of transitions often
-        referred to as `Trajectory`.
+        As opposed to the online case, where we learn on individual
+        `Transition`s, in the offline case we learn on a sequence of
+        transitions referred to as `Trajectory`.
         """
         trajectory = Trajectory.from_transitions(transitions)
         return self.delta(trajectory)
@@ -167,6 +168,11 @@ class TTD(OfflineTD):
         The resulting vector `u` contains target returns for each state along
         the trajectory, with $V(S_i)$ for $i \in \{0, 1, \dots, n-1\}$ getting
         $[n, n-1, \dots, 1]$-step $\lambda$ returns respectively.
+
+        References
+        ----------
+        Sutton and Barto, ch. 12.8, equation (12.18)
+
         """
 
         γ = self.gvf.continuation(trajectory)

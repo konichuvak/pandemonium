@@ -32,7 +32,9 @@ extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.mathjax',
     'sphinx_math_dollar',
-    'sphinx.ext.autodoc'
+    'sphinx.ext.autodoc',
+    'numpydoc'
+
 ]
 # autodoc_mock_imports = ['collections', 'pathlib']
 automodsumm_inherited_members = False

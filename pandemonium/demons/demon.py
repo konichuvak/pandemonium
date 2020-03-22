@@ -20,11 +20,17 @@ class Demon:
 
     Demon learns an approximate value function $\tilde{V}$ (avf), to the
     general value function (gvf) that corresponds to the setting of the
-    three question functions: $π$, $γ$, and $z$. The tools that the demon uses
-    to learn the approximation are called answers functions:
-        - $\phi$ (feature generator): learning useful state representations
-        - $\mu$ (behavior policy) : collecting experience
-        - $\lambda$ (eligibility trace): assigning credit to experiences
+    three question functions: $\pi$, $\gamma$, and z. The tools that the demon
+    uses to learn the approximation are called answers functions and are
+    comprised of $\mu$, $\phi$ and $\lambda$.
+
+    Attributes
+    ----------
+    gvf: General Value Function to be estimated by the demon
+    avf: Approximate Value Function learned by the demon to approximate `gvf`
+    $\phi$: Feature generator learning useful state representations
+    $\mu$: Behavior policy that collects experience
+    $\lambda$: Eligibility trace assigning credit to experiences
 
     """
     __slots__ = 'gvf', 'avf', 'φ', 'μ', 'λ'

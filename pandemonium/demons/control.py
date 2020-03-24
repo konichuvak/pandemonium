@@ -1,18 +1,17 @@
 from collections import OrderedDict
 
 import torch
-from pandemonium.demons import (Loss, ParametricDemon)
+from torch import nn
+
+from pandemonium.demons import Loss, ParametricDemon
 from pandemonium.demons.offline_td import (DeepOfflineTD, TDn, TTD,
                                            OfflineTDPrediction)
 from pandemonium.demons.offline_td import OfflineTDControl
-from pandemonium.experience import Trajectory, Transitions
+from pandemonium.experience import ER, Trajectory, Transitions
 from pandemonium.networks import Reshape
-from pandemonium.policies import Policy, HierarchicalPolicy
-from pandemonium.policies.gradient import DiffPolicy
+from pandemonium.policies import Policy, HierarchicalPolicy, DiffPolicy
 from pandemonium.policies.utils import torch_argmax_mask
-from pandemonium.utilities.replay import Replay
 from pandemonium.utilities.utilities import get_all_classes
-from torch import nn
 
 
 class DeepOfflineTDControl(DeepOfflineTD, OfflineTDControl):
@@ -28,8 +27,9 @@ class DeepOfflineTDControl(DeepOfflineTD, OfflineTDControl):
     def predict_q(self, x: torch.Tensor, target: bool = False) -> torch.Tensor:
         r"""
 
-        See Dueling Network Architectures for Deep Reinforcement Learning
-        by Wang et al. 2016
+        References
+        ----------
+        Dueling Network Architectures for DRL, Wang et al. (2016)
         """
         if target:
             if self.duelling:
@@ -79,7 +79,12 @@ class DeepSARSE(OfflineTDControl):
 
 
 class PixelControl(DQN):
-    """ Duelling de-convolutional network for auxiliary pixel control task """
+    """ Duelling de-convolutional network for auxiliary pixel control task
+
+    References
+    ----------
+    RL with unsupervised auxiliary tasks (Jaderberg et al. 2016)
+    """
 
     def __init__(self,
                  feature,
@@ -112,6 +117,8 @@ class PixelControl(DQN):
 class AC(ParametricDemon):
     """ Base class for Actor-Critic architectures that operate on batches
 
+    References
+    ----------
     https://hadovanhasselt.files.wordpress.com/2016/01/pg1.pdf
     """
 
@@ -180,7 +187,7 @@ class TDAC(AC, OfflineTDPrediction, TTD):
 class UNREAL(TDAC, TDn):
     """ A version of AC that stores experience in the replay buffer """
 
-    def __init__(self, feature, replay_buffer: Replay, **kwargs):
+    def __init__(self, feature, replay_buffer: ER, **kwargs):
         avf = nn.Linear(feature.feature_dim, 1)
         super().__init__(avf=avf, feature=feature, **kwargs)
         self.replay_buffer = replay_buffer
@@ -199,7 +206,7 @@ class OC(AC, DQN):
             actor=actor,
             # TODO: make a sequential replay that samples last
             #  BATCH_SIZE transitions in order
-            replay_buffer=Replay(memory_size=0, batch_size=0),
+            replay_buffer=ER(size=0, batch_size=0),
             **kwargs
         )
 

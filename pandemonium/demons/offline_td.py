@@ -2,11 +2,10 @@ from copy import deepcopy
 
 import torch
 import torch.nn.functional as F
-from pandemonium.experience.replay import Replay
 
 from pandemonium.demons import (Demon, Loss, ControlDemon, PredictionDemon,
                                 ParametricDemon)
-from pandemonium.experience import Trajectory, Transitions
+from pandemonium.experience import ER, PER, Trajectory, Transitions
 
 
 class OfflineTD(Demon):
@@ -47,7 +46,7 @@ class DeepOfflineTD(OfflineTD, ParametricDemon):
     """
 
     def __init__(self,
-                 replay_buffer: Replay,
+                 replay_buffer: ER,
                  target_update_freq: int = 0,
                  warm_up_period: int = 0,
                  **kwargs):
@@ -81,16 +80,37 @@ class DeepOfflineTD(OfflineTD, ParametricDemon):
         self.replay_buffer = replay_buffer
 
     def learn(self, transitions: Transitions):
-        self.update_counter += 1
-        self.replay_buffer.feed_batch(transitions)
+
+        # Add transitions to the replay buffer
+        if isinstance(self.replay_buffer, PER):
+            # Compute TD-error to determine priorities for transitions
+            trajectory = Trajectory.from_transitions(transitions)
+            _, info = self.delta(trajectory)
+            priorities = info['td_error'].abs() + self.replay_buffer.ε
+            priorities = [w.item() for w in priorities]
+            self.replay_buffer.add_batch(transitions, priorities)
+        else:
+            self.replay_buffer.add_batch(transitions)
+
         self.sync_target()
 
+        # Wait until warm up period is over
+        self.update_counter += 1
         if self.update_counter < self.warm_up_period:
             return None, dict()
 
+        # Learn from experience
         transitions = self.replay_buffer.sample()
         trajectory = Trajectory.from_transitions(transitions)
-        return self.delta(trajectory)
+        δ, info = self.delta(trajectory)
+
+        # Update the priorities according to the new TD-error
+        if isinstance(self.replay_buffer, PER):
+            priorities = info['td_error'].abs() + self.replay_buffer.ε
+            priorities = [w.item() for w in priorities]
+            indexes = trajectory.buffer_index.tolist()
+            self.replay_buffer.update_priorities(indexes, priorities)
+        return δ, info
 
     def sync_target(self):
         if self.target_update_freq and self.update_counter % self.target_update_freq == 0:
@@ -136,45 +156,50 @@ class OfflineTDControl(OfflineTD, ControlDemon):
         """ Computes value targets from action-value pairs in the trajectory """
         raise NotImplementedError
 
+    COUNT = 0
+
     def delta(self, trajectory: Trajectory) -> Loss:
         x = self.feature(trajectory.s0)
         a = torch.arange(x.size(0)), trajectory.a
         v = self.predict_q(x)[a].unsqueeze(-1)
         u = self.target(trajectory).detach()
-        δ = self.criterion(v, u)
-        return δ, {'td': δ.item()}
+        δ = self.criterion(v, u, reduction='none')
+        loss = (δ * trajectory.ρ).mean()
+        if trajectory.r.bool().any():
+            self.COUNT += 1
+            print(self.COUNT)
+        return loss, {'loss': loss.item(), 'td_error': δ}
 
     def target(self, trajectory: Trajectory):
         return super().target(trajectory, v=self.q_target(trajectory))
 
 
 class TTD(OfflineTD):
-    r""" Truncated :math:`\text{TD}(\lambda)` """
+    r""" Truncated :math:`\text{TD}(\lambda)`
+
+    Notes
+    -----
+    Generalizes $n$-step $\text{TD}$ by allowing arbitrary mixing of
+    $n$-step returns via $\lambda$ parameter.
+
+    Depending on the algorithm, vector `v` would contain different
+    bootstrapped estimates of values:
+
+    .. math::
+        - \text{TD}(\lambda) (forward view): state value estimates \text{V_t}(s)
+        - \text{Q}(\lambda): action value estimates \max\limits_{a}(Q_t(s_t, a))
+        - \text{SARSA}(\lambda): action value estimates Q_t(s_t, a_t)
+
+    The resulting vector `u` contains target returns for each state along
+    the trajectory, with $V(S_i)$ for $i \in \{0, 1, \dots, n-1\}$ getting
+    updated towards $[n, n-1, \dots, 1]$-step $\lambda$ returns respectively.
+
+    References
+    ----------
+    Sutton and Barto, ch. 12.3, 12.8, equation (12.18)
+    """
 
     def target(self, trajectory: Trajectory, v: torch.Tensor):
-        r"""
-
-        Generalizes $n$-step $\text{TD}$ by allowing arbitrary mixing of
-        $n$-step returns via $\lambda$ parameter.
-
-        Depending on the algorithm, vector `v` would contain different
-        bootstrapped estimates of values:
-
-        .. math::
-            - \text{TD}(\lambda) (forward view): state value estimates \text{V_t}(s)
-            - \text{Q}(\lambda): action value estimates \max\limits_{a}(Q_t(s_t, a))
-            - \text{SARSA}(\lambda): action value estimates Q_t(s_t, a_t)
-
-        The resulting vector `u` contains target returns for each state along
-        the trajectory, with $V(S_i)$ for $i \in \{0, 1, \dots, n-1\}$ getting
-        $[n, n-1, \dots, 1]$-step $\lambda$ returns respectively.
-
-        References
-        ----------
-        Sutton and Barto, ch. 12.8, equation (12.18)
-
-        """
-
         γ = self.gvf.continuation(trajectory)
         z = self.gvf.cumulant(trajectory)
         λ = self.λ(trajectory)

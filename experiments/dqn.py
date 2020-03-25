@@ -1,18 +1,16 @@
 from functools import reduce, partial
 
 import torch
-from gym_minigrid.envs import EmptyEnv
-from gym_minigrid.wrappers import FullyObsWrapper, ImgObsWrapper
+from gym_minigrid.wrappers import ImgObsWrapper
 from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
 from pandemonium.demons.control import DQN
-from pandemonium.envs import FourRooms
-from pandemonium.envs.minigrid.wrappers import OneHotObsWrapper
+from pandemonium.envs import FourRooms, EmptyEnv
 from pandemonium.envs.wrappers import Torch
-from pandemonium.networks.bodies import Identity, ConvBody
+from pandemonium.networks.bodies import ConvBody
 from pandemonium.policies.discrete import Egreedy
-from pandemonium.utilities.replay import Replay
+from pandemonium.experience import ER, PER
 from ray.rllib.utils.schedules import ConstantSchedule, LinearSchedule
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -86,17 +84,16 @@ policy.act = partial(policy.act, vf=aqf)
 # ==================================
 # Learning Algorithm
 # ==================================
-BATCH_SIZE = 32
+BATCH_SIZE = 16
 prediction_demons = list()
 
-replay = Replay(memory_size=100000, batch_size=BATCH_SIZE)
 control_demon = DQN(
     gvf=gvf,
     aqf=aqf,
     avf=torch.nn.Linear(feature_extractor.feature_dim, 1),
     feature=feature_extractor,
     behavior_policy=policy,
-    replay_buffer=replay,
+    replay_buffer=PER(size=10000, batch_size=BATCH_SIZE),
     target_update_freq=200,
     warm_up_period=100,
     double=True,

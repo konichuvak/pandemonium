@@ -1,6 +1,7 @@
 from functools import reduce
 
 import torch
+from gym_minigrid.envs import DoorKeyEnv
 from gym_minigrid.wrappers import ImgObsWrapper, FullyObsWrapper
 from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
@@ -10,7 +11,7 @@ from pandemonium.demons.control import TDAC
 from pandemonium.envs import FourRooms, EmptyEnv
 from pandemonium.envs.minigrid.wrappers import OneHotObsWrapper
 from pandemonium.envs.wrappers import Torch
-from pandemonium.networks.bodies import ConvBody, Identity, FCBody
+from pandemonium.networks.bodies import ConvBody, ConvLSTM, Identity
 from pandemonium.policies.discrete import Egreedy
 from pandemonium.policies.gradient import VPG
 from ray.rllib.utils.schedules import ConstantSchedule
@@ -26,9 +27,9 @@ __all__ = ['AGENT', 'ENV', 'WRAPPERS', 'BATCH_SIZE']
 # ------------------------------------------------------------------------------
 
 envs = [
-    EmptyEnv(size=10),
+    # EmptyEnv(size=10),
     # FourRooms(),
-    # DoorKeyEnv(size=7),
+    DoorKeyEnv(size=7),
     # MultiRoomEnv(4, 4),
     # CrossingEnv(),
 ]
@@ -37,9 +38,9 @@ WRAPPERS = [
     # SimplifyActionSpace,
 
     # Observation wrappers
-    FullyObsWrapper,
-    # ImgObsWrapper,
-    OneHotObsWrapper,
+    # FullyObsWrapper,
+    ImgObsWrapper,
+    # OneHotObsWrapper,
     # FlatObsWrapper,
     lambda e: Torch(e, device=device)
 ]
@@ -69,8 +70,12 @@ obs = ENV.reset()
 #     *obs.shape[1:], feature_dim=2 ** 8,
 #     channels=(8, 16, 32), kernels=(2, 2, 2), strides=(1, 1, 1)
 # )
+feature_extractor = ConvLSTM(
+    256, 1, *obs.shape[1:], feature_dim=2 ** 8,
+    channels=(8, 16, 32), kernels=(2, 2, 2), strides=(1, 1, 1)
+)
 # feature_extractor = FCBody(state_dim=obs.shape[1], hidden_units=(256,))
-feature_extractor = Identity(state_dim=obs.shape[1])
+# feature_extractor = Identity(state_dim=obs.shape[1])
 
 # ==================================
 # Behavioral Policy

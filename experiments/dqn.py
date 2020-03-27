@@ -76,7 +76,7 @@ feature_extractor = ConvBody(
 # ==================================
 
 # TODO: tie the warmup period withe the annealed exploration period
-schedule_steps = int(10e5)
+schedule_steps = int(1e5)
 policy = Egreedy(
     epsilon=LinearSchedule(schedule_timesteps=schedule_steps,
                            final_p=0.1, initial_p=1, framework='torch'),
@@ -89,16 +89,16 @@ policy.act = partial(policy.act, vf=aqf)
 # Learning Algorithm
 # ==================================
 BATCH_SIZE = 32
-# replay = PER(
-#     size=100000,
-#     batch_size=BATCH_SIZE,
-#     alpha=0.95,
-#     beta=LinearSchedule(schedule_timesteps=schedule_steps,
-#                         initial_p=1, final_p=0.1, framework='torch'),
-#     epsilon=1e-6
-# )
+replay = PER(
+    size=1000,
+    batch_size=BATCH_SIZE,
+    alpha=0.95,
+    beta=LinearSchedule(schedule_timesteps=schedule_steps,
+                        initial_p=1, final_p=0.1, framework='torch'),
+    epsilon=1e-6
+)
 
-replay = ER(100000, BATCH_SIZE)
+# replay = ER(1000, BATCH_SIZE)
 
 prediction_demons = list()
 

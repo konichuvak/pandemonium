@@ -22,6 +22,7 @@ def gen_pbar(stats):
         'policy_loss': ('π_loss', rounding + 3),
         'value_loss': ('v_loss', rounding + 3),
         'loss': ('loss', rounding + 3),
+        'epsilon': ('ε',  rounding + 3),
     }
     metrics = ''
     for metric, value in stats.items():
@@ -54,7 +55,13 @@ def trajectory_stats(traj: Trajectory):
 
     # TODO: Discounts
 
-    # TODO: Epsilon / temperature
+    for metric, values in traj.info.items():
+        if metric == 'epsilon':
+            stats.update({'epsilon': values[-1]})
+        elif metric == 'temperature':
+            stats.update({'temperature': values[-1]})
+        elif metric == 'entropy':
+            stats.update({'entropy': values.mean().item()})
 
     stats.update({
         'max_reward': np.max(reward_tracker),
@@ -70,7 +77,6 @@ def trajectory_stats(traj: Trajectory):
 # ------------------------------------------------------------------------------
 
 EXPERIMENT_PATH = EXPERIMENT_DIR / str(datetime.now().replace(microsecond=0))
-print(EXPERIMENT_PATH)
 EXPERIMENT_PATH.mkdir()
 PARAMETER_DIR = EXPERIMENT_PATH / 'weights'
 PARAMETER_DIR.mkdir()
@@ -145,14 +151,14 @@ for episode in range(10000 + 1):
             logs.update(**trajectory_stats(logs.pop('trajectory')))
 
             # if step % (BATCH_SIZE * 10) == 0:
-            desc = f"E {episode:3} | STEP {step:7} | TIME {total_time + logs.pop('episode_time'):5} | {EXPERIMENT_PATH} | {ENV.unwrapped.__class__.__name__}"
+            desc = f"E {episode:3} | STEP {step:7} | TIME {total_time + logs.pop('episode_time'):5} | {EXPERIMENT_PATH} | {ENV.unwrapped.__class__.__name__} "
             logger.info(desc)
 
             # Create a schematic of computational graph
-            if episode % 2 == 0:
-                graph = make_dot(logs['total_loss'],
-                                 params=dict(AGENT.horde.named_parameters()))
-                graph.render(f'{EXPERIMENT_PATH}/graph')
+            # if episode % 3 == 0:
+            #     graph = make_dot(logs['total_loss'],
+            #                      params=dict(AGENT.horde.named_parameters()))
+            #     graph.render(f'{EXPERIMENT_PATH}/graph')
 
             # Tensorboard logging
             exclude_from_tb = {

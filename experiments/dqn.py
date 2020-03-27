@@ -1,17 +1,19 @@
 from functools import reduce, partial
 
 import torch
-from gym_minigrid.wrappers import ImgObsWrapper
+from gym_minigrid.wrappers import ImgObsWrapper, FullyObsWrapper
+from ray.rllib.utils.schedules import ConstantSchedule, LinearSchedule
+
 from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
 from pandemonium.demons.control import DQN
-from pandemonium.envs import FourRooms, EmptyEnv
+from pandemonium.envs import EmptyEnv
+from pandemonium.envs.minigrid.wrappers import OneHotObsWrapper
 from pandemonium.envs.wrappers import Torch
-from pandemonium.networks.bodies import ConvBody
+from pandemonium.experience import PER, ER
+from pandemonium.networks.bodies import ConvBody, Identity
 from pandemonium.policies.discrete import Egreedy
-from pandemonium.experience import ER, PER
-from ray.rllib.utils.schedules import ConstantSchedule, LinearSchedule
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = torch.device('cpu')
@@ -34,9 +36,9 @@ WRAPPERS = [
     # SimplifyActionSpace,
 
     # Observation wrappers
-    # FullyObsWrapper,
-    ImgObsWrapper,
-    # OneHotObsWrapper,
+    FullyObsWrapper,
+    # ImgObsWrapper,
+    OneHotObsWrapper,
     # FlatObsWrapper,
     lambda e: Torch(e, device=device)
 ]
@@ -62,20 +64,21 @@ gvf = GVF(target_policy=target_policy,
 # Representation learning
 # ==================================
 obs = ENV.reset()
-feature_extractor = ConvBody(
-    *obs.shape[1:], feature_dim=2 ** 8,
-    channels=(8, 16, 32), kernels=(2, 2, 2), strides=(1, 1, 1)
-)
+# feature_extractor = ConvBody(
+#     *obs.shape[1:], feature_dim=2 ** 8,
+#     channels=(8, ), kernels=(2, ), strides=(1, )
+# )
 # feature_extractor = FCBody(state_dim=obs.shape[1], hidden_units=(256,))
-# feature_extractor = Identity(state_dim=obs.shape[1])
+feature_extractor = Identity(state_dim=obs.shape[1])
 
 # ==================================
 # Behavioral Policy
 # ==================================
 
 # TODO: tie the warmup period withe the annealed exploration period
+schedule_steps = int(10e5)
 policy = Egreedy(
-    epsilon=LinearSchedule(schedule_timesteps=1000000, final_p=0.1),
+    epsilon=LinearSchedule(schedule_steps, 0.1, 1),
     action_space=ENV.action_space
 )
 aqf = torch.nn.Linear(feature_extractor.feature_dim, ENV.action_space.n)
@@ -85,6 +88,16 @@ policy.act = partial(policy.act, vf=aqf)
 # Learning Algorithm
 # ==================================
 BATCH_SIZE = 16
+# replay_buffer = PER(
+#     size=100000,
+#     batch_size=BATCH_SIZE,
+#     alpha=0.95,
+#     beta=LinearSchedule(schedule_steps, 1, 0.1),
+#     epsilon=1e-6
+# )
+
+replay_buffer = ER(100000, BATCH_SIZE)
+
 prediction_demons = list()
 
 control_demon = DQN(
@@ -93,7 +106,7 @@ control_demon = DQN(
     avf=torch.nn.Linear(feature_extractor.feature_dim, 1),
     feature=feature_extractor,
     behavior_policy=policy,
-    replay_buffer=PER(size=10000, batch_size=BATCH_SIZE),
+    replay_buffer=replay_buffer,
     target_update_freq=200,
     warm_up_period=100,
     double=True,

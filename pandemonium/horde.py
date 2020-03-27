@@ -70,9 +70,10 @@ class Horde(torch.nn.Module):
             self.optimizer.step()
 
         # Create a schematic of computational graph
-        graph = make_dot(total_loss, params=dict(self.named_parameters()))
+        # graph = make_dot(total_loss, params=dict(self.named_parameters()))
 
-        logs.update({'total_loss': total_loss.item(), 'graph': graph})
+        # logs.update({'total_loss': total_loss.item(), 'graph': graph})
+        logs.update({'total_loss': total_loss.item()})
         return logs
 
     def __str__(self):

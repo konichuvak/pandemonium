@@ -5,10 +5,10 @@ import numpy as np
 import tensorboardX
 import torch
 from experiments import EXPERIMENT_DIR, RLogger
-# from experiments.a2c import *
 # from experiments.option_critic import *
 # from experiments.unreal import *
-from experiments.dqn import *
+from experiments.a2c import *
+# from experiments.dqn import *
 from pandemonium.experience import Trajectory
 
 
@@ -141,7 +141,7 @@ for episode in range(10000 + 1):
             step = total_steps + logs.pop('episode_steps')
             logs.update(**trajectory_stats(logs.pop('trajectory')))
 
-            # {gen_pbar(logs)}
+            # if step % (BATCH_SIZE * 10) == 0:
             desc = f"E {episode:3} | STEP {step:7} | TIME {total_time + logs.pop('episode_time'):5} | {EXPERIMENT_PATH} | {ENV.unwrapped.__class__.__name__}"
             logger.info(desc)
 

@@ -43,6 +43,10 @@ class ER:
         return len(self._storage)
 
     @property
+    def capacity(self):
+        return self._maxsize
+
+    @property
     def is_full(self):
         return len(self._storage) == self._maxsize
 
@@ -185,11 +189,11 @@ class PER(ER):
         β = self.β.value(self._num_sampled)
         total_priority = self._it_sum.sum()
         p_min = self._it_min.min() / total_priority
-        ρ_max = (p_min * len(self)) ** (-β)
+        ρ_max = (self.capacity * p_min) ** (-β)
         for i in idxes:
             transition = self._storage[i]._asdict()
             prob = self._it_sum[i] / total_priority
-            transition['ρ'] = (prob * len(self)) ** (-β) / ρ_max
+            transition['ρ'] = (self.capacity * prob) ** (-β) / ρ_max
             transition['buffer_index'] = i
             transitions.append(Transition(**transition))
 

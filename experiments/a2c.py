@@ -1,11 +1,11 @@
 from functools import reduce
 
 import torch
-from gym_minigrid.wrappers import ImgObsWrapper
+from gym_minigrid.wrappers import ImgObsWrapper, FullyObsWrapper
 from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
-from pandemonium.demons.td import TDn
+from pandemonium.demons.offline_td import TDn
 from pandemonium.demons.control import TDAC
 from pandemonium.envs import FourRooms, EmptyEnv
 from pandemonium.envs.minigrid.wrappers import OneHotObsWrapper
@@ -90,7 +90,7 @@ class ActorCritic(TDAC, TDn):
 
 
 control_demon = ActorCritic(
-    actor=policy,
+    behavior_policy=policy,
     gvf=gvf,
     avf=nn.Linear(feature_extractor.feature_dim, 1),
     feature=feature_extractor,

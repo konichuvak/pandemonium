@@ -176,12 +176,12 @@ class TDAC(AC, OfflineTDPrediction, TTD):
 
     """
 
+    def v_target(self, trajectory: Trajectory):
+        return self.avf(trajectory.x1)
+
     def critic_loss(self, trajectory: Trajectory):
-        x = self.feature(trajectory.s0)
-        v = self.predict(x)
-        u = self.target(trajectory).detach()
-        δ = self.criterion(v, u)
-        return δ, u - v, {'td': δ.item()}
+        loss, info = OfflineTDPrediction.delta(self, trajectory)
+        return loss, info['td_error'], info
 
 
 class UNREAL(TDAC, TDn):

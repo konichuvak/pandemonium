@@ -142,8 +142,9 @@ class OfflineTDPrediction(OfflineTD, PredictionDemon):
         x = self.feature(trajectory.s0)
         v = self.predict(x)
         u = self.target(trajectory).detach()
-        δ = self.criterion(v, u)
-        return δ, {'td': δ.item()}
+        δ = self.criterion(v, u, reduction='none')
+        loss = (δ * trajectory.ρ).mean()
+        return loss, {'loss': loss.item(), 'td_error': δ}
 
     def target(self, trajectory: Trajectory):
         return super().target(trajectory, v=self.v_target(trajectory))

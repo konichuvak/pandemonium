@@ -4,8 +4,8 @@ from typing import List
 
 import numpy as np
 from ray.rllib.utils.schedules import Schedule, ConstantSchedule
-
 from pandemonium.experience import Transitions, Transition
+# from ray.rllib.optimizers.segment_tree import SumSegmentTree, MinSegmentTree
 from pandemonium.experience.segment_tree import SumSegmentTree, MinSegmentTree
 
 
@@ -94,7 +94,7 @@ class ER:
             ix = np.random.randint(batch_size, len(self))
             samples = self._storage[ix:ix + batch_size]
         else:
-            ix = np.random.randint(batch_size, len(self), size=batch_size)
+            ix = np.random.randint(0, len(self), size=batch_size)
             samples = [self._storage[i] for i in ix]
 
         return samples
@@ -179,8 +179,12 @@ class PER(ER):
         self._num_sampled += batch_size
 
         if contiguous:
-            idx = self._sample_proportional(1)[0]
-            idxes = list(range(max(idx - batch_size, 0), idx))
+            # extra mass to ensure that we avoid sampling idx < batch_size
+            mass = random.random() * self._it_sum.sum(batch_size, len(self))
+            extra_mass = self._it_sum.sum(0, batch_size)
+            idx = self._it_sum.find_prefixsum_idx(mass + extra_mass)
+            assert idx >= batch_size
+            idxes = list(range(idx - batch_size, idx))
         else:
             idxes = self._sample_proportional(batch_size)
 

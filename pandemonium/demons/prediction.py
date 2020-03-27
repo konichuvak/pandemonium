@@ -1,21 +1,25 @@
 import torch.nn.functional as F
+from torch import nn
+
 from pandemonium.demons.demon import Loss, LinearDemon, ParametricDemon
 from pandemonium.demons.offline_td import TDn, OfflineTDPrediction
-from pandemonium.experience import Trajectory
+from pandemonium.experience import ER, Trajectory
 from pandemonium.networks import Reshape
-from pandemonium.utilities.replay import Replay
 from pandemonium.utilities.utilities import get_all_classes
-from torch import nn
 
 
 class RewardPrediction(ParametricDemon, OfflineTDPrediction):
     """ Classifies reward at the end of a state sequence
 
-     Used as an auxiliary task in UNREAL architecture.
-     """
+    Used as an auxiliary task in UNREAL architecture.
+
+    References
+    ----------
+    RL with unsupervised auxiliary tasks (Jaderberd et al., 2016)
+    """
 
     def __init__(self,
-                 replay_buffer: Replay,
+                 replay_buffer: ER,
                  feature,
                  output_dim: int = 3,
                  sequence_size: int = 3,
@@ -56,9 +60,13 @@ class ValueReplay(LinearDemon, OfflineTDPrediction, TDn):
     distribution and performs extra value function regression. It is used
     in the UNREAL architecture as an auxiliary task that helps representation
     learning.
+
+    References
+    ----------
+    RL with unsupervised auxiliary tasks (Jaderberd et al., 2016)
     """
 
-    def __init__(self, replay_buffer: Replay, **kwargs):
+    def __init__(self, replay_buffer: ER, **kwargs):
         super().__init__(output_dim=1, **kwargs)
         self.replay_buffer = replay_buffer
 

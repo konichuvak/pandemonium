@@ -1,16 +1,17 @@
 from functools import reduce
 
 import torch
-from gym_minigrid.wrappers import ImgObsWrapper
+from gym_minigrid.envs import DoorKeyEnv
+from gym_minigrid.wrappers import ImgObsWrapper, FullyObsWrapper
 from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
-from pandemonium.demons.td import TDn
+from pandemonium.demons.offline_td import TDn
 from pandemonium.demons.control import TDAC
 from pandemonium.envs import FourRooms, EmptyEnv
 from pandemonium.envs.minigrid.wrappers import OneHotObsWrapper
 from pandemonium.envs.wrappers import Torch
-from pandemonium.networks.bodies import ConvBody, Identity, FCBody
+from pandemonium.networks.bodies import ConvBody, ConvLSTM, Identity
 from pandemonium.policies.discrete import Egreedy
 from pandemonium.policies.gradient import VPG
 from ray.rllib.utils.schedules import ConstantSchedule
@@ -26,9 +27,9 @@ __all__ = ['AGENT', 'ENV', 'WRAPPERS', 'BATCH_SIZE']
 # ------------------------------------------------------------------------------
 
 envs = [
-    EmptyEnv(size=10),
+    # EmptyEnv(size=10),
     # FourRooms(),
-    # DoorKeyEnv(size=7),
+    DoorKeyEnv(size=7),
     # MultiRoomEnv(4, 4),
     # CrossingEnv(),
 ]
@@ -51,7 +52,7 @@ print(ENV)
 # Specify a question of interest
 # ------------------------------------------------------------------------------
 
-target_policy = Egreedy(epsilon=ConstantSchedule(0.),
+target_policy = Egreedy(epsilon=ConstantSchedule(0., framework='torch'),
                         action_space=ENV.action_space)
 gvf = GVF(target_policy=target_policy,
           cumulant=Fitness(ENV),
@@ -65,8 +66,12 @@ gvf = GVF(target_policy=target_policy,
 # Representation learning
 # ==================================
 obs = ENV.reset()
-feature_extractor = ConvBody(
-    *obs.shape[1:], feature_dim=2 ** 8,
+# feature_extractor = ConvBody(
+#     *obs.shape[1:], feature_dim=2 ** 8,
+#     channels=(8, 16, 32), kernels=(2, 2, 2), strides=(1, 1, 1)
+# )
+feature_extractor = ConvLSTM(
+    256, 1, *obs.shape[1:], feature_dim=2 ** 8,
     channels=(8, 16, 32), kernels=(2, 2, 2), strides=(1, 1, 1)
 )
 # feature_extractor = FCBody(state_dim=obs.shape[1], hidden_units=(256,))
@@ -90,7 +95,7 @@ class ActorCritic(TDAC, TDn):
 
 
 control_demon = ActorCritic(
-    actor=policy,
+    behavior_policy=policy,
     gvf=gvf,
     avf=nn.Linear(feature_extractor.feature_dim, 1),
     feature=feature_extractor,

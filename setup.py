@@ -17,17 +17,20 @@ DESCRIPTION = 'predictive knowledge acquisition in RL agents'
 REQUIRES_PYTHON = '>=3.6.0'
 VERSION = '6.6.6'
 
+# sudo apt-get install python-opencv graphviz
 # What packages are required for this module to be executed?
 REQUIRED = [
-    'ray',
+    'numpy',
     'torch',
     'torchviz',
-    'numpy',
+    'tensorboardX',
     'tqdm',
     'plotly',
-    'termcolor',
     'colorlog',
-    'pygame'
+    'pygame',
+    'gym-minigrid',
+    'ray[rllib]',
+    # 'deepmind_lab'
 ]
 
 # What packages are optional?

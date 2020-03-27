@@ -69,7 +69,7 @@ class Egreedy(Discrete):
 
     def act(self, *args, **kwargs):
         dist = self.dist(*args, **kwargs)
-        return dist.sample(), {'action_dist': dist,
+        return dist.sample(), {'entropy': dist.entropy(),
                                'epsilon': self.ε.value(self.t)}
 
     def __str__(self):
@@ -99,7 +99,7 @@ class SoftmaxPolicy(Discrete):
 
     def act(self, *args, **kwargs):
         dist = self.dist(*args, **kwargs)
-        return dist.sample(), {'action_dist': dist,
+        return dist.sample(), {'entropy': dist.entropy(),
                                'temperature': self.τ.value(self.t)}
 
     def __str__(self):
@@ -147,7 +147,7 @@ class HierarchicalPolicy(Discrete):
             self.idx = option_dist.sample().item()
             self.ω = self.Ω[self.idx]
         action_dist = self.ω.policy.dist(state)
-        info = {'beta': β, 'action_dist': action_dist, 'option': self.idx}
+        info = {'beta': β, 'entropy': action_dist.entropy(), 'option': self.idx}
         return action_dist.sample().item(), info
 
 

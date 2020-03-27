@@ -3,18 +3,19 @@ from functools import reduce
 
 import pygame
 import torch
+from tqdm import tqdm
 from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness, PixelChange
 from pandemonium.demons.control import UNREAL, PixelControl
-from pandemonium.demons.prediction import ValueReplay, RewardPrediction
+from pandemonium.demons.prediction import ValueReplay
 from pandemonium.envs import DeepmindLabEnv
 from pandemonium.envs.wrappers import Torch
 from pandemonium.experience import Transition, Trajectory
 from pandemonium.networks.bodies import ConvBody
 from pandemonium.policies.discrete import Egreedy
 from pandemonium.policies.gradient import VPG
-from pandemonium.utilities.replay import Replay
+from pandemonium.experience.buffers import ER
 from ray.rllib.utils.schedules import ConstantSchedule
 
 __all__ = ['AGENT', 'ENV', 'WRAPPERS', 'BATCH_SIZE', 'device', 'viz']
@@ -28,32 +29,17 @@ device = torch.device('cpu')
 
 envs = [
     DeepmindLabEnv('seekavoid_arena_01'),
-    # EmptyEnv(size=10),
-    # FourRooms(),
-    # DoorKeyEnv(size=7),
-    # MultiRoomEnv(4, 4),
-    # CrossingEnv(),
 ]
 WRAPPERS = [
-    # Non-observation wrappers
-    # SimplifyActionSpace,
-
-    # Observation wrappers
-    # FullyObsWrapper,
-    # RGBImgPartialObsWrapper,
-    # ImgObsWrapper,
-    # OneHotObsWrapper,
-    # FlatObsWrapper,
-    # lambda e: ImageNormalizer(e),
     lambda e: Torch(e, device=device),
 ]
 ENV = reduce(lambda e, wrapper: wrapper(e), WRAPPERS, envs[0])
-ENV.unwrapped.max_steps = float('inf')
 
 # ------------------------------------------------------------------------------
 # Specify questions of interest (main and auxiliary tasks)
 # ------------------------------------------------------------------------------
-π = Egreedy(epsilon=ConstantSchedule(0.), action_space=ENV.action_space)
+π = Egreedy(epsilon=ConstantSchedule(0., framework='torch'),
+            action_space=ENV.action_space)
 optimal_control = GVF(
     target_policy=π,
     cumulant=Fitness(ENV),
@@ -88,8 +74,12 @@ obs = ENV.reset()
 print(obs.shape)
 feature_extractor = ConvBody(
     *obs.shape[1:], feature_dim=2 ** 8,
-    channels=[32, 64, 64], kernels=[8, 4, 3], strides=[4, 2, 1]
+    channels=(32, 64, 64), kernels=(8, 4, 3), strides=(4, 2, 1)
 )
+# feature_extractor = ConvLSTM(
+#     256, 1, *obs.shape[1:], feature_dim=2 ** 8,
+#     channels=(16, 32), kernels=(8, 4), strides=(4, 2)
+# )
 
 # ==================================
 # Behavioral Policy
@@ -106,7 +96,7 @@ policy = VPG(feature_dim=feature_extractor.feature_dim,
 BATCH_SIZE = 32
 
 # TODO: Skew the replay for reward prediction task
-replay = Replay(memory_size=2000, batch_size=BATCH_SIZE)
+replay = ER(size=2000, batch_size=BATCH_SIZE)
 
 # rp = RewardPrediction(gvf=reward_prediction,
 #                       feature=feature_extractor,
@@ -126,10 +116,10 @@ pc = PixelControl(gvf=pixel_control,
 
 control_demon = UNREAL(gvf=optimal_control,
                        replay_buffer=replay,
-                       actor=policy,
+                       behavior_policy=policy,
                        feature=feature_extractor)
 
-demon_weights = torch.tensor([1, 1, 0.5], dtype=torch.float, device=device)
+demon_weights = torch.tensor([1, 1], dtype=torch.float, device=device)
 
 # ------------------------------------------------------------------------------
 # Specify agent that will be interacting with the environment
@@ -137,7 +127,7 @@ demon_weights = torch.tensor([1, 1, 0.5], dtype=torch.float, device=device)
 
 horde = Horde(
     control_demon=control_demon,
-    prediction_demons=[vr, pc],
+    prediction_demons=[pc],
     aggregation_fn=lambda losses: demon_weights.dot(losses),
     device=device,
 )
@@ -145,7 +135,7 @@ AGENT = Agent(feature_extractor, policy, horde)
 print(horde)
 
 # ------------------------------------------------------------------------------
-FPS = 120
+FPS = 60
 display_env = Torch(
     env=DeepmindLabEnv(
         level='seekavoid_arena_01',
@@ -168,10 +158,10 @@ def viz():
     v = control_demon(x0)
 
     # Simple circular buffers for displaying value trace and reward predictions
-    states = deque([s0], maxlen=rp.sequence_size)
+    # states = deque([s0], maxlen=rp.sequence_size)
     values = deque([v], maxlen=100)
 
-    for _ in range(1000):
+    for _ in tqdm(range(300)):
 
         # Step in the actual environment with the AC demon
         a, policy_info = policy(x0)
@@ -194,18 +184,18 @@ def viz():
         display.show_value(torch.tensor(list(values)).cpu().detach().numpy())
 
         # Display reward prediction bar
-        states.append(s0)
-        if len(states) != states.maxlen:
-            continue
-        x = rp.feature(torch.cat(list(states)))
-        v = rp.predict(x.view(1, -1)).softmax(1)
-        v = v.squeeze().cpu().detach().numpy()
-        display.show_reward_prediction(reward=reward, rp_c=v)
+        # states.append(s0)
+        # if len(states) != states.maxlen:
+        #     continue
+        # x = rp.feature(torch.cat(list(states)))
+        # v = rp.predict(x.view(1, -1)).softmax(1)
+        # v = v.squeeze().cpu().detach().numpy()
+        # display.show_reward_prediction(reward=reward, rp_c=v)
 
         # Display pixel change
         z = pc.gvf.cumulant(traj).squeeze()
         x = pc.feature(traj.s0)
-        v = pc.predict_q(x)[[0], traj.a]
+        v = pc.predict_q(x, target=False)[[0], traj.a]
         v = v.squeeze().cpu().detach().numpy()
         z = z.squeeze().cpu().detach().numpy()
         display.show_pixel_change(z, display.obs_shape[0], 0, 3.0, "PC")

@@ -3,6 +3,8 @@ from datetime import datetime
 
 import numpy as np
 import tensorboardX
+from torchviz import make_dot
+
 import torch
 from experiments import EXPERIMENT_DIR, RLogger
 # from experiments.option_critic import *
@@ -145,9 +147,10 @@ for episode in range(10000 + 1):
             desc = f"E {episode:3} | STEP {step:7} | TIME {total_time + logs.pop('episode_time'):5} | {EXPERIMENT_PATH} | {ENV.unwrapped.__class__.__name__}"
             logger.info(desc)
 
-            # Log a computational graph
-            graph = logs.pop('graph', None)
-            if graph is not None:
+            # Create a schematic of computational graph
+            if episode % 100 == 0:
+                graph = make_dot(logs['total_loss'],
+                                 params=dict(AGENT.horde.named_parameters()))
                 graph.render(f'{EXPERIMENT_PATH}/graph')
 
             # Tensorboard logging

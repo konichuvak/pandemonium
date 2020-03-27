@@ -4,7 +4,6 @@ from typing import List, Callable
 import torch
 from pandemonium.demons import ControlDemon, PredictionDemon
 from torch import nn
-from torchviz import make_dot
 
 
 class Horde(torch.nn.Module):
@@ -69,11 +68,7 @@ class Horde(torch.nn.Module):
             # torch.nn.utils.clip_grad_norm_(self.parameters(), 1)
             self.optimizer.step()
 
-        # Create a schematic of computational graph
-        # graph = make_dot(total_loss, params=dict(self.named_parameters()))
-
-        # logs.update({'total_loss': total_loss.item(), 'graph': graph})
-        logs.update({'total_loss': total_loss.item()})
+        logs.update({'total_loss': total_loss})
         return logs
 
     def __str__(self):

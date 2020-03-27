@@ -36,9 +36,9 @@ WRAPPERS = [
     # SimplifyActionSpace,
 
     # Observation wrappers
-    FullyObsWrapper,
-    # ImgObsWrapper,
-    OneHotObsWrapper,
+    # FullyObsWrapper,
+    ImgObsWrapper,
+    # OneHotObsWrapper,
     # FlatObsWrapper,
     lambda e: Torch(e, device=device)
 ]
@@ -50,7 +50,7 @@ print(ENV)
 # Specify a question of interest
 # ------------------------------------------------------------------------------
 
-target_policy = Egreedy(epsilon=ConstantSchedule(0.),
+target_policy = Egreedy(epsilon=ConstantSchedule(0., framework='torch'),
                         action_space=ENV.action_space)
 gvf = GVF(target_policy=target_policy,
           cumulant=Fitness(ENV),
@@ -64,12 +64,12 @@ gvf = GVF(target_policy=target_policy,
 # Representation learning
 # ==================================
 obs = ENV.reset()
-# feature_extractor = ConvBody(
-#     *obs.shape[1:], feature_dim=2 ** 8,
-#     channels=(8, ), kernels=(2, ), strides=(1, )
-# )
+feature_extractor = ConvBody(
+    *obs.shape[1:], feature_dim=2 ** 8,
+    channels=(8, 16, 32), kernels=(2, 2, 2), strides=(1, 1, 1)
+)
 # feature_extractor = FCBody(state_dim=obs.shape[1], hidden_units=(256,))
-feature_extractor = Identity(state_dim=obs.shape[1])
+# feature_extractor = Identity(state_dim=obs.shape[1])
 
 # ==================================
 # Behavioral Policy
@@ -78,7 +78,8 @@ feature_extractor = Identity(state_dim=obs.shape[1])
 # TODO: tie the warmup period withe the annealed exploration period
 schedule_steps = int(10e5)
 policy = Egreedy(
-    epsilon=LinearSchedule(schedule_steps, 0.1, 1),
+    epsilon=LinearSchedule(schedule_timesteps=schedule_steps,
+                           final_p=0.1, initial_p=1, framework='torch'),
     action_space=ENV.action_space
 )
 aqf = torch.nn.Linear(feature_extractor.feature_dim, ENV.action_space.n)
@@ -87,16 +88,17 @@ policy.act = partial(policy.act, vf=aqf)
 # ==================================
 # Learning Algorithm
 # ==================================
-BATCH_SIZE = 16
-# replay_buffer = PER(
+BATCH_SIZE = 32
+# replay = PER(
 #     size=100000,
 #     batch_size=BATCH_SIZE,
 #     alpha=0.95,
-#     beta=LinearSchedule(schedule_steps, 1, 0.1),
+#     beta=LinearSchedule(schedule_timesteps=schedule_steps,
+#                         initial_p=1, final_p=0.1, framework='torch'),
 #     epsilon=1e-6
 # )
 
-replay_buffer = ER(100000, BATCH_SIZE)
+replay = ER(100000, BATCH_SIZE)
 
 prediction_demons = list()
 
@@ -106,9 +108,10 @@ control_demon = DQN(
     avf=torch.nn.Linear(feature_extractor.feature_dim, 1),
     feature=feature_extractor,
     behavior_policy=policy,
-    replay_buffer=replay_buffer,
+    replay_buffer=replay,
     target_update_freq=200,
-    warm_up_period=100,
+    # warm_up_period=100,
+    warm_up_period=replay.capacity // replay.batch_size,
     double=True,
     duelling=True,
 )

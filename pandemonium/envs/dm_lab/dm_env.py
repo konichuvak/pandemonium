@@ -1,6 +1,6 @@
 from typing import NamedTuple
 
-import deepmind_lab
+# import deepmind_lab
 import gym
 import numpy as np
 from gym.spaces import Box

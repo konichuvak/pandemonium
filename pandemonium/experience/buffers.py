@@ -113,7 +113,7 @@ class PER(ER):
                  size: int,
                  batch_size: int,
                  alpha: float = 0.6,
-                 beta: Schedule = ConstantSchedule(0.4),
+                 beta: Schedule = ConstantSchedule(0.4, framework='torch'),
                  epsilon: float = 1e-6,
                  ):
         """

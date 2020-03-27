@@ -9,8 +9,8 @@ import torch
 from experiments import EXPERIMENT_DIR, RLogger
 # from experiments.option_critic import *
 # from experiments.unreal import *
-from experiments.a2c import *
-# from experiments.dqn import *
+# from experiments.a2c import *
+from experiments.dqn import *
 from pandemonium.experience import Trajectory
 
 
@@ -70,6 +70,7 @@ def trajectory_stats(traj: Trajectory):
 # ------------------------------------------------------------------------------
 
 EXPERIMENT_PATH = EXPERIMENT_DIR / str(datetime.now().replace(microsecond=0))
+print(EXPERIMENT_PATH)
 EXPERIMENT_PATH.mkdir()
 PARAMETER_DIR = EXPERIMENT_PATH / 'weights'
 PARAMETER_DIR.mkdir()
@@ -148,7 +149,7 @@ for episode in range(10000 + 1):
             logger.info(desc)
 
             # Create a schematic of computational graph
-            if episode % 100 == 0:
+            if episode % 2 == 0:
                 graph = make_dot(logs['total_loss'],
                                  params=dict(AGENT.horde.named_parameters()))
                 graph.render(f'{EXPERIMENT_PATH}/graph')

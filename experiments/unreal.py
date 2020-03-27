@@ -15,7 +15,7 @@ from pandemonium.experience import Transition, Trajectory
 from pandemonium.networks.bodies import ConvBody
 from pandemonium.policies.discrete import Egreedy
 from pandemonium.policies.gradient import VPG
-from pandemonium.experience.replay import Replay
+from pandemonium.experience.buffers import ER
 from ray.rllib.utils.schedules import ConstantSchedule
 
 __all__ = ['AGENT', 'ENV', 'WRAPPERS', 'BATCH_SIZE', 'device', 'viz']
@@ -38,7 +38,8 @@ ENV = reduce(lambda e, wrapper: wrapper(e), WRAPPERS, envs[0])
 # ------------------------------------------------------------------------------
 # Specify questions of interest (main and auxiliary tasks)
 # ------------------------------------------------------------------------------
-π = Egreedy(epsilon=ConstantSchedule(0.), action_space=ENV.action_space)
+π = Egreedy(epsilon=ConstantSchedule(0., framework='torch'),
+            action_space=ENV.action_space)
 optimal_control = GVF(
     target_policy=π,
     cumulant=Fitness(ENV),
@@ -95,7 +96,7 @@ policy = VPG(feature_dim=feature_extractor.feature_dim,
 BATCH_SIZE = 32
 
 # TODO: Skew the replay for reward prediction task
-replay = Replay(memory_size=2000, batch_size=BATCH_SIZE)
+replay = ER(size=2000, batch_size=BATCH_SIZE)
 
 # rp = RewardPrediction(gvf=reward_prediction,
 #                       feature=feature_extractor,
@@ -110,7 +111,7 @@ pc = PixelControl(gvf=pixel_control,
                   feature=feature_extractor,
                   behavior_policy=policy,
                   replay_buffer=replay,
-                  warm_up_period=replay.maxsize // replay.batch_size,
+                  warm_up_period=replay.capacity // replay.batch_size,
                   target_update_freq=200)
 
 control_demon = UNREAL(gvf=optimal_control,

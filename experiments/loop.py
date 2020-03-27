@@ -5,10 +5,10 @@ import numpy as np
 import tensorboardX
 import torch
 from experiments import EXPERIMENT_DIR, RLogger
-from experiments.a2c import *
+# from experiments.a2c import *
 # from experiments.option_critic import *
 # from experiments.unreal import *
-# from experiments.dqn import *
+from experiments.dqn import *
 from pandemonium.experience import Trajectory
 
 

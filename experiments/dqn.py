@@ -23,8 +23,8 @@ __all__ = ['AGENT', 'ENV', 'WRAPPERS', 'BATCH_SIZE']
 # ------------------------------------------------------------------------------
 
 envs = [
-    # EmptyEnv(size=10),
-    FourRooms(),
+    EmptyEnv(size=10),
+    # FourRooms(),
     # DoorKeyEnv(size=7),
     # MultiRoomEnv(4, 4),
     # CrossingEnv(),
@@ -34,7 +34,7 @@ WRAPPERS = [
     # SimplifyActionSpace,
 
     # Observation wrappers
-    FullyObsWrapper,
+    # FullyObsWrapper,
     ImgObsWrapper,
     # OneHotObsWrapper,
     # FlatObsWrapper,

@@ -129,7 +129,8 @@ class AC(ParametricDemon):
         raise NotImplementedError
 
     def actor_loss(self, trajectory: Trajectory, weights):
-        return self.μ.delta(trajectory.x0, trajectory.a, weights.squeeze())
+        x = self.feature(trajectory.s0)
+        return self.μ.delta(x, trajectory.a, weights.squeeze())
 
     def delta(self, trajectory: Trajectory) -> Loss:
         stats = dict()

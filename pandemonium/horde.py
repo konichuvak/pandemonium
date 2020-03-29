@@ -72,9 +72,8 @@ class Horde(torch.nn.Module):
         return logs
 
     def __str__(self):
-        s = [textwrap.indent(repr(d), "\t") for d in self.demons.keys()]
-        s = '\n'.join(s)
-        return f"Horde(\n{s}\n)"
+        s = ','.join(self.demons.keys())
+        return f"Horde({s})"
 
     def __repr__(self):
         s = [textwrap.indent(repr(d), "\t") for d in self.demons.values()]

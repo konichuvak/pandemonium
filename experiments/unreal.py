@@ -16,7 +16,7 @@ from pandemonium.networks.bodies import ConvBody
 from pandemonium.policies.discrete import Egreedy
 from pandemonium.policies.gradient import VPG
 from pandemonium.experience.buffers import ER
-from ray.rllib.utils.schedules import ConstantSchedule
+from pandemonium.utilities.schedules import ConstantSchedule
 
 __all__ = ['AGENT', 'ENV', 'WRAPPERS', 'BATCH_SIZE', 'device', 'viz']
 

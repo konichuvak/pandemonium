@@ -2,7 +2,7 @@ from typing import Union
 
 import gym
 import torch
-from ray.rllib.utils.schedules import ConstantSchedule, LinearSchedule
+from pandemonium.utilities.schedules import ConstantSchedule, LinearSchedule
 from torch.distributions import Categorical, Distribution
 
 from pandemonium.policies import Policy, torch_argmax_mask
@@ -72,7 +72,7 @@ class Egreedy(Discrete):
         return dist.sample(), {'entropy': dist.entropy(),
                                'epsilon': self.ε.value(self.t)}
 
-    def __str__(self):
+    def __repr__(self):
         return f'ε-greedy({self.ε})'
 
 

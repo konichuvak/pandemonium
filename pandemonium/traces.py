@@ -21,7 +21,7 @@ class EligibilityTrace:
     def __init__(self, λ, phi_dim):
         assert 0 <= λ <= 1
         self.λ = λ
-        self.trace = self.eligibility = self.e = np.array(phi_dim)
+        self.trace = self.eligibility = self.e = np.zeros(phi_dim)
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError
@@ -46,3 +46,11 @@ class DutchTrace(EligibilityTrace):
         λ, γ, α = self.λ, gamma, alpha
         self.e = λ * γ * self.e + (1 - α * λ * γ * np.dot(self.e, x)) * x
         return self.e
+
+
+class Vtrace(EligibilityTrace):
+    pass
+
+
+class Retrace(EligibilityTrace):
+    pass

@@ -5,7 +5,7 @@ import torch
 from gym_minigrid.envs import DoorKeyEnv
 from gym_minigrid.wrappers import ImgObsWrapper
 from plotly.graph_objects import Figure
-from ray.rllib.utils.schedules import ConstantSchedule
+from pandemonium.utilities.schedules import ConstantSchedule
 
 from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation

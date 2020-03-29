@@ -42,6 +42,10 @@ class DeepOfflineTDControl(DeepOfflineTD, OfflineTDControl):
                 return q - (q - v).mean(1, keepdim=True)
             return self.aqf(x)
 
+    def __repr__(self):
+        r = DeepOfflineTD.__repr__(self)[:-2]
+        return r + f'\n(double): {self.double}\n(duelling): {self.duelling}'
+
 
 class DQN(DeepOfflineTDControl, TDn):
     """ Deep Q-Network based on Watkins Q-learning rule """

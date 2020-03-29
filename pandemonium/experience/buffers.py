@@ -3,10 +3,12 @@ import sys
 from typing import List
 
 import numpy as np
-from ray.rllib.utils.schedules import Schedule, ConstantSchedule
+from pandemonium.utilities.schedules import Schedule, ConstantSchedule
 from pandemonium.experience import Transitions, Transition
 # from ray.rllib.optimizers.segment_tree import SumSegmentTree, MinSegmentTree
 from pandemonium.experience.segment_tree import SumSegmentTree, MinSegmentTree
+
+__all__ = ['ER', 'PER']
 
 
 class ER:
@@ -38,9 +40,6 @@ class ER:
         self._num_added = 0
         self._num_sampled = 0
         self._est_size_bytes = 0
-
-    def __len__(self):
-        return len(self._storage)
 
     @property
     def capacity(self):
@@ -98,6 +97,17 @@ class ER:
             samples = [self._storage[i] for i in ix]
 
         return samples
+
+    def __len__(self):
+        return len(self._storage)
+
+    def __str__(self):
+        return f'{self.__class__.__name__}'
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(' \
+               f'batch_size={self.batch_size}, ' \
+               f'capacity={self.capacity})'
 
 
 class PER(ER):
@@ -224,5 +234,13 @@ class PER(ER):
             self._it_min[idx] = priority ** self.α
             self._max_priority = max(self._max_priority, priority)
 
+    def __repr__(self):
+        return f'{self.__class__.__name__}(' \
+               f'batch_size={self.batch_size}, ' \
+               f'capacity={self.capacity}, ' \
+               f'α={self.α}, ' \
+               f'β={self.β}, ' \
+               f'ε={self.ε})'
 
-__all__ = ['ER', 'PER']
+
+

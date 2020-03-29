@@ -14,7 +14,7 @@ from pandemonium.envs.wrappers import Torch
 from pandemonium.networks.bodies import ConvBody, ConvLSTM, Identity
 from pandemonium.policies.discrete import Egreedy
 from pandemonium.policies.gradient import VPG
-from ray.rllib.utils.schedules import ConstantSchedule
+from pandemonium.utilities.schedules import ConstantSchedule
 from torch import nn
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -72,7 +72,7 @@ obs = ENV.reset()
 # )
 feature_extractor = ConvLSTM(
     256, 1, *obs.shape[1:], feature_dim=2 ** 8,
-    channels=(8, 16, 32), kernels=(2, 2, 2), strides=(1, 1, 1)
+    channels=(8, 16), kernels=(2, 2), strides=(1, 1)
 )
 # feature_extractor = FCBody(state_dim=obs.shape[1], hidden_units=(256,))
 # feature_extractor = Identity(state_dim=obs.shape[1])

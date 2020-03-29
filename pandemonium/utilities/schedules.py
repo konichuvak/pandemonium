@@ -1,5 +1,9 @@
 from ray.rllib.utils.schedules import ConstantSchedule as ConstSchedule
 from ray.rllib.utils.schedules import PolynomialSchedule as PolySchedule
+from ray.rllib.utils.schedules import Schedule
+
+__all__ = ['Schedule', 'ConstantSchedule', 'LinearSchedule',
+           'PolynomialSchedule']
 
 
 class ConstantSchedule(ConstSchedule):

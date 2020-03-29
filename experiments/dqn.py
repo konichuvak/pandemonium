@@ -1,8 +1,9 @@
 from functools import reduce, partial
 
 import torch
+from gym_minigrid.envs import DoorKeyEnv
 from gym_minigrid.wrappers import ImgObsWrapper, FullyObsWrapper
-from ray.rllib.utils.schedules import ConstantSchedule, LinearSchedule
+from pandemonium.utilities.schedules import ConstantSchedule, LinearSchedule
 
 from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
@@ -25,9 +26,9 @@ __all__ = ['AGENT', 'ENV', 'WRAPPERS', 'BATCH_SIZE']
 # ------------------------------------------------------------------------------
 
 envs = [
-    EmptyEnv(size=10),
+    # EmptyEnv(size=10),
     # FourRooms(),
-    # DoorKeyEnv(size=7),
+    DoorKeyEnv(size=7),
     # MultiRoomEnv(4, 4),
     # CrossingEnv(),
 ]
@@ -66,7 +67,7 @@ gvf = GVF(target_policy=target_policy,
 obs = ENV.reset()
 feature_extractor = ConvBody(
     *obs.shape[1:], feature_dim=2 ** 8,
-    channels=(8, 16, 32), kernels=(2, 2, 2), strides=(1, 1, 1)
+    channels=(8, 16), kernels=(2, 2), strides=(1, 1)
 )
 # feature_extractor = FCBody(state_dim=obs.shape[1], hidden_units=(256,))
 # feature_extractor = Identity(state_dim=obs.shape[1])
@@ -129,4 +130,5 @@ horde = Horde(
     device=device
 )
 AGENT = Agent(feature_extractor, policy, horde)
+print(repr(horde))
 print(horde)

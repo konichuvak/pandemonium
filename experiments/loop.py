@@ -4,14 +4,17 @@ from datetime import datetime
 import numpy as np
 import tensorboardX
 from torchviz import make_dot
-
+import os
 import torch
 from experiments import EXPERIMENT_DIR, RLogger
 # from experiments.option_critic import *
 # from experiments.unreal import *
-# from experiments.a2c import *
-from experiments.dqn import *
+from experiments.a2c import *
+# from experiments.dqn import *
 from pandemonium.experience import Trajectory
+
+# Environment variables
+os.environ["OMP_NUM_THREADS"] = "1"
 
 
 def gen_pbar(stats):
@@ -151,7 +154,11 @@ for episode in range(10000 + 1):
             logs.update(**trajectory_stats(logs.pop('trajectory')))
 
             # if step % (BATCH_SIZE * 10) == 0:
-            desc = f"E {episode:3} | STEP {step:7} | TIME {total_time + logs.pop('episode_time'):5} | {EXPERIMENT_PATH} | {ENV.unwrapped.__class__.__name__} "
+            desc = f"E {episode:3} | STEP {step:7} | " \
+                   f"TIME {total_time + logs.pop('episode_time'):5} | " \
+                   f"{EXPERIMENT_PATH} | " \
+                   f"{ENV.unwrapped.__class__.__name__} | " \
+                   f"{AGENT.horde}"
             logger.info(desc)
 
             # Create a schematic of computational graph

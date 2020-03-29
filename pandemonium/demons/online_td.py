@@ -1,6 +1,6 @@
 from typing import Type
 
-from pandemonium.demons import Demon, Loss
+from pandemonium.demons import PredictionDemon, Demon, Loss, ControlDemon
 from pandemonium.experience import Transition
 from pandemonium.traces import EligibilityTrace, AccumulatingTrace
 
@@ -16,8 +16,14 @@ class OnlineTD(Demon):
         e = eligibility(trace_decay, feature.feature_dim)
         super().__init__(eligibility=e, feature=feature, **kwargs)
 
+    def delta(self, t: Transition) -> Loss:
+        raise NotImplementedError
 
-class TDlambda(OnlineTD):
+    def learn(self, t: Transition):
+        return self.delta(t)
+
+
+class TDlambda(OnlineTD, PredictionDemon):
     r""" Semi-gradient :math:`\text{TD}\lambda` rule for estimating :math:`\tilde{v} ≈ v_{\pi}`
 
     .. math::
@@ -30,9 +36,9 @@ class TDlambda(OnlineTD):
     def delta(self, t: Transition) -> Loss:
         γ = self.gvf.continuation(t)
         z = self.gvf.z(t)
-        e = self.λ(γ, t.x0)
+        e = self.λ(γ, t.x0)  # assume linear FA
         δ = z + γ * self.predict(t.x1) - self.predict(t.x0)
-        return δ * e, {'td': δ.item(), 'eligibility': e.item()}
+        return δ * e, {'td_error': δ.item(), 'eligibility': e.item()}
 
 
 class TD0(TDlambda):
@@ -48,3 +54,15 @@ class TD0(TDlambda):
 
 class TrueOnlineTD(OnlineTD):
     pass
+
+
+class SARSAlambda(OnlineTD, ControlDemon):
+
+    def delta(self, t: Transition) -> Loss:
+        γ = self.gvf.continuation(t)
+        z = self.gvf.z(t)
+        e = self.λ(γ, t.x0)  # assume linear FA
+        q = self.predict_q(t.x0)[t.a]
+        _q = self.predict_q(t.x1)[self.behavior_policy(t.x1)]
+        δ = z + γ * _q - q
+        return δ * e, {'td_error': δ.item(), 'eligibility': e.item()}

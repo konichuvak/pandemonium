@@ -119,15 +119,14 @@ class DeepOfflineTD(OfflineTD, ParametricDemon):
             self.target_aqf.load_state_dict(self.aqf.state_dict())
 
     def __repr__(self):
-        # model = torch.nn.Module.__str__(self)[:-2]
         demon = ControlDemon.__repr__(self)
-        buffer = f'  (replay_buffer): {self.replay_buffer}'
-        hyperparams = f'  (hyperparams):\n' \
-                      f'    (warmup): {self.warm_up_period}\n' \
-                      f'    (target_update_freq): {self.target_update_freq}\n'
-        return f'{demon}\n' \
-               f'{buffer}\n' \
-               f'{hyperparams}\n)'
+        params = f'(replay_buffer): {repr(self.replay_buffer)}\n' \
+                 f'(warmup): {self.warm_up_period}\n' \
+                 f'(target_update_freq): {self.target_update_freq}'
+        return f'{demon}\n{params}'
+
+    def __str__(self):
+        return ControlDemon.__str__(self)
 
 
 class OfflineTDPrediction(OfflineTD, PredictionDemon):
@@ -197,7 +196,8 @@ class TTD(OfflineTD):
 
     References
     ----------
-    Sutton and Barto, ch. 12.3, 12.8, equation (12.18)
+    - Sutton and Barto (2018) ch. 12.3, 12.8, equation (12.18)
+    - van Seijen (2016) Appendix B, https://arxiv.org/pdf/1608.05151v1.pdf
     """
 
     def target(self, trajectory: Trajectory, v: torch.Tensor):

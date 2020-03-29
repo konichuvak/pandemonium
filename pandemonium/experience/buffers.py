@@ -1,12 +1,14 @@
 import random
 import sys
-from typing import List
+from typing import List, Callable
 
 import numpy as np
-from pandemonium.utilities.schedules import Schedule, ConstantSchedule
+import torch
 from pandemonium.experience import Transitions, Transition
 # from ray.rllib.optimizers.segment_tree import SumSegmentTree, MinSegmentTree
 from pandemonium.experience.segment_tree import SumSegmentTree, MinSegmentTree
+from pandemonium.utilities.schedules import Schedule, ConstantSchedule
+from torch.distributions import Categorical
 
 __all__ = ['ER', 'PER']
 
@@ -47,11 +49,11 @@ class ER:
 
     @property
     def is_full(self):
-        return len(self._storage) == self._maxsize
+        return len(self) == self._maxsize
 
     @property
     def is_empty(self):
-        return not len(self._storage)
+        return not len(self)
 
     def add(self, transition: Transition, weight: float = None) -> None:
         self._num_added += 1
@@ -108,6 +110,68 @@ class ER:
         return f'{self.__class__.__name__}(' \
                f'batch_size={self.batch_size}, ' \
                f'capacity={self.capacity})'
+
+
+class SegmentedER(ER):
+    """ Segmented Experience Replay
+
+    Allows for partitioning the ER into multiple segments, specifying a
+    sampling distribution over segments. Used in the UNREAL architecture for
+    reward prediction task.
+
+    References
+    ----------
+    RL with unsupervised auxiliary tasks (Jaderberd et al., 2016)
+    """
+
+    def __init__(self,
+                 size: int,
+                 batch_size: int,
+                 segments: int,
+                 criterion: Callable[[Transition], int],
+                 dist: Categorical = None):
+        """
+        Parameters
+        ----------
+        segments
+            Number of segments to split the memory into.
+        size
+            Max number of transitions stored across all segments.
+            The memory size is split uniformly across segments.
+        batch_size
+            Number of transitions to sample from the buffer
+        criterion
+            A rule deciding which segment of the memory to put transition into
+        dist
+            Sampling distribution across segments (defaults to uniform).
+        """
+        super().__init__(size=size, batch_size=batch_size)
+
+        # Experience is stored in the individual buffers
+        del self._storage
+        self.segments = segments
+        self.buffers = [ER(size // segments, batch_size) for _ in
+                        range(segments)]
+
+        self.criterion = criterion
+
+        if dist is None:
+            dist = Categorical(torch.ones(segments) * 1 / segments)
+        self.dist = dist
+
+    def add(self, transition: Transition, weight: float = None) -> None:
+        self.buffers[self.criterion(transition)].add(transition, weight)
+
+    def sample(self, batch_size: int = None, contiguous: bool = True):
+        if batch_size is None:
+            batch_size = self.batch_size
+        buffer = self.buffers[self.dist.sample().item()]
+        samples = buffer.sample(batch_size=batch_size, contiguous=contiguous)
+        return samples
+
+    def __len__(self):
+        # The size of the buffer is the sum of the sizes of individual buffers
+        return sum([len(b) for b in self.buffers])
 
 
 class PER(ER):
@@ -241,6 +305,3 @@ class PER(ER):
                f'α={self.α}, ' \
                f'β={self.β}, ' \
                f'ε={self.ε})'
-
-
-

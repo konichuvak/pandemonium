@@ -1,11 +1,11 @@
+import os
 from collections import deque
 from datetime import datetime
 
 import numpy as np
 import tensorboardX
-from torchviz import make_dot
-import os
 import torch
+
 from experiments import EXPERIMENT_DIR, RLogger
 # from experiments.option_critic import *
 # from experiments.unreal import *
@@ -25,7 +25,7 @@ def gen_pbar(stats):
         'policy_loss': ('π_loss', rounding + 3),
         'value_loss': ('v_loss', rounding + 3),
         'loss': ('loss', rounding + 3),
-        'epsilon': ('ε',  rounding + 3),
+        'epsilon': ('ε', rounding + 3),
     }
     metrics = ''
     for metric, value in stats.items():
@@ -94,6 +94,10 @@ PARAMETER_DIR.mkdir()
 #     ),
 #     strict=True
 # )
+
+# Save the parameter configuration of the agent
+with open(f'{EXPERIMENT_PATH}/params.cfg', 'w') as cfg:
+    print(repr(AGENT.horde), file=cfg)
 
 logger = RLogger()
 

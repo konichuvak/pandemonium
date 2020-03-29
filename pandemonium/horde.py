@@ -2,7 +2,7 @@ import textwrap
 from typing import List, Callable
 
 import torch
-from pandemonium.demons import ControlDemon, PredictionDemon
+from pandemonium.demons import Demon
 from torch import nn
 
 
@@ -22,14 +22,12 @@ class Horde(torch.nn.Module):
     """
 
     def __init__(self,
-                 control_demon: ControlDemon,
-                 prediction_demons: List[PredictionDemon],
+                 demons: List[Demon],
                  aggregation_fn: Callable[[torch.Tensor], torch.Tensor],
                  device: torch.device,
                  ):
         super().__init__()
-        demons = {str(demon): demon for demon in prediction_demons}
-        demons.update({str(control_demon): control_demon})
+        demons = {str(demon): demon for demon in demons}
         self.demons = nn.ModuleDict(demons)
 
         # Determines how the total loss is weighted across demons

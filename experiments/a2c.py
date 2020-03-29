@@ -109,8 +109,7 @@ demon_weights = torch.tensor([1.], device=device)
 
 
 horde = Horde(
-    control_demon=control_demon,
-    prediction_demons=prediction_demons,
+    demons=[control_demon],
     aggregation_fn=lambda losses: demon_weights.dot(losses),
     device=device
 )

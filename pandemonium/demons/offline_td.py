@@ -48,16 +48,23 @@ class DeepOfflineTD(OfflineTD, ParametricDemon):
     def __init__(self,
                  replay_buffer: ER,
                  target_update_freq: int = 0,
-                 warm_up_period: int = 0,
+                 warm_up_period: int = None,
                  **kwargs):
 
         super().__init__(**kwargs)
 
-        self.update_counter = 0
+        self.update_counter = 0  # keeps track of the number of updates so far
+
+        # Use replay buffer for breaking correlation in the experience samples
+        self.replay_buffer = replay_buffer
+
+        # By default, learning does not start until the replay buffer is full
+        if warm_up_period is None:
+            warm_up_period = replay_buffer.capacity // replay_buffer.batch_size
         self.warm_up_period = warm_up_period
-        self.target_update_freq = target_update_freq
 
         # Create a target network to stabilize training
+        self.target_update_freq = target_update_freq
         if self.target_update_freq:
             self.target_feature = deepcopy(self.φ)
             self.target_feature.load_state_dict(self.φ.state_dict())
@@ -75,9 +82,6 @@ class DeepOfflineTD(OfflineTD, ParametricDemon):
             self.target_feature = self.φ
             self.target_avf = self.avf
             self.target_aqf = self.aqf
-
-        # Use replay buffer for breaking correlation in the experience samples
-        self.replay_buffer = replay_buffer
 
     def learn(self, transitions: Transitions):
 

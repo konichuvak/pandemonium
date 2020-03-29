@@ -43,7 +43,7 @@ class DeepOfflineTDControl(DeepOfflineTD, OfflineTDControl):
             return self.aqf(x)
 
     def __repr__(self):
-        r = DeepOfflineTD.__repr__(self)[:-2]
+        r = DeepOfflineTD.__repr__(self)
         return r + f'\n(double): {self.double}\n(duelling): {self.duelling}'
 
 

@@ -5,7 +5,6 @@ from datetime import datetime
 import numpy as np
 import tensorboardX
 import torch
-
 from experiments import EXPERIMENT_DIR, RLogger
 # from experiments.option_critic import *
 # from experiments.unreal import *
@@ -13,8 +12,9 @@ from experiments.a2c import *
 # from experiments.dqn import *
 from pandemonium.experience import Trajectory
 
-# Environment variables
+# Ensure that we are not using more than one core per experiment
 os.environ["OMP_NUM_THREADS"] = "1"
+torch.set_num_threads(1)
 
 
 def gen_pbar(stats):
@@ -95,11 +95,11 @@ PARAMETER_DIR.mkdir()
 #     strict=True
 # )
 
-# Save the parameter configuration of the agent
-with open(f'{EXPERIMENT_PATH}/params.cfg', 'w') as cfg:
-    print(repr(AGENT.horde), file=cfg)
-
-logger = RLogger()
+# Set up the logger
+logger = RLogger(level=10,
+                 file_logger=(10, f'{EXPERIMENT_PATH}/experiment.log'))
+logger.critical(str(ENV))
+logger.critical(repr(AGENT.horde))
 
 # Tensorboard set up
 tb_writer = tensorboardX.SummaryWriter(EXPERIMENT_PATH)

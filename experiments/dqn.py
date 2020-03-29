@@ -1,7 +1,7 @@
 from functools import reduce, partial
 
 import torch
-from gym_minigrid.envs import DoorKeyEnv
+from gym_minigrid.envs import DoorKeyEnv, MultiRoomEnv
 from gym_minigrid.wrappers import ImgObsWrapper, FullyObsWrapper
 from pandemonium.utilities.schedules import ConstantSchedule, LinearSchedule
 
@@ -9,12 +9,12 @@ from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
 from pandemonium.demons.control import DQN
-from pandemonium.envs import EmptyEnv
+from pandemonium.envs import EmptyEnv, FourRooms
 from pandemonium.envs.minigrid.wrappers import OneHotObsWrapper
 from pandemonium.envs.wrappers import Torch
 from pandemonium.experience import PER, ER
 from pandemonium.networks.bodies import ConvBody, Identity
-from pandemonium.policies.discrete import Egreedy
+from pandemonium.policies.discrete import Egreedy, SoftmaxPolicy
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = torch.device('cpu')
@@ -45,7 +45,6 @@ WRAPPERS = [
 ]
 ENV = reduce(lambda e, wrapper: wrapper(e), WRAPPERS, envs[0])
 ENV.unwrapped.max_steps = float('inf')
-print(ENV)
 
 # ------------------------------------------------------------------------------
 # Specify a question of interest
@@ -67,7 +66,7 @@ gvf = GVF(target_policy=target_policy,
 obs = ENV.reset()
 feature_extractor = ConvBody(
     *obs.shape[1:], feature_dim=2 ** 8,
-    channels=(8, 16), kernels=(2, 2), strides=(1, 1)
+    channels=(8, 16, 32), kernels=(2, 2, 2), strides=(1, 1, 1)
 )
 # feature_extractor = FCBody(state_dim=obs.shape[1], hidden_units=(256,))
 # feature_extractor = Identity(state_dim=obs.shape[1])
@@ -77,12 +76,18 @@ feature_extractor = ConvBody(
 # ==================================
 
 # TODO: tie the warmup period withe the annealed exploration period
-schedule_steps = int(1e5)
-policy = Egreedy(
-    epsilon=LinearSchedule(schedule_timesteps=schedule_steps,
-                           final_p=0.1, initial_p=1, framework='torch'),
+schedule_steps = int(1e7)
+# policy = Egreedy(
+#     epsilon=LinearSchedule(schedule_timesteps=schedule_steps,
+#                            final_p=0.1, initial_p=1, framework='torch'),
+#     action_space=ENV.action_space
+# )
+policy = SoftmaxPolicy(
+    temperature=LinearSchedule(schedule_timesteps=schedule_steps,
+                               final_p=0.1, initial_p=1, framework='torch'),
     action_space=ENV.action_space
 )
+
 aqf = torch.nn.Linear(feature_extractor.feature_dim, ENV.action_space.n)
 policy.act = partial(policy.act, vf=aqf)
 
@@ -90,16 +95,18 @@ policy.act = partial(policy.act, vf=aqf)
 # Learning Algorithm
 # ==================================
 BATCH_SIZE = 32
+REPLAY_SIZE = int(1e6)
 replay = PER(
-    size=1000,
+    size=REPLAY_SIZE,
     batch_size=BATCH_SIZE,
-    alpha=0.95,
+    alpha=0.6,
+    # beta=ConstantSchedule(0.4, framework='torch'),
     beta=LinearSchedule(schedule_timesteps=schedule_steps,
                         initial_p=1, final_p=0.1, framework='torch'),
     epsilon=1e-6
 )
 
-# replay = ER(1000, BATCH_SIZE)
+replay = ER(REPLAY_SIZE, BATCH_SIZE)
 
 prediction_demons = list()
 
@@ -110,9 +117,7 @@ control_demon = DQN(
     feature=feature_extractor,
     behavior_policy=policy,
     replay_buffer=replay,
-    target_update_freq=200,
-    # warm_up_period=100,
-    warm_up_period=replay.capacity // replay.batch_size,
+    target_update_freq=100,
     double=True,
     duelling=True,
 )
@@ -130,5 +135,6 @@ horde = Horde(
     device=device
 )
 AGENT = Agent(feature_extractor, policy, horde)
-print(repr(horde))
-print(horde)
+
+# Sanity checks
+assert schedule_steps > REPLAY_SIZE

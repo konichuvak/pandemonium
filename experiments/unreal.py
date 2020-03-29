@@ -111,7 +111,6 @@ pc = PixelControl(gvf=pixel_control,
                   feature=feature_extractor,
                   behavior_policy=policy,
                   replay_buffer=replay,
-                  warm_up_period=replay.capacity // replay.batch_size,
                   target_update_freq=200)
 
 control_demon = UNREAL(gvf=optimal_control,

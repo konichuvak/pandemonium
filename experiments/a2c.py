@@ -1,7 +1,7 @@
 from functools import reduce
 
 import torch
-from gym_minigrid.envs import DoorKeyEnv
+from gym_minigrid.envs import DoorKeyEnv, MultiRoomEnv
 from gym_minigrid.wrappers import ImgObsWrapper, FullyObsWrapper
 from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
@@ -29,8 +29,8 @@ __all__ = ['AGENT', 'ENV', 'WRAPPERS', 'BATCH_SIZE']
 envs = [
     # EmptyEnv(size=10),
     # FourRooms(),
-    DoorKeyEnv(size=7),
-    # MultiRoomEnv(4, 4),
+    # DoorKeyEnv(size=7),
+    MultiRoomEnv(4, 4),
     # CrossingEnv(),
 ]
 WRAPPERS = [
@@ -38,7 +38,7 @@ WRAPPERS = [
     # SimplifyActionSpace,
 
     # Observation wrappers
-    # FullyObsWrapper,
+    FullyObsWrapper,
     ImgObsWrapper,
     # OneHotObsWrapper,
     # FlatObsWrapper,
@@ -66,14 +66,14 @@ gvf = GVF(target_policy=target_policy,
 # Representation learning
 # ==================================
 obs = ENV.reset()
-# feature_extractor = ConvBody(
-#     *obs.shape[1:], feature_dim=2 ** 8,
+feature_extractor = ConvBody(
+    *obs.shape[1:], feature_dim=2 ** 9,
+    channels=(8, 16, 32), kernels=(2, 2, 2), strides=(1, 1, 1)
+)
+# feature_extractor = ConvLSTM(
+#     256, 1, *obs.shape[1:], feature_dim=2 ** 9,
 #     channels=(8, 16, 32), kernels=(2, 2, 2), strides=(1, 1, 1)
 # )
-feature_extractor = ConvLSTM(
-    256, 1, *obs.shape[1:], feature_dim=2 ** 8,
-    channels=(8, 16), kernels=(2, 2), strides=(1, 1)
-)
 # feature_extractor = FCBody(state_dim=obs.shape[1], hidden_units=(256,))
 # feature_extractor = Identity(state_dim=obs.shape[1])
 

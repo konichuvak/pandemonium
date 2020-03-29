@@ -10,7 +10,7 @@ from pandemonium.experience.segment_tree import SumSegmentTree, MinSegmentTree
 from pandemonium.utilities.schedules import Schedule, ConstantSchedule
 from torch.distributions import Categorical
 
-__all__ = ['ER', 'PER']
+__all__ = ['ER', 'PER', 'SegmentedER']
 
 
 class ER:

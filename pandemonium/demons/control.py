@@ -1,8 +1,6 @@
 from collections import OrderedDict
 
 import torch
-from torch import nn
-
 from pandemonium.demons import Loss, ParametricDemon
 from pandemonium.demons.offline_td import (DeepOfflineTD, TDn, TTD,
                                            OfflineTDPrediction)
@@ -12,6 +10,7 @@ from pandemonium.networks import Reshape
 from pandemonium.policies import Policy, HierarchicalPolicy, DiffPolicy
 from pandemonium.policies.utils import torch_argmax_mask
 from pandemonium.utilities.utilities import get_all_classes
+from torch import nn
 
 
 class DeepOfflineTDControl(DeepOfflineTD, OfflineTDControl):
@@ -186,19 +185,6 @@ class TDAC(AC, OfflineTDPrediction, TTD):
     def critic_loss(self, trajectory: Trajectory):
         loss, info = OfflineTDPrediction.delta(self, trajectory)
         return loss, info['td_error'], info
-
-
-class UNREAL(TDAC, TDn):
-    """ A version of AC that stores experience in the replay buffer """
-
-    def __init__(self, feature, replay_buffer: ER, **kwargs):
-        avf = nn.Linear(feature.feature_dim, 1)
-        super().__init__(avf=avf, feature=feature, **kwargs)
-        self.replay_buffer = replay_buffer
-
-    def learn(self, transitions: Transitions) -> Loss:
-        # self.replay_buffer.feed_batch(transitions)
-        return super().learn(transitions)
 
 
 class OC(AC, DQN):

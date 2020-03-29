@@ -3,20 +3,21 @@ from functools import reduce
 
 import pygame
 import torch
-from tqdm import tqdm
 from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness, PixelChange
-from pandemonium.demons.control import UNREAL, PixelControl
-from pandemonium.demons.prediction import ValueReplay
+from pandemonium.demons.control import PixelControl, TDAC
+from pandemonium.demons.offline_td import TDn
+from pandemonium.demons.prediction import ValueReplay, RewardPrediction
 from pandemonium.envs import DeepmindLabEnv
 from pandemonium.envs.wrappers import Torch
 from pandemonium.experience import Transition, Trajectory
+from pandemonium.experience.buffers import ER, SegmentedER
 from pandemonium.networks.bodies import ConvBody
 from pandemonium.policies.discrete import Egreedy
 from pandemonium.policies.gradient import VPG
-from pandemonium.experience.buffers import ER
 from pandemonium.utilities.schedules import ConstantSchedule
+from tqdm import tqdm
 
 __all__ = ['AGENT', 'ENV', 'WRAPPERS', 'BATCH_SIZE', 'device', 'viz']
 
@@ -89,36 +90,55 @@ policy = VPG(feature_dim=feature_extractor.feature_dim,
              action_space=ENV.action_space)
 
 # ==================================
-# Learning Algorithm
+# Learning Algorithms (Demons)
 # ==================================
 
-
+REPLAY_SIZE = 2000
 BATCH_SIZE = 32
 
-# TODO: Skew the replay for reward prediction task
-replay = ER(size=2000, batch_size=BATCH_SIZE)
-
-# rp = RewardPrediction(gvf=reward_prediction,
-#                       feature=feature_extractor,
-#                       behavior_policy=policy,
-#                       replay_buffer=replay)
+# ********************************
+# Reward prediction demon
+# ********************************
+reward_replay = SegmentedER(
+    size=REPLAY_SIZE, batch_size=BATCH_SIZE,
+    segments=2, criterion=lambda transition: transition.r == 0,
+)
+rp = RewardPrediction(gvf=reward_prediction,
+                      feature=feature_extractor,
+                      behavior_policy=policy,
+                      replay_buffer=reward_replay)
+# ********************************
+# Value replay demon
+# ********************************
+replay = ER(size=REPLAY_SIZE, batch_size=BATCH_SIZE)
 vr = ValueReplay(gvf=value_replay,
                  feature=feature_extractor,
                  behavior_policy=policy,
                  replay_buffer=replay)
 
+# ********************************
+# Pixel control demon
+# ********************************
 pc = PixelControl(gvf=pixel_control,
                   feature=feature_extractor,
                   behavior_policy=policy,
-                  replay_buffer=replay,
+                  replay_buffer=replay,  # shared with value replay demon
                   target_update_freq=200)
 
-control_demon = UNREAL(gvf=optimal_control,
-                       replay_buffer=replay,
-                       behavior_policy=policy,
-                       feature=feature_extractor)
 
-demon_weights = torch.tensor([1, 1], dtype=torch.float, device=device)
+# ********************************
+# Main agent (N-step actor critic)
+# ********************************
+class AC(TDAC, TDn):
+    pass
+
+
+control_demon = AC(gvf=optimal_control,
+                   replay_buffer=replay,
+                   behavior_policy=policy,
+                   feature=feature_extractor)
+
+demon_weights = torch.tensor([1, 1, 1, 1], dtype=torch.float, device=device)
 
 # ------------------------------------------------------------------------------
 # Specify agent that will be interacting with the environment
@@ -160,7 +180,6 @@ def viz():
     values = deque([v], maxlen=100)
 
     for _ in tqdm(range(300)):
-
         # Step in the actual environment with the AC demon
         a, policy_info = policy(x0)
         s1, reward, done, info = ENV.step(a)

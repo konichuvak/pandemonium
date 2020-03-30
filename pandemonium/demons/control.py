@@ -53,6 +53,9 @@ class DQN(DeepOfflineTDControl, TDn):
     def q_target(self, trajectory: Trajectory):
         q = self.predict_q(trajectory.x1, target=True)
         if self.double:
+            if isinstance(self, PixelControl):
+                # TODO: q[mask] returns flat obs
+                raise NotImplementedError
             v = q[torch_argmax_mask(self.aqf(trajectory.x1), 1)].unsqueeze(-1)
         else:
             v = q.max(1, keepdim=True)[0]

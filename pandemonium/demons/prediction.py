@@ -1,14 +1,14 @@
 import torch.nn.functional as F
 from torch import nn
 
-from pandemonium.demons.demon import LinearDemon, ParametricDemon
+from pandemonium.demons.demon import LinearDemon, ParametricDemon, Loss
 from pandemonium.demons.offline_td import TDn, OfflineTDPrediction
-from pandemonium.experience import ER, SegmentedER, Trajectory, Transitions
+from pandemonium.experience import ER, SkewedER, Trajectory, Transitions
 from pandemonium.networks import Reshape
 from pandemonium.utilities.utilities import get_all_classes
 
 
-class RewardPrediction(ParametricDemon, OfflineTDPrediction):
+class RewardPrediction(ParametricDemon):
     """ Classifies reward at the end of a state sequence
 
     Used as an auxiliary task in UNREAL architecture.
@@ -19,7 +19,7 @@ class RewardPrediction(ParametricDemon, OfflineTDPrediction):
     """
 
     def __init__(self,
-                 replay_buffer: SegmentedER,
+                 replay_buffer: SkewedER,
                  feature,
                  output_dim: int = 3,
                  sequence_size: int = 3,
@@ -33,10 +33,13 @@ class RewardPrediction(ParametricDemon, OfflineTDPrediction):
             avf=avf,
             feature=feature,
             eligibility=None,
-            criterion=F.cross_entropy,
             **kwargs
         )
         self.replay_buffer = replay_buffer
+        self.criterion = F.cross_entropy
+
+    def predict(self, x):
+        return self.avf(x)
 
     def target(self, trajectory: Trajectory):
         """ Ternary classification target for -, 0, + rewards """

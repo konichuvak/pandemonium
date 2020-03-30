@@ -2,8 +2,9 @@ import textwrap
 from typing import List, Callable
 
 import torch
-from pandemonium.demons import Demon
 from torch import nn
+
+from pandemonium.demons import Demon
 
 
 class Horde(torch.nn.Module):

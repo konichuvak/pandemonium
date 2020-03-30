@@ -4,13 +4,14 @@ from typing import List, Callable
 
 import numpy as np
 import torch
+from torch.distributions import Categorical
+
 from pandemonium.experience import Transitions, Transition
 # from ray.rllib.optimizers.segment_tree import SumSegmentTree, MinSegmentTree
 from pandemonium.experience.segment_tree import SumSegmentTree, MinSegmentTree
 from pandemonium.utilities.schedules import Schedule, ConstantSchedule
-from torch.distributions import Categorical
 
-__all__ = ['ER', 'PER', 'SegmentedER']
+__all__ = ['ER', 'PER', 'SkewedER', 'SegmentedER']
 
 
 class ER:
@@ -58,7 +59,7 @@ class ER:
     def add(self, transition: Transition, weight: float = None) -> None:
         self._num_added += 1
 
-        if self._next_idx >= len(self._storage):
+        if self._next_idx >= len(self):
             self._storage.append(transition)
             self._est_size_bytes += sum(sys.getsizeof(d) for d in transition)
         else:
@@ -92,8 +93,9 @@ class ER:
         self._num_sampled += batch_size
 
         if contiguous:
-            ix = np.random.randint(batch_size, len(self))
-            samples = self._storage[ix:ix + batch_size]
+            # Select the index of the end of the sequence
+            ix = random.randint(batch_size, len(self))
+            samples = self._storage[ix - batch_size:ix]
         else:
             ix = np.random.randint(0, len(self), size=batch_size)
             samples = [self._storage[i] for i in ix]
@@ -116,12 +118,17 @@ class SegmentedER(ER):
     """ Segmented Experience Replay
 
     Allows for partitioning the ER into multiple segments, specifying a
-    sampling distribution over segments. Used in the UNREAL architecture for
-    reward prediction task.
+    sampling distribution over segments.
 
-    References
-    ----------
-    RL with unsupervised auxiliary tasks (Jaderberd et al., 2016)
+    Notes
+    -----
+    This ER is not suitable for sampling sequences of experiences unless
+    the type of experience is a `Trajectory`, which would be much more memory
+    intensive compared to `Transition` and is thus not recommended.
+
+    Current implementation assumes segments of fixed size and, thus, it might
+    take a while to fill up the buffer completely in case the criterion or
+    distribution of experiences is highly skewed.
     """
 
     def __init__(self,
@@ -172,6 +179,61 @@ class SegmentedER(ER):
     def __len__(self):
         # The size of the buffer is the sum of the sizes of individual buffers
         return sum([len(b) for b in self.buffers])
+
+
+class SkewedER(ER):
+    """
+    Used in the UNREAL architecture for the auxiliary reward prediction task.
+
+    References
+    ----------
+    RL with unsupervised auxiliary tasks (Jaderberd et al., 2016)
+    """
+
+    def __init__(self, *args, **kwargs):
+        self._segments = (set(), set())
+        super().__init__(*args, **kwargs)
+
+    def add(self, transition: Transition, weight: float = None) -> None:
+        self._num_added += 1
+
+        if self._next_idx >= len(self):
+            self._storage.append(transition)
+            self._est_size_bytes += sum(sys.getsizeof(d) for d in transition)
+            self._segments[transition.r == 0].add(self._next_idx)
+        else:
+            # Remove the last experience from the buffer.
+            # That experience could be in either rewarding or not.
+            self._segments[0].discard(self._next_idx)
+            self._segments[1].discard(self._next_idx)
+
+            # Add the experience to the buffer
+            self._storage[self._next_idx] = transition
+            self._segments[transition.r == 0].add(self._next_idx)
+
+        self._next_idx = (self._next_idx + 1) % self._maxsize
+
+    def sample(self, batch_size: int = None, contiguous: bool = True):
+        if self.is_empty:
+            return None
+
+        if batch_size is None:
+            batch_size = self.batch_size
+
+        self._num_sampled += batch_size
+
+        if contiguous:
+            # Select the index of the end of the sequence
+            exclude = set(range(batch_size - 1))
+            ixs = self._segments[random.randint(0, 1)] - exclude
+            ix = random.choice(tuple(ixs)) + 1
+            samples = self._storage[ix - batch_size:ix]
+        else:
+            ix = random.sample(self._segments[0], batch_size // 2)
+            ix += random.sample(self._segments[1], batch_size // 2)
+            samples = [self._storage[i] for i in ix]
+
+        return samples
 
 
 class PER(ER):

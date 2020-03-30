@@ -7,8 +7,8 @@ import tensorboardX
 import torch
 from experiments import EXPERIMENT_DIR, RLogger
 # from experiments.option_critic import *
-# from experiments.unreal import *
-from experiments.a2c import *
+from experiments.unreal import *
+# from experiments.a2c import *
 # from experiments.dqn import *
 from pandemonium.experience import Trajectory
 

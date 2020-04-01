@@ -1,3 +1,4 @@
+import torch
 import torch.nn.functional as F
 from torch import nn
 
@@ -43,8 +44,21 @@ class RewardPrediction(ParametricDemon):
 
     def target(self, trajectory: Trajectory):
         """ Ternary classification target for -, 0, + rewards """
-        g = trajectory.r[-1].long() + 1  # (-1, 0, 1) -> (0, 1, 2)
-        return g.unsqueeze(0)
+        g = trajectory.r[-1].item()
+        if g > 0:
+            g = torch.tensor([0])
+        elif g < 0:
+            g = torch.tensor([1])
+        else:
+            g = torch.tensor([2])
+        return g.long().to(trajectory.r.device)
+
+    def delta(self, trajectory: Trajectory) -> Loss:
+        x = self.feature(trajectory.s0)
+        v = self.predict(x)
+        u = self.target(trajectory).detach()
+        loss = self.criterion(input=v, target=u)
+        return loss, {'loss': loss.item()}
 
     def learn(self, transitions: Transitions):
         self.replay_buffer.add_batch(transitions)

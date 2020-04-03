@@ -145,7 +145,7 @@ class OfflineTDPrediction(OfflineTD, PredictionDemon):
         x = self.feature(trajectory.s0)
         v = self.predict(x)
         u = self.target(trajectory).detach()
-        loss = self.criterion(u, v, reduction='none')
+        loss = self.criterion(input=v, target=u, reduction='none')
         loss = (loss * trajectory.ρ).mean()  # weighted IS
         return loss, {'loss': loss.item(), 'td_error': u - v}
 
@@ -165,9 +165,13 @@ class OfflineTDControl(OfflineTD, ControlDemon):
     def delta(self, trajectory: Trajectory) -> Loss:
         x = self.feature(trajectory.s0)
         a = torch.arange(x.size(0)), trajectory.a
-        v = self.predict_q(x)[a].unsqueeze(-1)
+        v = self.predict_q(x)[a].unsqueeze(1)
         u = self.target(trajectory).detach()
-        loss = self.criterion(u, v, reduction='none')
+        assert u.shape == v.shape, f'{u.shape} vs {v.shape}'
+        loss = self.criterion(input=v, target=u, reduction='none')
+        if len(loss.shape) > 2:
+            # take average across states
+            loss = loss.mean(tuple(range(2, len(loss.shape))))
         loss = (loss * trajectory.ρ).mean()  # weighted IS
         if trajectory.r.bool().any():
             self.COUNT += 1

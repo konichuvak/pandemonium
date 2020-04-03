@@ -3,20 +3,22 @@ from functools import reduce
 
 import pygame
 import torch
-from tqdm import tqdm
 from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness, PixelChange
-from pandemonium.demons.control import UNREAL, PixelControl
-from pandemonium.demons.prediction import ValueReplay
+from pandemonium.demons import LinearDemon
+from pandemonium.demons.control import PixelControl, TDAC
+from pandemonium.demons.offline_td import TDn
+from pandemonium.demons.prediction import ValueReplay, RewardPrediction
 from pandemonium.envs import DeepmindLabEnv
 from pandemonium.envs.wrappers import Torch
 from pandemonium.experience import Transition, Trajectory
-from pandemonium.networks.bodies import ConvBody
+from pandemonium.experience.buffers import ER, SkewedER
+from pandemonium.networks.bodies import ConvBody, ConvLSTM
 from pandemonium.policies.discrete import Egreedy
 from pandemonium.policies.gradient import VPG
-from pandemonium.experience.buffers import ER
 from pandemonium.utilities.schedules import ConstantSchedule
+from tqdm import tqdm
 
 __all__ = ['AGENT', 'ENV', 'WRAPPERS', 'BATCH_SIZE', 'device', 'viz']
 
@@ -28,7 +30,7 @@ device = torch.device('cpu')
 # ------------------------------------------------------------------------------
 
 envs = [
-    DeepmindLabEnv('seekavoid_arena_01'),
+    DeepmindLabEnv('seekavoid_arena_01', render=False),
 ]
 WRAPPERS = [
     lambda e: Torch(e, device=device),
@@ -71,7 +73,6 @@ value_replay = optimal_control
 # Representation learning
 # ==================================
 obs = ENV.reset()
-print(obs.shape)
 feature_extractor = ConvBody(
     *obs.shape[1:], feature_dim=2 ** 8,
     channels=(32, 64, 64), kernels=(8, 4, 3), strides=(4, 2, 1)
@@ -89,62 +90,78 @@ policy = VPG(feature_dim=feature_extractor.feature_dim,
              action_space=ENV.action_space)
 
 # ==================================
-# Learning Algorithm
+# Learning Algorithms (Demons)
 # ==================================
 
-
+REPLAY_SIZE = 2000
 BATCH_SIZE = 32
 
-# TODO: Skew the replay for reward prediction task
-replay = ER(size=2000, batch_size=BATCH_SIZE)
+# ********************************
+# Reward prediction demon
+# ********************************
+rp = RewardPrediction(gvf=reward_prediction,
+                      feature=feature_extractor,
+                      behavior_policy=policy,
+                      replay_buffer=SkewedER(REPLAY_SIZE, BATCH_SIZE))
 
-# rp = RewardPrediction(gvf=reward_prediction,
-#                       feature=feature_extractor,
-#                       behavior_policy=policy,
-#                       replay_buffer=replay)
+# ********************************
+# Value replay demon
+# ********************************
+replay = ER(size=REPLAY_SIZE, batch_size=BATCH_SIZE)
 vr = ValueReplay(gvf=value_replay,
                  feature=feature_extractor,
                  behavior_policy=policy,
                  replay_buffer=replay)
 
+# ********************************
+# Pixel control demon
+# ********************************
 pc = PixelControl(gvf=pixel_control,
                   feature=feature_extractor,
                   behavior_policy=policy,
-                  replay_buffer=replay,
+                  replay_buffer=replay,  # shared with value replay demon
                   target_update_freq=200)
 
-control_demon = UNREAL(gvf=optimal_control,
-                       replay_buffer=replay,
-                       behavior_policy=policy,
-                       feature=feature_extractor)
 
-demon_weights = torch.tensor([1, 1], dtype=torch.float, device=device)
+# ********************************
+# Main agent (N-step actor critic)
+# ********************************
+class AC(TDAC, LinearDemon, TDn):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs, output_dim=1)
+
+
+control_demon = AC(gvf=optimal_control,
+                   behavior_policy=policy,
+                   feature=feature_extractor)
+
+demon_weights = torch.tensor([1, 1, 1, 1], dtype=torch.float, device=device)
 
 # ------------------------------------------------------------------------------
 # Specify agent that will be interacting with the environment
 # ------------------------------------------------------------------------------
 
 horde = Horde(
-    control_demon=control_demon,
-    prediction_demons=[pc],
+    demons=[control_demon, rp, vr, pc],
     aggregation_fn=lambda losses: demon_weights.dot(losses),
     device=device,
 )
 AGENT = Agent(feature_extractor, policy, horde)
-print(horde)
 
 # ------------------------------------------------------------------------------
-FPS = 60
-display_env = Torch(
-    env=DeepmindLabEnv(
-        level='seekavoid_arena_01',
-        width=600,
-        height=600,
-        fps=FPS,
-        display_size=(900, 600)
-    ),
-    device=device
-)
+# FPS = 60
+# display_env = Torch(
+#     env=DeepmindLabEnv(
+#         level='seekavoid_arena_01',
+#         width=600,
+#         height=600,
+#         fps=FPS,
+#         display_size=(900, 600),
+#         render=True,
+#     ),
+#     device=device
+# )
 
 
 def viz():
@@ -161,7 +178,6 @@ def viz():
     values = deque([v], maxlen=100)
 
     for _ in tqdm(range(300)):
-
         # Step in the actual environment with the AC demon
         a, policy_info = policy(x0)
         s1, reward, done, info = ENV.step(a)

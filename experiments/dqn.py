@@ -1,20 +1,17 @@
 from functools import reduce, partial
 
 import torch
-from gym_minigrid.envs import DoorKeyEnv, MultiRoomEnv
-from gym_minigrid.wrappers import ImgObsWrapper, FullyObsWrapper
-from pandemonium.utilities.schedules import ConstantSchedule, LinearSchedule
-
+from gym_minigrid.envs import DoorKeyEnv
+from gym_minigrid.wrappers import ImgObsWrapper
 from pandemonium import Agent, GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
 from pandemonium.demons.control import DQN
-from pandemonium.envs import EmptyEnv, FourRooms
-from pandemonium.envs.minigrid.wrappers import OneHotObsWrapper
 from pandemonium.envs.wrappers import Torch
 from pandemonium.experience import PER, ER
-from pandemonium.networks.bodies import ConvBody, Identity
+from pandemonium.networks.bodies import ConvBody
 from pandemonium.policies.discrete import Egreedy, SoftmaxPolicy
+from pandemonium.utilities.schedules import ConstantSchedule, LinearSchedule
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = torch.device('cpu')
@@ -106,9 +103,7 @@ replay = PER(
     epsilon=1e-6
 )
 
-replay = ER(REPLAY_SIZE, BATCH_SIZE)
-
-prediction_demons = list()
+# replay = ER(REPLAY_SIZE, BATCH_SIZE)
 
 control_demon = DQN(
     gvf=gvf,
@@ -129,8 +124,7 @@ demon_weights = torch.tensor([1.], device=device)
 
 
 horde = Horde(
-    control_demon=control_demon,
-    prediction_demons=prediction_demons,
+    demons=[control_demon],
     aggregation_fn=lambda losses: demon_weights.dot(losses),
     device=device
 )

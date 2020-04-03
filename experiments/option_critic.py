@@ -95,7 +95,6 @@ policy = EgreedyOverOptions(
 #  initiating for some other policy
 
 BATCH_SIZE = 32
-prediction_demons = list()
 
 control_demon = OC(
     gvf=gvf,
@@ -111,8 +110,7 @@ demon_weights = torch.tensor([1.], device=device)
 
 
 horde = Horde(
-    control_demon=control_demon,
-    prediction_demons=prediction_demons,
+    demons=[control_demon]
     aggregation_fn=lambda losses: demon_weights.dot(losses)
 )
 AGENT = Agent(feature_extractor=feature_extractor, horde=horde)

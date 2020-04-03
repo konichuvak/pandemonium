@@ -1,6 +1,6 @@
 from typing import NamedTuple
 
-# import deepmind_lab
+import deepmind_lab
 import gym
 import numpy as np
 from gym.spaces import Box
@@ -34,7 +34,7 @@ class DeepmindLabEnv(gym.Env):
 
     def __init__(self, level: str, colors: str = 'RGB_INTERLEAVED',
                  width: int = 84, height: int = 84, fps: int = 60,
-                 display_size=(600, 400),
+                 display_size=(600, 400), render: bool = False,
                  **kwargs):
         super().__init__(**kwargs)
 
@@ -57,7 +57,9 @@ class DeepmindLabEnv(gym.Env):
 
         self.last_obs = None
 
-        self.display = DeepmindLabDisplay(display_size, env=self)
+        self.display = None
+        if render:
+            self.display = DeepmindLabDisplay(display_size, env=self)
 
     def step(self, action: int, frame_skip: int = 4):
         reward = self.lab.step(self.actions[action], num_steps=frame_skip)

@@ -1,14 +1,17 @@
 import random
 import sys
-from typing import List
+from typing import List, Callable
 
 import numpy as np
-from pandemonium.utilities.schedules import Schedule, ConstantSchedule
+import torch
+from torch.distributions import Categorical
+
 from pandemonium.experience import Transitions, Transition
 # from ray.rllib.optimizers.segment_tree import SumSegmentTree, MinSegmentTree
 from pandemonium.experience.segment_tree import SumSegmentTree, MinSegmentTree
+from pandemonium.utilities.schedules import Schedule, ConstantSchedule
 
-__all__ = ['ER', 'PER']
+__all__ = ['ER', 'PER', 'SkewedER', 'SegmentedER']
 
 
 class ER:
@@ -47,16 +50,16 @@ class ER:
 
     @property
     def is_full(self):
-        return len(self._storage) == self._maxsize
+        return len(self) == self._maxsize
 
     @property
     def is_empty(self):
-        return not len(self._storage)
+        return not len(self)
 
     def add(self, transition: Transition, weight: float = None) -> None:
         self._num_added += 1
 
-        if self._next_idx >= len(self._storage):
+        if self._next_idx >= len(self):
             self._storage.append(transition)
             self._est_size_bytes += sum(sys.getsizeof(d) for d in transition)
         else:
@@ -90,8 +93,9 @@ class ER:
         self._num_sampled += batch_size
 
         if contiguous:
-            ix = np.random.randint(batch_size, len(self))
-            samples = self._storage[ix:ix + batch_size]
+            # Select the index of the end of the sequence
+            ix = random.randint(batch_size, len(self))
+            samples = self._storage[ix - batch_size:ix]
         else:
             ix = np.random.randint(0, len(self), size=batch_size)
             samples = [self._storage[i] for i in ix]
@@ -108,6 +112,128 @@ class ER:
         return f'{self.__class__.__name__}(' \
                f'batch_size={self.batch_size}, ' \
                f'capacity={self.capacity})'
+
+
+class SegmentedER(ER):
+    """ Segmented Experience Replay
+
+    Allows for partitioning the ER into multiple segments, specifying a
+    sampling distribution over segments.
+
+    Notes
+    -----
+    This ER is not suitable for sampling sequences of experiences unless
+    the type of experience is a `Trajectory`, which would be much more memory
+    intensive compared to `Transition` and is thus not recommended.
+
+    Current implementation assumes segments of fixed size and, thus, it might
+    take a while to fill up the buffer completely in case the criterion or
+    distribution of experiences is highly skewed.
+    """
+
+    def __init__(self,
+                 size: int,
+                 batch_size: int,
+                 segments: int,
+                 criterion: Callable[[Transition], int],
+                 dist: Categorical = None):
+        """
+        Parameters
+        ----------
+        segments
+            Number of segments to split the memory into.
+        size
+            Max number of transitions stored across all segments.
+            The memory size is split uniformly across segments.
+        batch_size
+            Number of transitions to sample from the buffer
+        criterion
+            A rule deciding which segment of the memory to put transition into
+        dist
+            Sampling distribution across segments (defaults to uniform).
+        """
+        super().__init__(size=size, batch_size=batch_size)
+
+        # Experience is stored in the individual buffers
+        del self._storage
+        self.segments = segments
+        self.buffers = [ER(size // segments, batch_size) for _ in
+                        range(segments)]
+
+        self.criterion = criterion
+
+        if dist is None:
+            dist = Categorical(torch.ones(segments) * 1 / segments)
+        self.dist = dist
+
+    def add(self, transition: Transition, weight: float = None) -> None:
+        self.buffers[self.criterion(transition)].add(transition, weight)
+
+    def sample(self, batch_size: int = None, contiguous: bool = True):
+        if batch_size is None:
+            batch_size = self.batch_size
+        buffer = self.buffers[self.dist.sample().item()]
+        samples = buffer.sample(batch_size=batch_size, contiguous=contiguous)
+        return samples
+
+    def __len__(self):
+        # The size of the buffer is the sum of the sizes of individual buffers
+        return sum([len(b) for b in self.buffers])
+
+
+class SkewedER(ER):
+    """
+    Used in the UNREAL architecture for the auxiliary reward prediction task.
+
+    References
+    ----------
+    RL with unsupervised auxiliary tasks (Jaderberd et al., 2016)
+    """
+
+    def __init__(self, *args, **kwargs):
+        self._segments = (set(), set())
+        super().__init__(*args, **kwargs)
+
+    def add(self, transition: Transition, weight: float = None) -> None:
+        self._num_added += 1
+
+        if self._next_idx >= len(self):
+            self._storage.append(transition)
+            self._est_size_bytes += sum(sys.getsizeof(d) for d in transition)
+            self._segments[transition.r == 0].add(self._next_idx)
+        else:
+            # Remove the last experience from the buffer.
+            # That experience could be in either rewarding or not.
+            self._segments[0].discard(self._next_idx)
+            self._segments[1].discard(self._next_idx)
+
+            # Add the experience to the buffer
+            self._storage[self._next_idx] = transition
+            self._segments[transition.r == 0].add(self._next_idx)
+
+        self._next_idx = (self._next_idx + 1) % self._maxsize
+
+    def sample(self, batch_size: int = None, contiguous: bool = True):
+        if self.is_empty:
+            return None
+
+        if batch_size is None:
+            batch_size = self.batch_size
+
+        self._num_sampled += batch_size
+
+        if contiguous:
+            # Select the index of the end of the sequence
+            exclude = set(range(batch_size - 1))
+            ixs = self._segments[random.randint(0, 1)] - exclude
+            ix = random.choice(tuple(ixs)) + 1
+            samples = self._storage[ix - batch_size:ix]
+        else:
+            ix = random.sample(self._segments[0], batch_size // 2)
+            ix += random.sample(self._segments[1], batch_size // 2)
+            samples = [self._storage[i] for i in ix]
+
+        return samples
 
 
 class PER(ER):
@@ -241,6 +367,3 @@ class PER(ER):
                f'α={self.α}, ' \
                f'β={self.β}, ' \
                f'ε={self.ε})'
-
-
-

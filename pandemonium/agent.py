@@ -30,6 +30,7 @@ class Agent:
                  steps: int) -> Tuple[Transitions, dict]:
         """ Perform number of `steps` in the environment
 
+        Stops early if the episode is over.
 
         Parameters
         ----------
@@ -49,6 +50,8 @@ class Agent:
         wall_time = time.time()
         transitions = list()
         done = False
+        total_reward = 0.
+
         x0 = self.feature_extractor(s0)
         while len(transitions) < steps and not done:
             a, policy_info = self.behavior_policy(x0)
@@ -58,24 +61,58 @@ class Agent:
             t = Transition(s0, a, reward, s1, done, x0, x1, info=info)
             transitions.append(t)
             s0, x0 = s1, x1
+            total_reward += reward
 
         # Record statistics
         logs = {
-            'episode_end': done,
-            'time': time.time() - wall_time,
-            'steps': steps if done else len(transitions),
+            'done': done,
+            'interaction_reward': total_reward,
+            'interaction_time': time.time() - wall_time,
+            'interaction_steps': steps if done else len(transitions),
         }
         return transitions, logs
 
     def learn(self, env, episodes: int, update_freq: int) -> Iterator[dict]:
 
+        total_steps = 0
         for episode in range(episodes):
-            done = False  # indicator for the end of the episode
-            env.seed(1337)  # keep the env consistent from episode to episode
+
+            # Initialize metrics
+            done = False        # indicator for the end of the episode
+            episode_steps = 0   # tracks total steps taken during the episode
+            episode_reward = 0  # tracks reward received during the episode
+            logs = dict()
+
+            # Initialize environment
+            env.seed(1337)  # keeps the env consistent from episode to episode
             s0 = env.reset()
+
             while not done:
+                # Collect experience
                 transitions, logs = self.interact(env, s0, update_freq)
+                episode_reward += logs.pop('interaction_reward')
+                done = logs.pop('done')  # do not set `done` as this is interpreted as the end of trial by Tune
+
+                # Learn from experience
                 learning_stats = self.horde.learn(transitions)
                 logs.update(**learning_stats)
-                yield logs
-                done = logs['episode_end']
+
+                # Intra-episode stats
+                episode_steps += logs.pop('interaction_steps')
+                logs['timesteps_total'] = total_steps + episode_steps
+
+                if not done:
+                    yield logs
+
+            # Inter-episode stats
+            total_steps += episode_steps
+            logs.update({
+                'episode_reward': episode_reward,
+                'episodes_total': episode,
+            })
+            yield logs
+
+
+
+
+

@@ -107,6 +107,8 @@ class DeepOfflineTD(ParametricDemon):
 
         # Learn from experience
         transitions = self.replay_buffer.sample()
+        if not transitions:
+            return None, dict()  # not enough experience in the buffer
         trajectory = Trajectory.from_transitions(transitions)
         δ, info = self.delta(trajectory)
 

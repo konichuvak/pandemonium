@@ -68,6 +68,8 @@ class RewardPrediction(ParametricDemon):
             return None, dict()
 
         transitions = self.replay_buffer.sample(self.sequence_size)
+        if not transitions:
+            return None, dict()  # not enough samples in the replay
         trajectory = Trajectory.from_transitions(transitions)
         loss, info = self.delta(trajectory)
         info.update({'rp_traj': trajectory})

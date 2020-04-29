@@ -51,7 +51,7 @@ class GVF:
         """
         return self.π(s)
 
-    def continuation(self, s) -> float:
+    def continuation(self, s):
         r""" Outputs continuation signal based on the agent’s observation
 
         .. math::
@@ -63,7 +63,7 @@ class GVF:
         """
         return self.γ(s)
 
-    def cumulant(self, s) -> float:
+    def cumulant(self, s):
         r""" Accumulates future values of the signal.
 
         .. math::

@@ -1,49 +1,70 @@
 from typing import Tuple, Optional
 
 import torch
-from pandemonium.networks.utils import layer_init, conv2d_size_out
 from torch import nn
 from torch.functional import F
 
+from pandemonium.networks.utils import layer_init, conv2d_size_out
+from pandemonium.utilities.registrable import Registrable
 
-class Identity(nn.Module):
-    def __init__(self, state_dim):
+
+class BaseNetwork(nn.Module, Registrable):
+    """ ABC for all networks that allows for registration
+
+    Attributes
+    ----------
+    feature_dim: tuple
+        dimensions of the input to the network
+
+    """
+
+    def __init__(self, obs_shape: tuple, **kwargs):
         super().__init__()
-        self.feature_dim = state_dim
+
+
+@BaseNetwork.register('identity')
+class Identity(BaseNetwork):
+    def __init__(self, obs_shape: tuple):
+        super().__init__(obs_shape)
+        self.feature_dim = obs_shape
 
     def forward(self, x):
         return x
 
 
-class FCBody(nn.Module):
+@BaseNetwork.register('fc_body')
+class FCBody(BaseNetwork):
     def __init__(self,
-                 state_dim: int,
+                 obs_shape: tuple,
                  hidden_units: tuple = (64,),
                  activation=nn.ReLU):
-        super().__init__()
-        dims = (state_dim,) + hidden_units
-        self.feature_dim = dims[-1]
-
-        modules = []
+        super().__init__(obs_shape)
+        dims = obs_shape + hidden_units
+        modules = list()
         for i, (dim_in, dim_out) in enumerate(zip(dims[:-1], dims[1:])):
             modules.append(layer_init(nn.Linear(dim_in, dim_out)))
             modules.append(activation())
         self.ff = nn.Sequential(*modules)
+        self.feature_dim = hidden_units[-1]
 
     def forward(self, x):
         return self.ff(x)
 
 
-class ConvBody(nn.Module):
+@BaseNetwork.register('conv_body')
+class ConvBody(BaseNetwork):
     """ A convolutional neural network, also known as `nature CNN` in RL """
 
-    def __init__(self, d: int, w: int, h: int,
+    def __init__(self,
+                 obs_shape: tuple,
                  feature_dim: int = 256,
                  channels=(8, 16, 32),
                  kernels=(2, 2, 2),
                  strides=(1, 1, 1)):
         assert len(channels) == len(kernels) == len(strides)
+        assert len(obs_shape) == 3, obs_shape
 
+        d, w, h = obs_shape
         ch = (d,) + channels
         conv = list()
         for i in range(len(channels)):
@@ -52,7 +73,7 @@ class ConvBody(nn.Module):
             w = conv2d_size_out(w, kernels[i], strides[i])
             h = conv2d_size_out(h, kernels[i], strides[i])
 
-        super().__init__()
+        super().__init__(obs_shape)
         self.conv = nn.Sequential(*conv)
         self.fc = layer_init(nn.Linear(w * h * ch[len(channels)], feature_dim))
         self.feature_dim = feature_dim
@@ -64,6 +85,7 @@ class ConvBody(nn.Module):
         return x
 
 
+@BaseNetwork.register('conv_lstm')
 class ConvLSTM(ConvBody):
     """ A convolutional neural net with a recurrent LSTM layer on top
 

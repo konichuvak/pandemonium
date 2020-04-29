@@ -2,10 +2,10 @@ from typing import Union
 
 import gym
 import torch
-from pandemonium.utilities.schedules import ConstantSchedule, LinearSchedule
-from torch.distributions import Categorical, Distribution
+from torch.distributions import Categorical, Uniform, Distribution
 
 from pandemonium.policies import Policy, torch_argmax_mask
+from pandemonium.utilities.schedules import ConstantSchedule, LinearSchedule
 from pandemonium.utilities.spaces import OptionSpace
 from pandemonium.utilities.utilities import get_all_classes
 
@@ -15,25 +15,27 @@ Schedule = Union[ConstantSchedule, LinearSchedule]
 class Discrete(Policy):
     """ Base class for discrete policies """
 
-    def __init__(self, action_space):
+    def __init__(self, action_space, feature_dim):
         if not isinstance(action_space, gym.spaces.Discrete):
             raise TypeError()
-        super().__init__(action_space=action_space)
+        super().__init__(action_space=action_space, feature_dim=feature_dim)
 
     def dist(self, *args, **kwargs) -> Distribution:
         raise NotImplementedError
 
 
+@Policy.register('discrete_random')
 class Random(Discrete):
     """ Picks an option at random """
 
     def dist(self, *args, **kwargs):
-        return self.action_space
+        return Uniform(0, self.action_space.n)
 
     def __str__(self):
         return f'RandomPolicy({self.action_space.n})'
 
 
+@Policy.register('egreedy')
 class Egreedy(Discrete):
     r""" :math:`\epsilon`-greedy policy for discrete action spaces.
 
@@ -76,7 +78,12 @@ class Egreedy(Discrete):
         return f'ε-greedy({self.ε})'
 
 
+@Policy.register('softmax')
 class SoftmaxPolicy(Discrete):
+    """ Picks actions with probability proportional to Q-values.
+
+    Also called Boltzman or Gibbs distribution.
+    """
 
     def __init__(self, temperature: Schedule, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -94,7 +101,7 @@ class SoftmaxPolicy(Discrete):
         self.τ = schedule
 
     def dist(self, features, vf) -> Categorical:
-        probs = (vf(features) / self.temperature).softmax(dim=2)
+        probs = (vf(features) / self.temperature).softmax(dim=1)
         return Categorical(probs=probs)
 
     def act(self, *args, **kwargs):

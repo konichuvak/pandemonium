@@ -160,7 +160,7 @@ class OfflineTDControl(OfflineTD, ControlDemon):
         """ Computes value targets from action-value pairs in the trajectory """
         raise NotImplementedError
 
-    COUNT = 0
+    # COUNT = 0   # TESTING PER
 
     def delta(self, trajectory: Trajectory) -> Loss:
         x = self.feature(trajectory.s0)
@@ -173,9 +173,9 @@ class OfflineTDControl(OfflineTD, ControlDemon):
             # take average across states
             loss = loss.mean(tuple(range(2, len(loss.shape))))
         loss = (loss * trajectory.ρ).mean()  # weighted IS
-        if trajectory.r.bool().any():
-            self.COUNT += 1
-            print(self.COUNT)
+        # if trajectory.r.bool().any():
+        #     self.COUNT += 1
+        #     print(self.COUNT)
         return loss, {'loss': loss.item(), 'td_error': u - v}
 
     def target(self, trajectory: Trajectory):

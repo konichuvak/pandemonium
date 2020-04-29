@@ -10,8 +10,9 @@ from pandemonium.utilities.utilities import get_all_classes
 
 
 class RewardPrediction(ParametricDemon):
-    """ Classifies reward at the end of a state sequence
+    """ A demon that maximizes un-discounted n-step return.
 
+    Learns the sign (+, 0, -) of the reward at the end of a state sequence.
     Used as an auxiliary task in UNREAL architecture.
 
     References
@@ -102,7 +103,7 @@ class ValueReplay(LinearDemon, OfflineTDPrediction, TDn):
         transitions = self.replay_buffer.sample()
         trajectory = Trajectory.from_transitions(transitions)
         loss, info = self.delta(trajectory)
-        info.update({'rp_traj': trajectory})
+        info.update({'vr_traj': trajectory})
         return loss, info
 
 

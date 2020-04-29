@@ -1,5 +1,5 @@
 import textwrap
-from typing import List, Callable
+from typing import List, Callable, Dict
 
 import torch
 from torch import nn
@@ -25,8 +25,7 @@ class Horde(torch.nn.Module):
     def __init__(self,
                  demons: List[Demon],
                  aggregation_fn: Callable[[torch.Tensor], torch.Tensor],
-                 device: torch.device,
-                 ):
+                 device: torch.device):
         super().__init__()
         demons = {str(demon): demon for demon in demons}
         self.demons = nn.ModuleDict(demons)
@@ -39,7 +38,6 @@ class Horde(torch.nn.Module):
         self.first_pass = True
 
         self.device = device
-        self.to(device)
 
     def learn(self, transitions) -> dict:
 
@@ -52,8 +50,12 @@ class Horde(torch.nn.Module):
         for i, (d, demon) in enumerate(self.demons.items()):
             loss, info = demon.learn(transitions)
             losses[i] = loss if loss is not None else 0
-            logs.update(
-                {f'{d}{id(demon)}': {f'{k}': v for k, v in info.items()}})
+
+            # HACK
+            for key in ('td_error', 'rp_traj', 'vr_traj'):
+                info.pop(key, None)  # remove non-leaf tensors from logs
+
+            logs.update({f'{d}': {f'{k}': v for k, v in info.items()}})
 
         # Optimize joint objective
         total_loss = self.aggregation_fn(losses)
@@ -67,7 +69,8 @@ class Horde(torch.nn.Module):
             # torch.nn.utils.clip_grad_norm_(self.parameters(), 1)
             self.optimizer.step()
 
-        logs.update({'total_loss': total_loss})
+        # TODO: hack for ray
+        logs.update({'total_loss': total_loss.item()})
         return logs
 
     def __str__(self):

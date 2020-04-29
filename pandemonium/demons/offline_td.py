@@ -38,11 +38,13 @@ class OfflineTD(Demon):
         return self.delta(trajectory)
 
 
-class DeepOfflineTD(OfflineTD, ParametricDemon):
+class DeepOfflineTD(ParametricDemon):
     """ Mixin for offline :math:`\text{TD}` methods with non-linear FA
 
     Tries to deal with instabilities of training deep neural network by
     using techniques like target network and replay buffer.
+
+    # TODO: make this a true mixin
     """
 
     def __init__(self,

@@ -14,7 +14,8 @@ from pandemonium.policies.utils import torch_argmax_mask
 from pandemonium.utilities.utilities import get_all_classes
 
 
-class DeepOfflineTDControl(DeepOfflineTD, OfflineTDControl):
+class DQN(DeepOfflineTD, OfflineTDControl, TDn):
+    """ Deep Q-Network based on Watkins Q-learning rule """
 
     def __init__(self,
                  duelling: bool = False,
@@ -42,14 +43,6 @@ class DeepOfflineTDControl(DeepOfflineTD, OfflineTDControl):
                 return q - (q - v).mean(1, keepdim=True)
             return self.aqf(x)
 
-    def __repr__(self):
-        r = DeepOfflineTD.__repr__(self)
-        return r + f'\n(double): {self.double}\n(duelling): {self.duelling}'
-
-
-class DQN(DeepOfflineTDControl, TDn):
-    """ Deep Q-Network based on Watkins Q-learning rule """
-
     @torch.no_grad()
     def q_target(self, trajectory: Trajectory):
         q = self.predict_q(trajectory.x1, target=True)
@@ -61,6 +54,11 @@ class DQN(DeepOfflineTDControl, TDn):
         else:
             v = q.max(1, keepdim=True)[0]
         return v
+
+    def __repr__(self):
+        r = DeepOfflineTD.__repr__(self)
+        return r + f'\n(double): {self.double}' \
+                   f'\n(duelling): {self.duelling}'
 
 
 class DeepSARSA(OfflineTDControl):

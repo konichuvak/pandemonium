@@ -82,7 +82,9 @@ class ER:
         for experience, weight in zip(transitions, weights):
             self.add(experience, weight)
 
-    def sample(self, batch_size: int = None, contiguous: bool = True):
+    def sample(self,
+               batch_size: int = None,
+               contiguous: bool = True) -> List[Transition]:
         r""" Randomly draws a batch of transitions
 
         Parameters
@@ -94,7 +96,7 @@ class ER:
             This is particularly useful when using $n$-step methods.
         """
         if self.is_empty:
-            return None
+            return list()
 
         if batch_size is None:
             batch_size = self.batch_size
@@ -179,9 +181,15 @@ class SegmentedER(ER):
     def add(self, transition: Transition, weight: float = None) -> None:
         self.buffers[self.criterion(transition)].add(transition, weight)
 
-    def sample(self, batch_size: int = None, contiguous: bool = True):
+    def sample(self,
+               batch_size: int = None,
+               contiguous: bool = True) -> List[Transition]:
+        if self.is_empty:
+            return list()
+
         if batch_size is None:
             batch_size = self.batch_size
+
         buffer = self.buffers[self.dist.sample().item()]
         samples = buffer.sample(batch_size=batch_size, contiguous=contiguous)
         return samples
@@ -224,9 +232,11 @@ class SkewedER(ER):
 
         self._next_idx = (self._next_idx + 1) % self._maxsize
 
-    def sample(self, batch_size: int = None, contiguous: bool = True):
+    def sample(self,
+               batch_size: int = None,
+               contiguous: bool = True) -> List[Transition]:
         if self.is_empty:
-            return None
+            return list()
 
         if batch_size is None:
             batch_size = self.batch_size
@@ -235,13 +245,20 @@ class SkewedER(ER):
 
         if contiguous:
             # Select the index of the end of the sequence
-            exclude = set(range(batch_size - 1))
-            ixs = self._segments[random.randint(0, 1)] - exclude
+            segment = random.randint(0, 1)
+            if not self._segments[segment]:
+                # no transitions of the type `segment` have been encountered yet
+                return list()
+            head = set(range(batch_size - 1))
+            ixs = self._segments[segment] - head
             ix = random.choice(tuple(ixs)) + 1
+            # Return a trajectory leading up to a randomly chosen state
             samples = self._storage[ix - batch_size:ix]
         else:
-            ix = random.sample(self._segments[0], batch_size // 2)
-            ix += random.sample(self._segments[1], batch_size // 2)
+            sample_size = min(batch_size // 2, len(self._segments[0]))
+            ix = random.sample(self._segments[0], sample_size)
+            sample_size = min(batch_size // 2, len(self._segments[1]))
+            ix += random.sample(self._segments[1], sample_size)
             samples = [self._storage[i] for i in ix]
 
         return samples
@@ -319,7 +336,11 @@ class PER(ER):
             res.append(idx)
         return res
 
-    def sample(self, batch_size: int = None, contiguous: bool = True):
+    def sample(self,
+               batch_size: int = None,
+               contiguous: bool = True) -> List[Transition]:
+        if self.is_empty:
+            return list()
 
         if batch_size is None:
             batch_size = self.batch_size

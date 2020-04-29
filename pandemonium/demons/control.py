@@ -1,6 +1,8 @@
 from collections import OrderedDict
 
 import torch
+from torch import nn
+
 from pandemonium.demons import Loss, ParametricDemon
 from pandemonium.demons.offline_td import (DeepOfflineTD, TDn, TTD,
                                            OfflineTDPrediction)
@@ -10,7 +12,6 @@ from pandemonium.networks import Reshape
 from pandemonium.policies import Policy, HierarchicalPolicy, DiffPolicy
 from pandemonium.policies.utils import torch_argmax_mask
 from pandemonium.utilities.utilities import get_all_classes
-from torch import nn
 
 
 class DeepOfflineTDControl(DeepOfflineTD, OfflineTDControl):

@@ -9,11 +9,20 @@ from torch.distributions import Categorical
 from pandemonium.experience import Transitions, Transition
 # from ray.rllib.optimizers.segment_tree import SumSegmentTree, MinSegmentTree
 from pandemonium.experience.segment_tree import SumSegmentTree, MinSegmentTree
+from pandemonium.utilities.registrable import Registrable
 from pandemonium.utilities.schedules import Schedule, ConstantSchedule
 
-__all__ = ['ER', 'PER', 'SkewedER', 'SegmentedER']
+__all__ = ['ReplayBuffer', 'ER', 'PER', 'SkewedER', 'SegmentedER']
 
 
+class ReplayBuffer(Registrable):
+    """ Registrar for replay buffers"""
+
+    def __init__(self, *args, **kwargs):
+        raise NotImplementedError
+
+
+@ReplayBuffer.register('er')
 class ER:
     """ Experience Replay buffer
 
@@ -114,6 +123,7 @@ class ER:
                f'capacity={self.capacity})'
 
 
+@ReplayBuffer.register('segmented_er')
 class SegmentedER(ER):
     """ Segmented Experience Replay
 
@@ -181,6 +191,7 @@ class SegmentedER(ER):
         return sum([len(b) for b in self.buffers])
 
 
+@ReplayBuffer.register('skewed_er')
 class SkewedER(ER):
     """
     Used in the UNREAL architecture for the auxiliary reward prediction task.
@@ -236,6 +247,7 @@ class SkewedER(ER):
         return samples
 
 
+@ReplayBuffer.register('per')
 class PER(ER):
     """ Prioritized Experience Replay buffer
 

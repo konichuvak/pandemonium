@@ -1,6 +1,7 @@
-from pandemonium.policies import Policy
 from torch import nn
 from torch.distributions import Distribution, Categorical
+
+from pandemonium.policies import Policy
 from pandemonium.utilities.utilities import get_all_classes
 
 
@@ -10,21 +11,19 @@ class DiffPolicy(Policy, nn.Module):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         nn.Module.__init__(self)
+        self.forward = self.act
 
     def dist(self, *args, **kwargs) -> Distribution:
         raise NotImplementedError
 
-    def forward(self, *args, **kwargs):
-        return self.act(*args, **kwargs)
 
-
+@Policy.register('VPG')
 class VPG(DiffPolicy):
     """ Vanilla Policy Gradient """
 
-    def __init__(self, feature_dim: int, entropy_coefficient: float = 0.01,
-                 *args, **kwargs):
+    def __init__(self, entropy_coefficient: float = 0.01, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.policy_head = nn.Linear(feature_dim, self.action_space.n)
+        self.policy_head = nn.Linear(self.feature_dim, self.action_space.n)
         self.β = entropy_coefficient
 
     def dist(self, features, *args, **kwargs) -> Categorical:

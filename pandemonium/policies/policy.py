@@ -3,23 +3,45 @@ from typing import Tuple, Dict
 import gym
 from torch.distributions import Distribution
 
+from pandemonium.utilities.registrable import Registrable
+
 PolicyInfo = Dict[str, Distribution]
 
 
-class Policy:
-    r""" Base abstract class for decision making rules """
+class Policy(Registrable):
+    r""" Base abstract class for decision making rules
 
-    def __init__(self, action_space: gym.spaces.Space):
+    Mathematically, a policy is a function $\pi: \mathcal{X} -> \mathcal{A}$
+    that maps the space of features onto the space of actions.
+    """
+
+    def __init__(self,
+                 feature_dim: int,
+                 action_space: gym.spaces.Space,
+                 **params):
+        """
+
+        Parameters
+        ----------
+        feature_dim: int
+            dimensionality of the feature vector (domain of the function)
+        action_space: gym.spaces.Space
+            (range of the functions)
+        **params:
+            any additional parameters required to initialize the Policy
+        """
+        self.feature_dim = feature_dim
         self.action_space = action_space
 
     def __call__(self, *args, **kwargs):
         return self.act(*args, **kwargs)
 
     def dist(self, *args, **kwargs) -> Distribution:
-        """ Returns a distribution over actions """
+        """ Produces a distribution over actions """
         raise NotImplementedError
 
     def act(self, *args, **kwargs) -> Tuple['Action', PolicyInfo]:
+        """ Samples an action from a distribution over actions """
         dist = self.dist(*args, **kwargs)
         return dist.sample(), {'action_dist': dist}
 

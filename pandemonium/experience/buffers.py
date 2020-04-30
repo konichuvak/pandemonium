@@ -246,11 +246,11 @@ class SkewedER(ER):
         if contiguous:
             # Select the index of the end of the sequence
             segment = random.randint(0, 1)
-            if not self._segments[segment]:
-                # no transitions of the type `segment` have been encountered yet
-                return list()
             head = set(range(batch_size - 1))
             ixs = self._segments[segment] - head
+            if not ixs:
+                # no transitions of the type `segment` have been encountered yet
+                return list()
             ix = random.choice(tuple(ixs)) + 1
             # Return a trajectory leading up to a randomly chosen state
             samples = self._storage[ix - batch_size:ix]

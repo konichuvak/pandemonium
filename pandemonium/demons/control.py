@@ -44,7 +44,7 @@ class DQN(DeepOfflineTD, OfflineTDControl, TDn):
             return self.aqf(x)
 
     @torch.no_grad()
-    def q_target(self, trajectory: Trajectory):
+    def v_target(self, trajectory: Trajectory):
         q = self.predict_q(trajectory.x1, target=True)
         if self.double:
             if isinstance(self, PixelControl):
@@ -65,7 +65,7 @@ class DeepSARSA(OfflineTDControl):
     r""" :math:`n`-step semi-gradient :math:`\text{SARSA}` """
 
     @torch.no_grad()
-    def q_target(self, trajectory: Trajectory):
+    def v_target(self, trajectory: Trajectory):
         q = self.predict_q(trajectory.x1)
         a = self.gvf.π(trajectory.x1, vf=self.aqf)
         v = q[torch.arange(q.size(0)), a]
@@ -76,7 +76,7 @@ class DeepSARSE(OfflineTDControl):
     r""" :math:`n`-step semi-gradient expected :math:`\text{SARSA}` """
 
     @torch.no_grad()
-    def q_target(self, trajectory: Trajectory):
+    def v_target(self, trajectory: Trajectory):
         q = self.predict_q(trajectory.x1)
         dist = self.gvf.π.dist(trajectory.x1, vf=self.aqf)
         v = q * dist.probs

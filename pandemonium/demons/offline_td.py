@@ -160,7 +160,7 @@ class OfflineTDPrediction(OfflineTD, PredictionDemon):
 class OfflineTDControl(OfflineTD, ControlDemon):
 
     @torch.no_grad()
-    def q_target(self, trajectory: Trajectory):
+    def v_target(self, trajectory: Trajectory):
         """ Computes value targets from action-value pairs in the trajectory """
         raise NotImplementedError
 
@@ -183,7 +183,7 @@ class OfflineTDControl(OfflineTD, ControlDemon):
         return loss, {'loss': loss.item(), 'td_error': u - v}
 
     def target(self, trajectory: Trajectory):
-        return super().target(trajectory, v=self.q_target(trajectory))
+        return super().target(trajectory, v=self.v_target(trajectory))
 
 
 class TTD(OfflineTD):

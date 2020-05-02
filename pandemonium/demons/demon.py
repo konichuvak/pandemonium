@@ -48,7 +48,6 @@ class Demon:
                  behavior_policy: Policy,
                  eligibility: Optional[EligibilityTrace],
                  ):
-        super().__init__()
         self.gvf = gvf
         self.avf = avf
 

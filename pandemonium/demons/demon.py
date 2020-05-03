@@ -118,27 +118,6 @@ class Demon:
                f')'
 
 
-class ParametricDemon(Demon, torch.nn.Module, ABC):
-    """ Parametrized Demons implemented in PyTorch subclass this """
-
-    def forward(self, *args, **kwargs) -> torch.Tensor:
-        return self.predict(*args, **kwargs)
-
-
-class LinearDemon(ParametricDemon, ABC):
-    r""" Approximates state or state-action values using linear projection
-
-    .. math::
-        \widetilde{V}(s) = \boldsymbol{x}(s)^{T}\boldsymbol{w}
-    """
-
-    def __init__(self, feature, output_dim: int, *args, **kwargs):
-        super().__init__(
-            avf=torch.nn.Linear(feature.feature_dim, output_dim),
-            feature=feature, *args, **kwargs
-        )
-
-
 class PredictionDemon(Demon, ABC):
     r""" Collects factual knowledge about environment by learning to predict
 
@@ -191,6 +170,31 @@ class ControlDemon(Demon, ABC):
     def behavior_policy(self, x: torch.Tensor):
         # Control policies usually require access to value functions.
         return self.μ(x, vf=self.aqf)
+
+
+class ParametricDemon(Demon, torch.nn.Module, ABC):
+    """ Base class fot parametrized Demons implemented in PyTorch """
+
+    def __init__(self, **kwargs):
+        torch.nn.Module.__init__(self)
+        super().__init__(**kwargs)
+
+    def forward(self, *args, **kwargs) -> torch.Tensor:
+        return self.predict(*args, **kwargs)
+
+
+class LinearDemon(ParametricDemon, ABC):
+    r""" Approximates state or state-action values using linear projection
+
+    .. math::
+        \widetilde{V}(s) = \boldsymbol{x}(s)^{T}\boldsymbol{w}
+    """
+
+    def __init__(self, feature, output_dim: int, *args, **kwargs):
+        super().__init__(
+            avf=torch.nn.Linear(feature.feature_dim, output_dim),
+            feature=feature, *args, **kwargs
+        )
 
 
 __all__ = ['Demon', 'ParametricDemon', 'LinearDemon', 'PredictionDemon',

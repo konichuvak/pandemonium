@@ -155,13 +155,26 @@ class ControlDemon(Demon, ABC):
     Can be thought of as an accumulator of procedural knowledge.
 
     In addition to the approximate value function (avf), has a an approximate
-    q-value function (aqf) that produces estimates for state-action pairs.
+    q-value function (aqf) that produces value estimates for state-action pairs.
     """
-    __slots__ = 'aqf'
+    # __slots__ = 'aqf',
 
-    def __init__(self, aqf: Callable, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, aqf: Callable, **kwargs):
+        super().__init__(avf=self.implied_avf, **kwargs)
         self.aqf = aqf
+
+    def implied_avf(self, x):
+        r""" State-value function in terms of action-value function
+
+        .. math::
+            V^{\pi}(s) = \sum_{a \in \mathcal{A}} \pi (a|s) * Q^{\pi}(a,s)
+
+        Is overridden in duelling architecture by an independent estimator.
+
+        TODO: does not apply for continuous action spaces
+        TODO: handle predictions made to compute targets via target_aqf
+        """
+        return (self.μ.dist(x, vf=self.aqf).probs * self.aqf(x)).sum(1)
 
     def predict(self, x):
         """ Computes value of a given state """

@@ -12,6 +12,34 @@ from pandemonium.networks import Reshape
 from pandemonium.policies import Policy, HierarchicalPolicy, DiffPolicy
 from pandemonium.policies.utils import torch_argmax_mask
 from pandemonium.utilities.utilities import get_all_classes
+from torch import nn
+
+
+class DuellingMixin:
+    r""" Mixin for value-based control algorithms that uses two separate
+    estimators for action-values and state-values.
+
+    References
+    ----------
+    "Dueling Network Architectures for DRL" by Wang et al.
+        https://arxiv.org/pdf/1511.06581
+
+    """
+    avf: callable
+    aqf: callable
+    target_avf: callable
+    target_aqf: callable
+
+    def __init__(self):
+        if not isinstance(self, ControlDemon):
+            raise TypeError(f'Duelling architecture is only supported'
+                            f'by control algorithms')
+        self.avf = nn.Linear(self.φ.feature_dim, 1)
+
+    def predict_q(self, x, target: bool = False):
+        v = self.avf(x) if not target else self.target_aqf(x)
+        q = self.aqf(x) if not target else self.target_aqf(x)
+        return q - (q - v).mean(1, keepdim=True)
 
 
 class DQN(DeepOfflineTD, OfflineTDControl, TDn):

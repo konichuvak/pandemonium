@@ -38,105 +38,6 @@ class OfflineTD(Demon):
         return self.delta(trajectory)
 
 
-class DeepOfflineTD(ParametricDemon):
-    """ Mixin for offline :math:`\text{TD}` methods with non-linear FA
-
-    Tries to deal with instabilities of training deep neural network by
-    using techniques like target network and replay buffer.
-
-    # TODO: make this a true mixin
-    """
-
-    def __init__(self,
-                 replay_buffer: ER,
-                 target_update_freq: int = 0,
-                 warm_up_period: int = None,
-                 **kwargs):
-
-        super().__init__(**kwargs)
-
-        self.update_counter = 0  # keeps track of the number of updates so far
-
-        # Use replay buffer for breaking correlation in the experience samples
-        self.replay_buffer = replay_buffer
-
-        # By default, learning does not start until the replay buffer is full
-        if warm_up_period is None:
-            warm_up_period = replay_buffer.capacity // replay_buffer.batch_size
-        self.warm_up_period = warm_up_period
-
-        # Create a target network to stabilize training
-        self.target_update_freq = target_update_freq
-        if self.target_update_freq:
-            self.target_feature = deepcopy(self.φ)
-            self.target_feature.load_state_dict(self.φ.state_dict())
-            self.target_feature.eval()
-
-            self.target_avf = deepcopy(self.avf)
-            self.target_avf.load_state_dict(self.avf.state_dict())
-            self.target_avf.eval()
-
-            self.target_aqf = deepcopy(self.aqf)
-            self.target_aqf.load_state_dict(self.aqf.state_dict())
-            self.target_aqf.eval()
-
-        else:
-            self.target_feature = self.φ
-            self.target_avf = self.avf
-            self.target_aqf = self.aqf
-
-    def learn(self, transitions: Transitions):
-
-        # Add transitions to the replay buffer
-        if isinstance(self.replay_buffer, PER):
-            # Compute TD-error to determine priorities for transitions
-            trajectory = Trajectory.from_transitions(transitions)
-            _, info = self.delta(trajectory)
-            priorities = info['td_error'].abs() + self.replay_buffer.ε
-            priorities = [w.item() for w in priorities]
-            self.replay_buffer.add_batch(transitions, priorities)
-        else:
-            self.replay_buffer.add_batch(transitions)
-
-        self.sync_target()
-
-        # Wait until warm up period is over
-        self.update_counter += 1
-        if self.update_counter < self.warm_up_period:
-            return None, dict()
-
-        # Learn from experience
-        transitions = self.replay_buffer.sample()
-        if not transitions:
-            return None, dict()  # not enough experience in the buffer
-        trajectory = Trajectory.from_transitions(transitions)
-        δ, info = self.delta(trajectory)
-
-        # Update the priorities according to the new TD-error
-        if isinstance(self.replay_buffer, PER):
-            priorities = info['td_error'].abs() + self.replay_buffer.ε
-            priorities = [w.item() for w in priorities]
-            indexes = trajectory.buffer_index.tolist()
-            self.replay_buffer.update_priorities(indexes, priorities)
-        return δ, info
-
-    def sync_target(self):
-        if self.target_update_freq and self.update_counter % self.target_update_freq == 0:
-            self.target_feature.load_state_dict(self.φ.state_dict())
-            self.target_avf.load_state_dict(self.avf.state_dict())
-            self.target_aqf.load_state_dict(self.aqf.state_dict())
-
-    def __repr__(self):
-        demon = ControlDemon.__repr__(self)
-        params = f'(replay_buffer): {repr(self.replay_buffer)}\n' \
-                 f'(warmup): {self.warm_up_period}\n' \
-                 f'(target_update_freq): {self.target_update_freq}'
-        return f'{demon}\n{params}'
-
-    def __str__(self):
-        return ControlDemon.__str__(self)
-
-
 class OfflineTDPrediction(OfflineTD, PredictionDemon):
     r""" Offline :math:`\text{TD}(\lambda)` for prediction tasks """
 
@@ -236,3 +137,117 @@ class TDn(TTD):
             eligibility=lambda trajectory: torch.ones_like(trajectory.r),
             **kwargs
         )
+
+
+class ReplayBufferMixin:
+    r""" Mixin that adds a replay buffer to an agent.
+
+    Was originally designed as a means to make RL more data efficient [1].
+    Later on adapted in DQN architecture to make the data distribution more
+    stationary [2].
+
+    References
+    ----------
+    [1] "Self-Improving Reactive Agents Based On RL, Planning and Teaching"
+        by Lin. http://www.incompleteideas.net/lin-92.pdf
+    [2] "Playing Atari with Deep Reinforcement Learning"
+        https://arxiv.org/pdf/1312.5602.pdf
+    """
+    delta: callable
+
+    def __init__(self,
+                 replay_buffer: ER,
+                 priority_measure: str = 'td_error'):
+        """
+
+        Parameters
+        ----------
+        replay_buffer: ReplayBuffer
+            An instance of a replay buffer
+        priority_measure: str
+            Priorities to experiences are assigned based on this metric in
+            prioritized ER case. Defaults to using `td_error`, but could also
+            be `ce_loss` in case of distributional value learning.
+        """
+        self.replay_buffer = replay_buffer
+        self.priority_measure = priority_measure
+
+    def store(self, transitions: Transitions):
+        """ Adds transitions to the replay buffer.
+
+        Pre-computes priorities in case Prioritized Experience Replay is used.
+        """
+
+        if isinstance(self.replay_buffer, PER):
+            trajectory = Trajectory.from_transitions(transitions)
+            _, info = self.delta(trajectory)
+            priorities = info[self.priority_measure]
+            priorities = priorities.abs() + self.replay_buffer.ε
+            self.replay_buffer.add_batch(transitions, priorities.tolist())
+        else:
+            self.replay_buffer.add_batch(transitions)
+
+    def _update_priorities(self, trajectory: Trajectory, info: dict):
+        priorities = info[self.priority_measure]
+        priorities = priorities.abs() + self.replay_buffer.ε
+        indexes = trajectory.buffer_index.tolist()
+        self.replay_buffer.update_priorities(indexes, priorities.tolist())
+
+
+class TargetNetMixin:
+    r""" Mixin that adds a target network to the agent.
+
+    Duplicates the estimator networks that are used to estimate targets.
+    These clones are updated at a `target_update_freq` frequency which allows
+    to stabilize the training process and make targets less non-stationary.
+
+    References
+    ----------
+    [1] "Playing Atari with Deep Reinforcement Learning"
+        https://arxiv.org/pdf/1312.5602.pdf
+    """
+    aqf: callable
+    avf: callable
+    φ: callable
+
+    def __init__(self, target_update_freq: int = 0):
+
+        self.update_counter = 0  # keeps track of the number of updates so far
+
+        # Create target networks to stabilize training
+        self.target_networks = dict()
+        self.target_update_freq = target_update_freq
+        if self.target_update_freq:
+            self.target_feature = deepcopy(self.φ)
+            self.target_feature.load_state_dict(self.φ.state_dict())
+            self.target_feature.eval()
+            self.target_networks[self.target_feature] = self.φ
+
+            if isinstance(self.avf, nn.Module):
+                # `avf` is a network in duelling DQN and is implicit in `aqf`
+                # in other cases
+                self.target_avf = deepcopy(self.avf)
+                self.target_avf.load_state_dict(self.avf.state_dict())
+                self.target_avf.eval()
+                self.target_networks[self.target_avf] = self.avf
+
+            if isinstance(self.aqf, nn.Module):
+                # `aqf` is a network in all DQN family except distributional
+                # case, where it is implicit in the `azf`
+                self.target_aqf = deepcopy(self.aqf)
+                self.target_aqf.load_state_dict(self.aqf.state_dict())
+                self.target_aqf.eval()
+                self.target_networks[self.target_aqf] = self.aqf
+
+            if hasattr(self, 'azf') and isinstance(self.azf, nn.Module):
+                # only for distributional agents
+                self.target_azf = deepcopy(self.azf)
+                self.target_azf.load_state_dict(self.azf.state_dict())
+                self.target_azf.eval()
+                self.target_networks[self.target_azf] = self.azf
+
+    def sync_target(self):
+        if self.target_update_freq:
+            if self.update_counter % self.target_update_freq == 0:
+                for target_net, net in self.target_networks.items():
+                    target_net.load_state_dict(net.state_dict())

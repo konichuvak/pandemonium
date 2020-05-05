@@ -49,9 +49,9 @@ class Demon:
                  eligibility: Optional[EligibilityTrace],
                  ):
         self.gvf = gvf
-        self.avf = avf
+        self.avf = self.target_avf = avf
 
-        self.φ = feature
+        self.φ = self.target_feature = feature
         self.μ = behavior_policy
         self.λ = eligibility
 
@@ -140,7 +140,7 @@ class ControlDemon(Demon, ABC):
 
     def __init__(self, aqf: Callable, **kwargs):
         super().__init__(avf=self.implied_avf, **kwargs)
-        self.aqf = aqf
+        self.aqf = self.target_aqf = aqf
 
     def implied_avf(self, x):
         r""" State-value function in terms of action-value function

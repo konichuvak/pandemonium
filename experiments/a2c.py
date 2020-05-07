@@ -71,9 +71,11 @@ def create_demons(config, env, feature_extractor, policy) -> Horde:
         feature=feature_extractor,
         criterion=mse_loss
     )
+
+    demon_weights = torch.tensor([1.]).to(device)
     horde = Horde(
         demons=[control_demon],
-        aggregation_fn=lambda losses: torch.tensor([1.], device=device),
+        aggregation_fn=lambda losses: demon_weights.dot(losses),
         device=device
     )
 

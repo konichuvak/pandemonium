@@ -39,7 +39,6 @@ class Demon:
         Eligibility trace assigning credit to experiences
 
     """
-    __slots__ = 'gvf', 'avf', 'φ', 'μ', 'λ'
 
     def __init__(self,
                  gvf: GVF,
@@ -67,10 +66,10 @@ class Demon:
         raise NotImplementedError
 
     def predict(self, x):
-        r""" Predict the value of the state """
+        r""" Predict the value (or value distribution) of the state """
         raise NotImplementedError
 
-    def feature(self, *args, **kwargs) -> torch.Tensor:
+    def feature(self, *args, **kwargs):
         r""" A mapping from MDP states to features
 
         .. math::
@@ -136,7 +135,6 @@ class ControlDemon(Demon, ABC):
     In addition to the approximate value function (avf), has a an approximate
     q-value function (aqf) that produces value estimates for state-action pairs.
     """
-    # __slots__ = 'aqf',
 
     def __init__(self, aqf: Callable, **kwargs):
         super().__init__(avf=self.implied_avf, **kwargs)

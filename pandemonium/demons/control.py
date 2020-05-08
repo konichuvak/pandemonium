@@ -43,6 +43,126 @@ class DuellingMixin:
         return q - (q - v).mean(1, keepdim=True)
 
 
+class CategoricalQ:
+    """ Categorical Q-learning mixin.
+
+    References
+    ----------
+    "A Distributional Perspective on RL" by Bellemare et al.
+        https://arxiv.org/abs/1707.06887
+    """
+    φ: callable
+    μ: Policy
+
+    def __init__(self,
+                 num_atoms: int,
+                 v_min: float,
+                 v_max: float):
+        """ Sets up functions that allow for distributional value learning.
+
+        Parameters
+        ----------
+        num_atoms: int
+            Number of atoms (bins) for representing the distribution of return.
+            When this is greater than 1, distributional Q-learning is used.
+        v_min: float
+            Minimum possible Q-value of the distribution
+        v_max: float
+            Maximum possible Q-value of the distribution
+        """
+        assert num_atoms > 0, f'num_atoms should be greater than 0, got {num_atoms}'
+        assert v_max > v_min, f'{v_max} should be greater than {v_min}'
+        self.num_atoms = num_atoms
+        self.v_min, self.v_max = v_min, v_max
+        self.z = self.atoms = torch.linspace(v_min, v_max, num_atoms)
+        self.support = self.atoms[None, :]
+        self.Δz = (v_max - v_min) / float(num_atoms - 1)
+        self.azf = self.target_azf = nn.Sequential(
+            nn.Linear(self.φ.feature_dim,
+                      self.μ.action_space.n * num_atoms),
+            Reshape(-1, self.μ.action_space.n, num_atoms),
+            nn.Softmax(dim=2)
+        )
+        self.criterion = cross_entropy
+
+        del self.aqf  # necessary when aqf is a torch net
+
+        def implied_aqf(x):
+            r""" Computes expected action-values using the learned distribution.
+
+            Overrides ``pandemonium.demons.demon.ControlDemon.aqf`` with an
+            aqf induced by the distributional action-value function `azf`.
+
+            .. math::
+                Q(x, a) = \sum_{i=1}^{N} z_i p_i(x, a)
+            """
+            return torch.einsum('k,ijk->ij', [self.atoms, self.azf(x)])
+
+        self.aqf = implied_aqf
+
+        def eval_actions(x, a):
+            r""" Computes the value distribution for given actions.
+
+            Overrides
+            ``pandemonium.demons.offline_td.OfflineTDControl.eval_actions``.
+
+            Returns
+            -------
+            (N, n_atoms) matrix with probability vectors as rows, inducing
+            a probability mass function for values of actions in `a`.
+            """
+            return self.azf(x)[torch.arange(a.size(0)), a]
+
+        self.eval_actions = eval_actions
+
+        __delta = self.delta
+
+        def delta(trajectory: Trajectory) -> Loss:
+            batch_loss, info = __delta(trajectory)
+            info['ce_loss'] = info.pop('loss')  # rename for clarity
+            return batch_loss, info
+
+        self.delta = delta
+
+        @torch.no_grad()
+        def target(trajectory: Trajectory):
+            r""" Computes value targets using Categorical Q-learning.
+
+            Effectively reduces the usual Bellman update to multi-class
+            classification problem.
+
+            On the implementation side, operating on distributions would be
+            nice too. However torch distributions API is quite limited atm.
+                Z = Categorical(probs=self.target_azf(trajectory.x1))
+                T = [AffineTransform(loc=r, scale=γ, event_dim=1)]
+                TZ = TransformedDistribution(base_distribution=Z, transforms=T)
+            """
+            assert isinstance(self, TDn)  # make linter happy
+
+            # Scale and shift the support with the multi-step Bellman operator
+            # TZ(x,a) = R(x, a) + γZ(x',a')
+            # TODO: is the mean preserved under multi-step operator?
+            support = self.support.repeat_interleave(len(trajectory), dim=0)
+            Tz = TDn.target(self, trajectory, v=support)  # (batch, num_atoms)
+
+            # Compute probability mass vector for greedy action in the next state
+            Z = self.target_azf(trajectory.x1)  # (batch, actions, atoms)
+            q = torch.einsum('k,ijk->ij', [self.atoms, Z])  # (batch, actions)
+            # a = q[torch_argmax_mask(q, 1)]  # TODO: what about double Q?
+            a = q.argmax(1)  # TODO: argmax is not randomized
+            probs = Z[torch.arange(len(trajectory)), a]
+            assert torch.allclose(probs.sum(1), torch.ones(probs.size(0)))
+
+            # Compute ΦΤz
+            # Projects the target distribution (Tz, probs) with a shifted support
+            # `Tz` and probability mass vector `probs` onto the support of our
+            # parametric model using the l2 (a.k.a. Cramer) distance
+            projected_probs = l2_projection(Tz, probs, self.atoms)
+            return projected_probs
+
+        self.target = target
+
+
 class DQN(OfflineTDControl,
           TDn,
           ParametricDemon,

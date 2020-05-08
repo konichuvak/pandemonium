@@ -64,23 +64,32 @@ class OfflineTDControl(OfflineTD, ControlDemon):
         """ Computes value targets from action-value pairs in the trajectory """
         raise NotImplementedError
 
-    # COUNT = 0   # TESTING PER
+    def eval_actions(self, x, a):
+        """ Computes values associated with actions `a`
+
+        Is overridden by distributional agents that use `azf`
+
+        Returns
+        -------
+        (N, 1) vector of values for each action in the `a` vector.
+        """
+        return self.aqf(x)[torch.arange(a.size(0)), a].unsqueeze(1)
 
     def delta(self, trajectory: Trajectory) -> Loss:
-        x = self.feature(trajectory.s0)
-        a = torch.arange(x.size(0)), trajectory.a
-        v = self.predict_q(x)[a].unsqueeze(1)
+        x = self.feature(trajectory.s0)  # could use trajectory.x1 instead
+        v = self.eval_actions(x, trajectory.a)
         u = self.target(trajectory).detach()
         assert u.shape == v.shape, f'{u.shape} vs {v.shape}'
         loss = self.criterion(input=v, target=u, reduction='none')
         if len(loss.shape) > 2:
+            # Pixel Control task?
             # take average across states
             loss = loss.mean(tuple(range(2, len(loss.shape))))
-        loss = (loss * trajectory.ρ).mean()  # weighted IS
-        # if trajectory.r.bool().any():
-        #     self.COUNT += 1
-        #     print(self.COUNT)
-        return loss, {'loss': loss.item(), 'td_error': u - v}
+        batch_loss = (loss * trajectory.ρ).mean()  # weighted IS
+        # TODO: td-error is not necessarily u-v depending on the criterion
+        return batch_loss, {'batch_loss': batch_loss.item(),
+                            'loss': loss,
+                            'td_error': u - v}
 
     def target(self, trajectory: Trajectory):
         return super().target(trajectory, v=self.v_target(trajectory))

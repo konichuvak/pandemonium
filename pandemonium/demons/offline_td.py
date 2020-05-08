@@ -1,11 +1,13 @@
 import torch
 import torch.nn.functional as F
-from pandemonium.demons import Demon, Loss, ControlDemon, PredictionDemon
-from pandemonium.experience import (Trajectory, Transitions)
 
+from pandemonium.demons import Demon, Loss, ControlDemon, PredictionDemon
+from pandemonium.experience import Trajectory, Transitions
 
 
 class OfflineTD(Demon):
+    # TODO: consider renaming to MultistepTD to remove potential confusion
+    #   with batch RL methods
     r""" Base class for forward-view :math:`\text{TD}` methods.
 
     This class is used as a base for most of the DRL algorithms due to
@@ -14,7 +16,7 @@ class OfflineTD(Demon):
 
     def __init__(self, criterion=F.smooth_l1_loss, **kwargs):
         super().__init__(**kwargs)
-        self.criterion = criterion  # loss function for regression
+        self.criterion = criterion
 
     def delta(self, trajectory: Trajectory) -> Loss:
         """ Updates a value of a state using information in the trajectory """
@@ -99,6 +101,7 @@ class TTD(OfflineTD):
         - \text{TD}(\lambda) (forward view): state value estimates \text{V_t}(s)
         - \text{Q}(\lambda): action value estimates \max\limits_{a}(Q_t(s_t, a))
         - \text{SARSA}(\lambda): action value estimates Q_t(s_t, a_t)
+        - \text{CategoricalQ}: atom values of the distribution
 
     The resulting vector `u` contains target returns for each state along
     the trajectory, with $V(S_i)$ for $i \in \{0, 1, \dots, n-1\}$ getting
@@ -106,11 +109,14 @@ class TTD(OfflineTD):
 
     References
     ----------
-    - Sutton and Barto (2018) ch. 12.3, 12.8, equation (12.18)
-    - van Seijen (2016) Appendix B, https://arxiv.org/pdf/1608.05151v1.pdf
+    Sutton and Barto (2018) ch. 12.3, 12.8, equation (12.18)
+        http://incompleteideas.net/book/the-book.html
+    van Seijen (2016) Appendix B, https://arxiv.org/pdf/1608.05151v1.pdf
+        https://github.com/deepmind/rlax/blob/master/rlax/_src/multistep.py#L33
     """
 
     def target(self, trajectory: Trajectory, v: torch.Tensor):
+        assert len(trajectory) == v.shape[0]
         γ = self.gvf.continuation(trajectory)
         z = self.gvf.cumulant(trajectory)
         λ = self.λ(trajectory)
@@ -127,6 +133,13 @@ class TDn(TTD):
     Targets are calculated using forward view from $n$-step returns, where
     $n$ is determined by the length of trajectory. $\text{TDn}$ is a special
     case of truncated $\text{TD}$ with $\lambda=1$.
+
+    The actual value of `n` is determined implicitly from the length of the
+    trajectory (which itself is based on the `rollout_fragment_length`).
+
+    TODO: clarify the relationship between n-step, rollout_fragment_length,
+        batch_size, training_iteration
+
     """
 
     def __init__(self, **kwargs):

@@ -114,6 +114,11 @@ class Agent:
                 episode_steps += logs.pop('interaction_steps')
                 logs['timesteps_total'] = total_steps + episode_steps
 
+                # Used for HParams tab in TBX in minigrids to evaluate agents
+                # based on how many episodes they could compltet in a fixed
+                # amount of steps
+                logs['episodes_total'] = episode
+
                 if not done:
                     yield logs
 
@@ -122,11 +127,5 @@ class Agent:
             logs.update({
                 'steps_this_episode': episode_steps,
                 'episode_reward': episode_reward,
-                'episodes_total': episode,
             })
             yield logs
-
-
-
-
-

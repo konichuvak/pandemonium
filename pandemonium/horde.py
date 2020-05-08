@@ -52,7 +52,7 @@ class Horde(torch.nn.Module):
             losses[i] = loss if loss is not None else 0
 
             # HACK
-            for key in ('td_error', 'rp_traj', 'vr_traj'):
+            for key in ('td_error', 'rp_traj', 'vr_traj', 'ce_loss', 'loss'):
                 info.pop(key, None)  # remove non-leaf tensors from logs
 
             logs.update({f'{d}': {f'{k}': v for k, v in info.items()}})

@@ -30,19 +30,15 @@ register_env("DMLab", lambda config: Torch(DeepmindLabEnv(**config),
                                            device=device))
 
 env_config = {
-    'level': 'seekavoid_arena_01',
+    # 'level': 'seekavoid_arena_01',
+    'level': 'nav_maze_static_01',
 }
 
-model_cfg = {
-    'feature_dim': tune.grid_search([512, 1024]),
-    'channels': (16, 32),
-    'kernels': (8, 4),
-    'strides': (4, 2),
-}
+model_cfg = tune.grid_search(['shallow', 'deep'])
 
 replay_params = {
-    'buffer_size': tune.grid_search([2000, 10000]),
-    'target_update_freq': 200,
+    'buffer_size': 2000,
+    'target_update_freq': tune.grid_search([100, 500]),
 }
 
 policy_cfg = {'entropy_coefficient': 0.01}
@@ -64,6 +60,7 @@ def create_demons(config, env, feature_extractor, policy) -> Horde:
 
     # Target policy is greedy
     π = Egreedy(epsilon=ConstantSchedule(0., framework='torch'),
+                feature_dim=feature_extractor.feature_dim,
                 action_space=env.action_space)
 
     # ==========================================================================
@@ -74,7 +71,7 @@ def create_demons(config, env, feature_extractor, policy) -> Horde:
     optimal_control = GVF(
         target_policy=π,
         cumulant=Fitness(env),
-        continuation=ConstantContinuation(0.9)
+        continuation=ConstantContinuation(config['gamma'])
     )
 
     # Main N-step Actor-Critic agent
@@ -105,7 +102,7 @@ def create_demons(config, env, feature_extractor, policy) -> Horde:
             gvf=GVF(
                 target_policy=π,
                 cumulant=PixelChange(),
-                continuation=ConstantContinuation(0.9),
+                continuation=ConstantContinuation(config['gamma']),
             ),
             feature=feature_extractor,
             behavior_policy=policy,
@@ -160,18 +157,6 @@ def create_demons(config, env, feature_extractor, policy) -> Horde:
     )
 
     return horde
-
-
-# TODO: Cannot use `build_trainer` since it requires a Policy class
-#   unless a dummy policy can be passed?
-# UNREALTrainer = build_trainer(
-#     name="UNREAL",
-#     default_config=A2C_DEFAULT_CONFIG,
-#     default_policy=A3CTFPolicy,
-#     get_policy_class=get_policy_class,
-#     make_policy_optimizer=choose_policy_optimizer,
-#     validate_config=validate_config,
-#     execution_plan=execution_plan)
 
 
 # ------------------------------------------------------------------------------
@@ -290,11 +275,13 @@ if __name__ == "__main__":
             # optimizer.step performed in the trainer_template is same as agent.learn and includes exp collection and sgd
             # try to see how to write horde.learn as a SyncSampleOptimizer in ray
 
+            'gamma': tune.grid_search([0.9, 0.99]),
+
             # === RLLib params ===
             "use_pytorch": True,
             "env": "DMLab",
             "env_config": env_config,
-            "rollout_fragment_length": tune.grid_search([64, 128]),
+            "rollout_fragment_length": 20,  # as per original paper
             # used as batch size for exp collector and ER buffer
             # "train_batch_size": 32,
         },

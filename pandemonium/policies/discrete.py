@@ -57,14 +57,14 @@ class Egreedy(Discrete):
         self.t = 0
         self.ε = schedule
 
-    def dist(self, features, vf) -> Categorical:
-        """ Creates a Categorical distribution with :math:`\epsilon`-greedy support
+    def dist(self, features, q_fn) -> Categorical:
+        """ Creates a categorical distribution with :math:`\epsilon`-greedy pmf
 
         Assumes that Q-values are of shape (batch, actions, states)
         """
-        ε, q = self.epsilon, vf(features)
+        ε, q = self.epsilon, q_fn(features)
         assert len(q.shape) > 1
-        assert q.shape[1] == self.action_space.n  # (batch, action, ...)
+        assert q.shape[1] == self.action_space.n
         probs = torch.empty_like(q).fill_(ε / (self.action_space.n - 1))
         probs[torch_argmax_mask(q, 1)] = 1 - ε
         return Categorical(probs=probs)
@@ -83,6 +83,11 @@ class SoftmaxPolicy(Discrete):
     """ Picks actions with probability proportional to Q-values.
 
     Also called Boltzman or Gibbs distribution.
+
+    References
+    ----------
+    Sutton & Barto Section 2.3
+        http://incompleteideas.net/book/ebook/node17.html
     """
 
     def __init__(self, temperature: Schedule, *args, **kwargs):
@@ -100,8 +105,11 @@ class SoftmaxPolicy(Discrete):
         self.t = 0
         self.τ = schedule
 
-    def dist(self, features, vf) -> Categorical:
-        probs = (vf(features) / self.temperature).softmax(dim=1)
+    def dist(self, features, q_fn) -> Categorical:
+        q = q_fn(features)
+        assert len(q.shape) > 1
+        assert q.shape[1] == self.action_space.n
+        probs = (q / self.temperature).softmax(dim=-1)
         return Categorical(probs=probs)
 
     def act(self, *args, **kwargs):

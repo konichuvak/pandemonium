@@ -147,8 +147,10 @@ class CategoricalQ:
             # Compute probability mass vector for greedy action in the next state
             Z = self.target_azf(trajectory.x1)  # (batch, actions, atoms)
             q = torch.einsum('k,ijk->ij', [self.atoms, Z])  # (batch, actions)
-            # a = q[torch_argmax_mask(q, 1)]  # TODO: what about double Q?
-            a = q.argmax(1)  # TODO: argmax is not randomized
+            if self.double:
+                a = torch_argmax_mask(self.aqf(trajectory.x1), 1).long().argmax(1)
+            else:
+                a = q.argmax(1)
             probs = Z[torch.arange(len(trajectory)), a]
             assert torch.allclose(probs.sum(1), torch.ones(probs.size(0)))
 

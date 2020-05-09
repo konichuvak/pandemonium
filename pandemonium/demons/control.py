@@ -2,8 +2,6 @@ from collections import OrderedDict
 from functools import partial
 
 import torch
-from torch import nn
-
 from pandemonium.demons import Loss, ParametricDemon, ControlDemon
 from pandemonium.demons.offline_td import OfflineTDControl
 from pandemonium.demons.offline_td import TTD, TDn, OfflineTDPrediction
@@ -14,6 +12,7 @@ from pandemonium.policies import Policy, HierarchicalPolicy, DiffPolicy
 from pandemonium.policies.utils import torch_argmax_mask
 from pandemonium.utilities.distributions import cross_entropy, l2_projection
 from pandemonium.utilities.utilities import get_all_classes
+from torch import nn
 
 
 class DuellingMixin:
@@ -137,7 +136,7 @@ class CategoricalQ:
                 T = [AffineTransform(loc=r, scale=γ, event_dim=1)]
                 TZ = TransformedDistribution(base_distribution=Z, transforms=T)
             """
-            assert isinstance(self, TDn)  # make linter happy
+            assert isinstance(self, (DQN, TDn))  # make linter happy
 
             # Scale and shift the support with the multi-step Bellman operator
             # TZ(x,a) = R(x, a) + γZ(x',a')
@@ -148,7 +147,8 @@ class CategoricalQ:
             Z = self.target_azf(trajectory.x1)  # (batch, actions, atoms)
             q = torch.einsum('k,ijk->ij', [self.atoms, Z])  # (batch, actions)
             if self.double:
-                a = torch_argmax_mask(self.aqf(trajectory.x1), 1).long().argmax(1)
+                online_q = self.aqf(trajectory.x1)
+                a = torch_argmax_mask(online_q, 1).long().argmax(1)
             else:
                 a = q.argmax(1)
             probs = Z[torch.arange(len(trajectory)), a]

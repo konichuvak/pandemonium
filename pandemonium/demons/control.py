@@ -141,7 +141,6 @@ class CategoricalQ:
 
             # Scale and shift the support with the multi-step Bellman operator
             # TZ(x,a) = R(x, a) + γZ(x',a')
-            # TODO: is the mean preserved under multi-step operator?
             support = self.support.repeat_interleave(len(trajectory), dim=0)
             Tz = TDn.target(self, trajectory, v=support)  # (batch, num_atoms)
 

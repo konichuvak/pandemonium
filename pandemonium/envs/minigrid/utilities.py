@@ -1,16 +1,12 @@
 import json
-from functools import reduce
-from typing import List, Type
 
-import gym
 import numpy as np
 import plotly.graph_objs as go
-from gym import ObservationWrapper
 from gym_minigrid.minigrid import MiniGridEnv
 from plotly.utils import PlotlyJSONEncoder
 
 
-def generate_all_states(env: MiniGridEnv, wrappers: List[Type[gym.Wrapper]]):
+def generate_all_states(env: MiniGridEnv):
     """ Generates all possible states for a given minigrid """
     states = list()
     for direction in range(4):
@@ -22,20 +18,8 @@ def generate_all_states(env: MiniGridEnv, wrappers: List[Type[gym.Wrapper]]):
                 except TypeError:
                     env.place_agent(i, j, force=True)
                 env.unwrapped.agent_dir = direction
-
-                # Obtain observation by sequentially applying all the wrappers
-                #   on top of the original observation.
-                obs = env.gen_obs()
-                for i, wrapper in zip(range(len(wrappers) - 1, -1, -1),
-                                      wrappers):
-                    if not isinstance(wrapper(env.unwrapped),
-                                      ObservationWrapper):
-                        continue
-                    wrapped = reduce(lambda wrap, _: wrap.env, range(i),
-                                     env)
-                    obs = wrapped.observation(obs)
+                obs, reward, done, info = env.step(env.Actions.done)
                 states.append((obs, (direction, i, j)))
-
     return states
 
 

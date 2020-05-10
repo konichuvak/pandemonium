@@ -4,15 +4,15 @@ from typing import List, Callable
 
 import numpy as np
 import torch
-from torch.distributions import Categorical
-
-from pandemonium.experience import Transitions, Transition
+from pandemonium.experience import Transitions, Transition, Trajectory
 # from ray.rllib.optimizers.segment_tree import SumSegmentTree, MinSegmentTree
 from pandemonium.experience.segment_tree import SumSegmentTree, MinSegmentTree
 from pandemonium.utilities.registrable import Registrable
 from pandemonium.utilities.schedules import Schedule, ConstantSchedule
+from torch.distributions import Categorical
 
-__all__ = ['ReplayBuffer', 'ER', 'PER', 'SkewedER', 'SegmentedER']
+__all__ = ['ReplayBuffer', 'ER', 'PER', 'SkewedER', 'SegmentedER',
+           'ReplayBufferMixin']
 
 
 class ReplayBuffer(Registrable):
@@ -26,11 +26,18 @@ class ReplayBuffer(Registrable):
 class ER:
     """ Experience Replay buffer
 
+    Was originally designed as a means to make RL more data efficient [1].
+    Later on adapted in DQN architecture to make the data distribution more
+    stationary [2].
+
     References
     ----------
-    - Self-Improving Reactive Agents Based On Reinforcement Learning,
-      Planning and Teaching (Lin, 1992)
-    - Ray RLLib v9.0
+    [1] "Self-Improving Reactive Agents Based On RL, Planning and Teaching"
+        by Lin. http://www.incompleteideas.net/lin-92.pdf
+    [2] "Playing Atari with Deep Reinforcement Learning"
+        https://arxiv.org/pdf/1312.5602.pdf
+
+    Ray RLLib v9.0 implementation
     """
 
     def __init__(self, size: int, batch_size: int):
@@ -400,3 +407,46 @@ class PER(ER):
                f'α={self.α}, ' \
                f'β={self.β}, ' \
                f'ε={self.ε})'
+
+
+class ReplayBufferMixin:
+    """ Mixin that adds a replay buffer to an agent."""
+    delta: callable
+
+    def __init__(self,
+                 replay_buffer: ER,
+                 priority_measure: str = 'td_error'):
+        """
+
+        Parameters
+        ----------
+        replay_buffer: ReplayBuffer
+            An instance of a replay buffer
+        priority_measure: str
+            Priorities to experiences are assigned based on this metric in
+            prioritized ER case. Defaults to using `td_error`, but could also
+            be `ce_loss` in case of distributional value learning.
+        """
+        self.replay_buffer = replay_buffer
+        self.priority_measure = priority_measure
+
+    def store(self, transitions: Transitions):
+        """ Adds transitions to the replay buffer.
+
+        Pre-computes priorities in case Prioritized Experience Replay is used.
+        """
+
+        if isinstance(self.replay_buffer, PER):
+            trajectory = Trajectory.from_transitions(transitions)
+            _, info = self.delta(trajectory)
+            priorities = info[self.priority_measure]
+            priorities = priorities.abs() + self.replay_buffer.ε
+            self.replay_buffer.add_batch(transitions, priorities.tolist())
+        else:
+            self.replay_buffer.add_batch(transitions)
+
+    def _update_priorities(self, trajectory: Trajectory, info: dict):
+        priorities = info[self.priority_measure]
+        priorities = priorities.abs() + self.replay_buffer.ε
+        indexes = trajectory.buffer_index.tolist()
+        self.replay_buffer.update_priorities(indexes, priorities.tolist())

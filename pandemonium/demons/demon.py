@@ -39,7 +39,6 @@ class Demon:
         Eligibility trace assigning credit to experiences
 
     """
-    __slots__ = 'gvf', 'avf', 'φ', 'μ', 'λ'
 
     def __init__(self,
                  gvf: GVF,
@@ -49,9 +48,9 @@ class Demon:
                  eligibility: Optional[EligibilityTrace],
                  ):
         self.gvf = gvf
-        self.avf = avf
+        self.avf = self.target_avf = avf
 
-        self.φ = feature
+        self.φ = self.target_feature = feature
         self.μ = behavior_policy
         self.λ = eligibility
 
@@ -67,10 +66,10 @@ class Demon:
         raise NotImplementedError
 
     def predict(self, x):
-        r""" Predict the value of the state """
+        r""" Predict the value (or value distribution) of the state """
         raise NotImplementedError
 
-    def feature(self, *args, **kwargs) -> torch.Tensor:
+    def feature(self, *args, **kwargs):
         r""" A mapping from MDP states to features
 
         .. math::
@@ -118,8 +117,65 @@ class Demon:
                f')'
 
 
+class PredictionDemon(Demon, ABC):
+    r""" Collects factual knowledge about environment by learning to predict
+
+    Can be thought of as an accumulator of declarative knowledge.
+    """
+
+    def predict(self, x):
+        return self.avf(x)
+
+
+class ControlDemon(Demon, ABC):
+    r""" Learns the optimal policy while learning to predict
+
+    Can be thought of as an accumulator of procedural knowledge.
+
+    In addition to the approximate value function (avf), has a an approximate
+    q-value function (aqf) that produces value estimates for state-action pairs.
+    """
+
+    def __init__(self, aqf: Callable, **kwargs):
+        super().__init__(avf=self.implied_avf, **kwargs)
+        self.aqf = self.target_aqf = aqf
+
+    def implied_avf(self, x):
+        r""" State-value function in terms of action-value function
+
+        .. math::
+            V^{\pi}(s) = \sum_{a \in \mathcal{A}} \pi (a|s) * Q^{\pi}(a,s)
+
+        Is overridden in duelling architecture by an independent estimator.
+
+        TODO: does not apply for continuous action spaces
+        TODO: handle predictions made to compute targets via target_aqf
+        """
+        return (self.μ.dist(x, vf=self.aqf).probs * self.aqf(x)).sum(1)
+
+    def predict(self, x):
+        """ Computes value of a given state """
+        return self.avf(x)
+
+    def predict_q(self, x):
+        """ Computes action-values in a given state """
+        return self.aqf(x)
+
+    def predict_adv(self, x):
+        """ Computes the advantage in a given state """
+        return self.aqf(x) - self.avf(x)
+
+    def behavior_policy(self, x: torch.Tensor):
+        # Control policies usually require access to value functions.
+        return self.μ(x, vf=self.aqf)
+
+
 class ParametricDemon(Demon, torch.nn.Module, ABC):
-    """ Parametrized Demons implemented in PyTorch subclass this """
+    """ Base class fot parametrized Demons implemented in PyTorch """
+
+    def __init__(self, **kwargs):
+        torch.nn.Module.__init__(self)
+        super().__init__(**kwargs)
 
     def forward(self, *args, **kwargs) -> torch.Tensor:
         return self.predict(*args, **kwargs)
@@ -137,47 +193,6 @@ class LinearDemon(ParametricDemon, ABC):
             avf=torch.nn.Linear(feature.feature_dim, output_dim),
             feature=feature, *args, **kwargs
         )
-
-
-class PredictionDemon(Demon, ABC):
-    r""" Collects factual knowledge about environment by learning to predict
-
-    Can be thought of as an accumulator of declarative knowledge.
-    """
-
-    def predict(self, x):
-        return self.avf(x)
-
-
-class ControlDemon(Demon, ABC):
-    r""" Learns the optimal policy while learning to predict
-
-    Can be thought of as an accumulator of procedural knowledge.
-
-    In addition to the approximate value function (avf), has a an approximate
-    q-value function (aqf) that produces estimates for state-action pairs.
-    """
-    __slots__ = 'aqf'
-
-    def __init__(self, aqf: Callable, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.aqf = aqf
-
-    def predict(self, x):
-        """ Computes value of a given state """
-        return self.avf(x)
-
-    def predict_q(self, x):
-        """ Computes action-values in a given state """
-        return self.aqf(x)
-
-    def predict_adv(self, x):
-        """ Computes the advantage in a given state """
-        return self.aqf(x) - self.avf(x)
-
-    def behavior_policy(self, x: torch.Tensor):
-        # Control policies usually require access to value functions.
-        return self.μ(x, vf=self.aqf)
 
 
 __all__ = ['Demon', 'ParametricDemon', 'LinearDemon', 'PredictionDemon',

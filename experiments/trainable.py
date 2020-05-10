@@ -10,6 +10,21 @@ from pandemonium.policies import Policy
 
 Trainer._allow_unknown_configs = True
 
+networks = {
+    'shallow': {
+        'feature_dim': 512,
+        'channels': (16, 32),
+        'kernels': (8, 4),
+        'strides': (4, 2),
+    },
+    'deep': {
+        'feature_dim': 512,
+        'channels': (16, 32, 64),
+        'kernels': (8, 4, 2),
+        'strides': (4, 2, 1),
+    }
+}
+
 
 class Loop(Trainer):
     # _name = name
@@ -25,13 +40,22 @@ class Loop(Trainer):
         obs_shape = self.env.reset().shape
         if isinstance(obs_shape, torch.Size):
             obs_shape = obs_shape[1:]  # discard batch dimension
-        feature_extractor = net_cls(obs_shape=obs_shape, **cfg['feature_cfg'])
+
+        # TODO: register various models?
+        # feature_cfg = networks[cfg['feature_cfg']]
+        feature_cfg = cfg['feature_cfg']
+        feature_extractor = net_cls(obs_shape=obs_shape, **feature_cfg)
 
         # Set up policy network
         policy_cls = Policy.by_name(cfg['policy_name'])
+        # policy = policy_cls(feature_dim=feature_extractor.feature_dim,
+        #                     action_space=self.env.action_space,
+        #                     **cfg['policy_cfg'])
+        # TODO: needed for tuning softmax vs egreedy in DQN
+        param_name = 'epsilon' if cfg['policy_name'] == 'egreedy' else 'temperature'
         policy = policy_cls(feature_dim=feature_extractor.feature_dim,
                             action_space=self.env.action_space,
-                            **cfg['policy_cfg'])
+                            **{param_name: cfg['policy_cfg']['param']})
 
         # Set up Optimizer a.k.a. Horde
         horde = cfg['horde_fn'](cfg, self.env, feature_extractor, policy)
@@ -41,15 +65,25 @@ class Loop(Trainer):
         self.loop = agent.learn(
             env=self.env,
             episodes=10000,
-            update_freq=cfg['rollout_fragment_length'],
+            update_horizon=cfg['rollout_fragment_length'],
         )
+
+        self.hist_stats = {
+            'episode_reward': list()
+        }
 
     def _train(self):
         """ Perform one training iteration
 
-        A training iteration may last for multiple updates of the networks.
+        In general, a training iteration may last for multiple updates of
+        the networks.
         """
         logs = next(self.loop)
+
+        # Add histogram stats
+        if 'episode_reward' in logs:
+            self.hist_stats['episode_reward'].append(logs['episode_reward'])
+            logs['hist_stats'] = self.hist_stats
         return logs
 
     @staticmethod

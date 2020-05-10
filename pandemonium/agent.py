@@ -2,7 +2,8 @@ import time
 from typing import Tuple, Iterator
 
 import torch
-from pandemonium.experience import Transition, Transitions
+
+from pandemonium.experience import Transition, Transitions, Trajectory
 from pandemonium.horde import Horde
 from pandemonium.policies import Policy
 
@@ -64,22 +65,34 @@ class Agent:
             total_reward += reward
 
         # Record statistics
+        trajectory = Trajectory.from_transitions(transitions)
+
         logs = {
             'done': done,
             'interaction_reward': total_reward,
             'interaction_time': time.time() - wall_time,
             'interaction_steps': steps if done else len(transitions),
+            'actions': trajectory.a.tolist(),
+            'entropy': trajectory.info['entropy'].tolist(),
+            'is_ratios': trajectory.ρ.mean().item()
         }
+
+        # OHLC and mean?
+        if 'epsilon' in trajectory.info:
+            logs['epsilon'] = trajectory.info['epsilon'][-1]
+        if 'temperature' in trajectory.info:
+            logs['temperature'] = trajectory.info['temperature'][-1]
+
         return transitions, logs
 
-    def learn(self, env, episodes: int, update_freq: int) -> Iterator[dict]:
+    def learn(self, env, episodes: int, update_horizon: int) -> Iterator[dict]:
 
         total_steps = 0
         for episode in range(episodes):
 
             # Initialize metrics
-            done = False        # indicator for the end of the episode
-            episode_steps = 0   # tracks total steps taken during the episode
+            done = False  # indicator for the end of the episode
+            episode_steps = 0  # tracks total steps taken during the episode
             episode_reward = 0  # tracks reward received during the episode
             logs = dict()
 
@@ -89,9 +102,9 @@ class Agent:
 
             while not done:
                 # Collect experience
-                transitions, logs = self.interact(env, s0, update_freq)
+                transitions, logs = self.interact(env, s0, update_horizon)
                 episode_reward += logs.pop('interaction_reward')
-                done = logs.pop('done')  # do not set `done` as this is interpreted as the end of trial by Tune
+                done = logs.pop('done')
 
                 # Learn from experience
                 learning_stats = self.horde.learn(transitions)
@@ -101,18 +114,18 @@ class Agent:
                 episode_steps += logs.pop('interaction_steps')
                 logs['timesteps_total'] = total_steps + episode_steps
 
+                # Used for HParams tab in TBX in minigrids to evaluate agents
+                # based on how many episodes they could compltet in a fixed
+                # amount of steps
+                logs['episodes_total'] = episode
+
                 if not done:
                     yield logs
 
             # Inter-episode stats
             total_steps += episode_steps
             logs.update({
+                'steps_this_episode': episode_steps,
                 'episode_reward': episode_reward,
-                'episodes_total': episode,
             })
             yield logs
-
-
-
-
-

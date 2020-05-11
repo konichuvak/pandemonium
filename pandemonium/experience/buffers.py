@@ -4,12 +4,13 @@ from typing import List, Callable
 
 import numpy as np
 import torch
+from torch.distributions import Categorical
+
 from pandemonium.experience import Transitions, Transition, Trajectory
 # from ray.rllib.optimizers.segment_tree import SumSegmentTree, MinSegmentTree
 from pandemonium.experience.segment_tree import SumSegmentTree, MinSegmentTree
 from pandemonium.utilities.registrable import Registrable
 from pandemonium.utilities.schedules import Schedule, ConstantSchedule
-from torch.distributions import Categorical
 
 __all__ = ['ReplayBuffer', 'ER', 'PER', 'SkewedER', 'SegmentedER',
            'ReplayBufferMixin']
@@ -440,13 +441,18 @@ class ReplayBufferMixin:
             trajectory = Trajectory.from_transitions(transitions)
             _, info = self.delta(trajectory)
             priorities = info[self.priority_measure]
+            if len(priorities.shape) == 2:
+                priorities = priorities.squeeze(dim=1)
             priorities = priorities.abs() + self.replay_buffer.ε
             self.replay_buffer.add_batch(transitions, priorities.tolist())
         else:
             self.replay_buffer.add_batch(transitions)
 
     def _update_priorities(self, trajectory: Trajectory, info: dict):
-        priorities = info[self.priority_measure]
-        priorities = priorities.abs() + self.replay_buffer.ε
-        indexes = trajectory.buffer_index.tolist()
-        self.replay_buffer.update_priorities(indexes, priorities.tolist())
+        if isinstance(self.replay_buffer, PER):
+            priorities = info[self.priority_measure]
+            if len(priorities.shape) == 2:
+                priorities = priorities.squeeze(dim=1)
+            priorities = priorities.abs() + self.replay_buffer.ε
+            indexes = trajectory.buffer_index.tolist()
+            self.replay_buffer.update_priorities(indexes, priorities.tolist())

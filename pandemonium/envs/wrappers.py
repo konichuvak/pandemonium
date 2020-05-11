@@ -17,8 +17,9 @@ class Torch(ObservationWrapper):
 
     def __init__(self, *args, device: torch.device = None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.device = device if device is not None else torch.device(
-            "cuda" if torch.cuda.is_available() else "cpu")
+        self.device = 'cpu'
+        # self.device = device if device is not None else torch.device(
+        #     "cuda" if torch.cuda.is_available() else "cpu")
 
     def observation(self, obs):
         t = torch.tensor(obs, device=self.device, dtype=torch.float32)

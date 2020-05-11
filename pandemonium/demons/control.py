@@ -2,6 +2,8 @@ from collections import OrderedDict
 from functools import partial
 
 import torch
+from torch import nn
+
 from pandemonium.demons import Loss, ParametricDemon, ControlDemon
 from pandemonium.demons.offline_td import OfflineTDControl
 from pandemonium.demons.offline_td import TTD, TDn, OfflineTDPrediction
@@ -12,7 +14,6 @@ from pandemonium.policies import Policy, HierarchicalPolicy, DiffPolicy
 from pandemonium.policies.utils import torch_argmax_mask
 from pandemonium.utilities.distributions import cross_entropy, l2_projection
 from pandemonium.utilities.utilities import get_all_classes
-from torch import nn
 
 
 class DuellingMixin:
@@ -119,6 +120,7 @@ class CategoricalQ:
         def delta(trajectory: Trajectory) -> Loss:
             batch_loss, info = __delta(trajectory)
             info['ce_loss'] = info.pop('loss')  # rename for clarity
+            del info['td_error']
             return batch_loss, info
 
         self.delta = delta
@@ -193,7 +195,11 @@ class DQN(OfflineTDControl,
                  **kwargs):
 
         # Adds a replay buffer
-        ReplayBufferMixin.__init__(self, replay_buffer)
+        priority = None
+        if isinstance(replay_buffer, PER):
+            # Use cross-entropy loss as a measure of priority
+            priority = 'ce_loss' if num_atoms > 1 else 'td_error'
+        ReplayBufferMixin.__init__(self, replay_buffer, priority)
 
         # By default, learning does not start until the replay buffer is full
         if warm_up_period is None:

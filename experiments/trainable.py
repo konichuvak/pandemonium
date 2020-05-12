@@ -1,12 +1,12 @@
 import torch
+from pandemonium.agent import Agent
+from pandemonium.networks.bodies import BaseNetwork
+from pandemonium.policies import Policy
+from ray.rllib.agents.a3c.a3c_torch_policy import A3CTorchPolicy
 from ray.rllib.agents.trainer import Trainer, COMMON_CONFIG
 from ray.rllib.utils import override
 from ray.tune import Trainable
 from ray.tune.resources import Resources
-
-from pandemonium.agent import Agent
-from pandemonium.networks.bodies import BaseNetwork
-from pandemonium.policies import Policy
 
 Trainer._allow_unknown_configs = True
 
@@ -28,7 +28,7 @@ networks = {
 
 class Loop(Trainer):
     # _name = name
-    # _policy = default_policy
+    _policy = A3CTorchPolicy
     _default_config = COMMON_CONFIG
 
     def _init(self, cfg, env_creator):
@@ -39,7 +39,9 @@ class Loop(Trainer):
         net_cls = BaseNetwork.by_name(cfg['feature_name'])
         obs_shape = self.env.reset().shape
         if isinstance(obs_shape, torch.Size):
-            obs_shape = obs_shape[1:]  # discard batch dimension
+            obs_shape = tuple(obs_shape[1:])  # discard batch dimension
+            if len(obs_shape) == 1:
+                obs_shape = obs_shape[0]
 
         # TODO: register various models?
         # feature_cfg = networks[cfg['feature_cfg']]
@@ -52,7 +54,8 @@ class Loop(Trainer):
         #                     action_space=self.env.action_space,
         #                     **cfg['policy_cfg'])
         # TODO: needed for tuning softmax vs egreedy in DQN
-        param_name = 'epsilon' if cfg['policy_name'] == 'egreedy' else 'temperature'
+        param_name = 'epsilon' if cfg[
+                                      'policy_name'] == 'egreedy' else 'temperature'
         policy = policy_cls(feature_dim=feature_extractor.feature_dim,
                             action_space=self.env.action_space,
                             **{param_name: cfg['policy_cfg']['param']})
@@ -61,8 +64,8 @@ class Loop(Trainer):
         horde = cfg['horde_fn'](cfg, self.env, feature_extractor, policy)
 
         # Create a learning loop
-        agent = Agent(feature_extractor, policy, horde)
-        self.loop = agent.learn(
+        self.agent = Agent(feature_extractor, policy, horde)
+        self.loop = self.agent.learn(
             env=self.env,
             episodes=10000,
             update_horizon=cfg['rollout_fragment_length'],
@@ -71,6 +74,11 @@ class Loop(Trainer):
         self.hist_stats = {
             'episode_reward': list()
         }
+
+    def _evaluate(self):
+        metrics = self.config["custom_eval_function"](
+            self, self.evaluation_workers)
+        return metrics
 
     def _train(self):
         """ Perform one training iteration

@@ -2,6 +2,7 @@ from functools import reduce
 
 import ray
 import torch
+from gym_minigrid.envs import EmptyEnv
 from gym_minigrid.wrappers import ImgObsWrapper
 from ray import tune
 from ray.tune import register_env
@@ -15,20 +16,21 @@ from pandemonium.cumulants import Fitness
 from pandemonium.demons import LinearDemon
 from pandemonium.demons.control import TDAC
 from pandemonium.demons.offline_td import TDn
-from pandemonium.envs import FourRooms
+from pandemonium.envs.minigrid import MinigridDisplay
 from pandemonium.envs.wrappers import Torch
 from pandemonium.policies.discrete import Egreedy
 from pandemonium.utilities.schedules import ConstantSchedule
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = torch.device('cpu')
+EXPERIMENT_NAME = 'A2C'
 
 
-def env_creator():
+def env_creator(env_config):
     # TODO: Ignore config for now until all the envs are properly registered
     envs = [
-        # EmptyEnv(size=10),
-        FourRooms(),
+        EmptyEnv(size=10),
+        # FourRooms(),
         # DoorKeyEnv(size=7),
         # MultiRoomEnv(minNumRooms=4, maxNumRooms=4),
         # DeepmindLabEnv(level='seekavoid_arena_01')
@@ -50,7 +52,7 @@ def env_creator():
     return env
 
 
-register_env("A2C_env", lambda config: env_creator())
+register_env("A2C_env", env_creator)
 
 
 def create_demons(config, env, feature_extractor, policy) -> Horde:
@@ -83,11 +85,41 @@ def create_demons(config, env, feature_extractor, policy) -> Horde:
     return horde
 
 
+EVAL_ENV = env_creator(dict())
+
+
+def eval_fn(trainer: Loop, eval_workers):
+    # cfg = trainer.config
+    # env = trainer.env_creator(cfg['env_config'])
+    env = EVAL_ENV
+    display = MinigridDisplay(env, [])
+    states = torch.stack([s[0] for s in display.all_states]).squeeze()
+
+    episode = 1
+    # Visualize action-value function of each demon
+    for demon in trainer.agent.horde.demons.values():
+        x = demon.feature(states)
+        v = demon.predict(x)
+        v = v.transpose(0, 1).view(4, env.height - 2, env.width - 2)
+        v = torch.nn.ConstantPad2d(1, 0)(v)
+        v = v.cpu().detach().numpy()
+
+        fig = display.plot_state_values(
+            figure_name=f'episode {episode}',
+            v=v,
+        )
+        display.save_figure(fig,
+                            save_path=f'{EXPERIMENT_DIR}/{EXPERIMENT_NAME}/vf{episode}',
+                            auto_open=False)
+
+    return {'dummy': None}
+
+
 if __name__ == "__main__":
     ray.init(local_mode=False)
     analysis = tune.run(
         Loop,
-        name='A2C',
+        name=EXPERIMENT_NAME,
         stop={"timesteps_total": int(1e5)},
         config={
             # Model a.k.a. Feature Extractor
@@ -116,6 +148,24 @@ if __name__ == "__main__":
             "env_config": {},
             "rollout_fragment_length": 16,  # batch size for exp collector
             # "train_batch_size": 32,
+
+            # --- Evaluation ---
+            "evaluation_interval": 100,  # per training iteration
+            "custom_eval_function": eval_fn,
+            "evaluation_num_episodes": 1,
+            "evaluation_config": {
+                "env_config": {},
+            },
+            # HACK to get the evaluation through
+            "model": {
+                'conv_filters': [
+                    [8, [2, 2], 1],
+                    [16, [2, 2], 1],
+                    [32, [2, 2], 1],
+                ],
+                'fcnet_hiddens': [256]
+            }
+
         },
         num_samples=1,
         local_dir=EXPERIMENT_DIR,

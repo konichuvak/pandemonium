@@ -1,29 +1,11 @@
 import json
+from typing import Union, Dict, Any
 
-import numpy as np
 import plotly.graph_objs as go
-from gym_minigrid.minigrid import MiniGridEnv
 from plotly.utils import PlotlyJSONEncoder
 
 
-def generate_all_states(env: MiniGridEnv):
-    """ Generates all possible states for a given minigrid """
-    states = list()
-    for direction in range(4):
-        for j in range(env.grid.height):
-            for i in range(env.grid.width):
-                env.grid.set(*np.array((i, j)), None)
-                try:
-                    env.place_agent(top=(i, j), size=(1, 1))
-                except TypeError:
-                    env.place_agent(i, j, force=True)
-                env.unwrapped.agent_dir = direction
-                obs, reward, done, info = env.step(env.Actions.done)
-                states.append((obs, (direction, i, j)))
-    return states
-
-
-def plotlyfig2json(fig, fpath):
+def plotlyfig2json(fig: Union[Dict[Any, go.Figure], go.Figure], fpath: str):
     """
     Serialize a plotly figure object to JSON so it can be persisted to disk.
     Figures persisted as JSON can be rebuilt using the plotly JSON chart API:
@@ -35,17 +17,34 @@ def plotlyfig2json(fig, fpath):
     Modified from https://github.com/nteract/nteract/issues/1229
     """
 
-    redata = json.loads(json.dumps(fig.data, cls=PlotlyJSONEncoder))
-    relayout = json.loads(json.dumps(fig.layout, cls=PlotlyJSONEncoder))
+    if isinstance(fig, dict):
+        figure = fig.copy()
+        json_fig = {
+            fig_name: {
+                'data': json.loads(json.dumps(fig.data, cls=PlotlyJSONEncoder)),
+                'layout': json.loads(
+                    json.dumps(fig.layout, cls=PlotlyJSONEncoder))
+            }
+            for fig_name, fig in figure.items()
+        }
+    else:
+        json_fig = {
+            'data': json.loads(json.dumps(fig.data, cls=PlotlyJSONEncoder)),
+            'layout': json.loads(json.dumps(fig.layout, cls=PlotlyJSONEncoder))
+        }
 
     with open(fpath, 'w') as f:
-        json.dump({'data': redata, 'layout': relayout}, f)
+        json.dump(json_fig, f)
 
 
-def plotlyfromjson(fpath):
+def plotlyfromjson(fpath) -> Union[Dict[Any, go.Figure], go.Figure]:
     """Render a plotly figure from a json file"""
     with open(fpath, 'r') as f:
-        v = json.loads(f.read())
+        fig = json.loads(f.read())
 
-    fig = go.Figure(data=v['data'], layout=v['layout'])
-    return fig
+    if isinstance(fig, dict):
+        figure = fig.copy()
+        return {fig_name: go.Figure(data=fig['data'], layout=fig['layout'])
+                for fig_name, fig in figure.items()}
+    else:
+        return go.Figure(data=fig['data'], layout=fig['layout'])

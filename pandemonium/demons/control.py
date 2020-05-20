@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from functools import partial
+from warnings import warn
 
 import torch
 from torch import nn
@@ -232,9 +233,9 @@ class DQN(OfflineTDControl,
         TargetNetMixin.__init__(self, target_update_freq)
         if self.target_aqf == self.aqf:
             # TODO: fix the distributional case
-            print('Warning target aqf == aqf')
+            warn('target aqf == aqf')
         if self.target_avf == self.avf:
-            print('Warning target avf == avf')
+            warn('target avf == avf')
 
         # Adds double Q-learning for tackling maximization bias
         self.double = double

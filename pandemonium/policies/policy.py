@@ -43,7 +43,7 @@ class Policy(Registrable):
     def act(self, *args, **kwargs) -> Tuple['Action', PolicyInfo]:
         """ Samples an action from a distribution over actions """
         dist = self.dist(*args, **kwargs)
-        return dist.sample(), {'action_dist': dist}
+        return dist.sample(), {'action_dist': dist, 'entropy': dist.entropy()}
 
     def action_filter(self, state):
         """ Filters the actions available at a given state

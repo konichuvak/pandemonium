@@ -6,20 +6,16 @@ AC
 .. autoclass:: AC
    :show-inheritance:
 
-   .. rubric:: Attributes Summary
+   .. rubric:: Methods Summary
 
    .. autosummary::
 
-      ~AC.avf
-      ~AC.gvf
-      ~AC.λ
-      ~AC.μ
-      ~AC.φ
+      ~AC.actor_loss
+      ~AC.critic_loss
+      ~AC.delta
 
-   .. rubric:: Attributes Documentation
+   .. rubric:: Methods Documentation
 
-   .. autoattribute:: avf
-   .. autoattribute:: gvf
-   .. autoattribute:: λ
-   .. autoattribute:: μ
-   .. autoattribute:: φ
+   .. automethod:: actor_loss
+   .. automethod:: critic_loss
+   .. automethod:: delta

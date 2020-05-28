@@ -5,3 +5,17 @@ OC
 
 .. autoclass:: OC
    :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~OC.delta
+      ~OC.learn
+      ~OC.n_step_target
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: delta
+   .. automethod:: learn
+   .. automethod:: n_step_target

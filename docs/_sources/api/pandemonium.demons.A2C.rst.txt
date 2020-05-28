@@ -5,3 +5,13 @@ A2C
 
 .. autoclass:: A2C
    :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~A2C.critic_loss
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: critic_loss

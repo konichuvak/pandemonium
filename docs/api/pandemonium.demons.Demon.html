@@ -37,8 +37,8 @@
   <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="LinearDemon" href="pandemonium.demons.LinearDemon.html" />
-    <link rel="prev" title="DeepOfflineTDControl" href="pandemonium.demons.DeepOfflineTDControl.html" /> 
+    <link rel="next" title="DuellingMixin" href="pandemonium.demons.DuellingMixin.html" />
+    <link rel="prev" title="DeepSARSE" href="pandemonium.demons.DeepSARSE.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -94,21 +94,30 @@
 <li class="toctree-l3 current"><a class="reference internal" href="../package-ref.html#id1">Classes</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.A2C.html">A2C</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.AC.html">AC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.CategoricalQ.html">CategoricalQ</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.ControlDemon.html">ControlDemon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DQN.html">DQN</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DeepOfflineTDControl.html">DeepOfflineTDControl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DeepSARSA.html">DeepSARSA</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DeepSARSE.html">DeepSARSE</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">Demon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DuellingMixin.html">DuellingMixin</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.LinearDemon.html">LinearDemon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OC.html">OC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OfflineTD.html">OfflineTD</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OfflineTDControl.html">OfflineTDControl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OfflineTDPrediction.html">OfflineTDPrediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OnlineTD.html">OnlineTD</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.ParametricDemon.html">ParametricDemon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.PixelControl.html">PixelControl</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.PredictionDemon.html">PredictionDemon</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.QLearning.html">QLearning</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.RewardPrediction.html">RewardPrediction</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.SARSA.html">SARSA</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.SARSE.html">SARSE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.SARSAlambda.html">SARSAlambda</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TD0.html">TD0</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TDAC.html">TDAC</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.UNREAL.html">UNREAL</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TDlambda.html">TDlambda</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TDn.html">TDn</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TTD.html">TTD</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TrueOnlineTD.html">TrueOnlineTD</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.ValueReplay.html">ValueReplay</a></li>
 </ul>
 </li>
@@ -120,14 +129,18 @@
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.networks">pandemonium.networks Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.cumulants">pandemonium.cumulants Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.continuations">pandemonium.continuations Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.traces">pandemonium.traces Module</a></li>
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Examples and Usecases</span></p>
+<p class="caption"><span class="caption-text">Architectures</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architectures.html">Architectures</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Benchmarks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">Benchmarks</a></li>
 </ul>
 
             
@@ -198,7 +211,7 @@
 <h1>Demon<a class="headerlink" href="#demon" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pandemonium.demons.Demon">
-<em class="property">class </em><code class="sig-prename descclassname">pandemonium.demons.</code><code class="sig-name descname">Demon</code><span class="sig-paren">(</span><em class="sig-param">gvf: pandemonium.gvf.GVF, avf: Callable, feature, behavior_policy: pandemonium.policies.policy.Policy, eligibility: Optional[pandemonium.traces.EligibilityTrace]</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Demon</code><span class="sig-paren">(</span><em class="sig-param">gvf: pandemonium.gvf.GVF, avf: Callable, feature, behavior_policy: pandemonium.policies.policy.Policy, eligibility: Optional[pandemonium.traces.EligibilityTrace]</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p><strong>General Value Function Approximator</strong></p>
 <p>Each demon is an independent reinforcement learning agent responsible
@@ -206,64 +219,114 @@ for learning one piece of predictive knowledge about the main agent’s
 interaction with its environment.</p>
 <p>Demon learns an approximate value function <span class="math notranslate nohighlight">\(\tilde{V}\)</span> (avf), to the
 general value function (gvf) that corresponds to the setting of the
-three question functions: <span class="math notranslate nohighlight">\(π\)</span>, <span class="math notranslate nohighlight">\(γ\)</span>, and <span class="math notranslate nohighlight">\(z\)</span>. The tools that the demon uses
-to learn the approximation are called answers functions:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><span class="math notranslate nohighlight">\(\phi\)</span> (feature generator): learning useful state representations</p></li>
-<li><p><span class="math notranslate nohighlight">\(\mu\)</span> (behavior policy) : collecting experience</p></li>
-<li><p><span class="math notranslate nohighlight">\(\lambda\)</span> (eligibility trace): assigning credit to experiences</p></li>
-</ul>
-</div></blockquote>
-<p class="rubric">Attributes Summary</p>
+three question functions: <span class="math notranslate nohighlight">\(\pi\)</span>, <span class="math notranslate nohighlight">\(\gamma\)</span>, and z. The tools that the demon
+uses to learn the approximation are called answers functions and are
+comprised of <span class="math notranslate nohighlight">\(\mu\)</span>, <span class="math notranslate nohighlight">\(\phi\)</span> and <span class="math notranslate nohighlight">\(\lambda\)</span>.</p>
+<dl class="attribute">
+<dt id="pandemonium.demons.Demon.gvf">
+<code class="sig-name descname">gvf</code><a class="headerlink" href="#pandemonium.demons.Demon.gvf" title="Permalink to this definition">¶</a></dt>
+<dd><p>General Value Function to be estimated by the demon</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pandemonium.demons.Demon.avf">
+<code class="sig-name descname">avf</code><a class="headerlink" href="#pandemonium.demons.Demon.avf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Approximate Value Function learned by the demon to approximate <cite>gvf</cite></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pandemonium.demons.Demon.φ">
+<code class="sig-name descname">φ</code><a class="headerlink" href="#pandemonium.demons.Demon.φ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Feature generator learning useful state representations</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pandemonium.demons.Demon.μ">
+<code class="sig-name descname">μ</code><a class="headerlink" href="#pandemonium.demons.Demon.μ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Behavior policy that collects experience</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="pandemonium.demons.Demon.λ">
+<code class="sig-name descname">λ</code><a class="headerlink" href="#pandemonium.demons.Demon.λ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Eligibility trace assigning credit to experiences</p>
+</dd></dl>
+
+<p class="rubric">Methods Summary</p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.Demon.avf" title="pandemonium.demons.Demon.avf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">avf</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.Demon.behavior_policy" title="pandemonium.demons.Demon.behavior_policy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">behavior_policy</span></code></a>(self, s)</p></td>
+<td><p>Specifies behavior of the agent</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.Demon.delta" title="pandemonium.demons.Demon.delta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delta</span></code></a>(self, experience, ForwardRef])</p></td>
+<td><p>Specifies the update rule for approximate value function (avf)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.Demon.eligibility" title="pandemonium.demons.Demon.eligibility"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eligibility</span></code></a>(self, s)</p></td>
+<td><p>Specifies eligibility trace-decay rate</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.Demon.feature" title="pandemonium.demons.Demon.feature"><code class="xref py py-obj docutils literal notranslate"><span class="pre">feature</span></code></a>(self, \*args, \*\*kwargs)</p></td>
+<td><p>A mapping from MDP states to features</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.Demon.learn" title="pandemonium.demons.Demon.learn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">learn</span></code></a>(self, \*args, \*\*kwargs)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.Demon.gvf" title="pandemonium.demons.Demon.gvf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gvf</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.Demon.λ" title="pandemonium.demons.Demon.λ"><code class="xref py py-obj docutils literal notranslate"><span class="pre">λ</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.Demon.μ" title="pandemonium.demons.Demon.μ"><code class="xref py py-obj docutils literal notranslate"><span class="pre">μ</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.Demon.φ" title="pandemonium.demons.Demon.φ"><code class="xref py py-obj docutils literal notranslate"><span class="pre">φ</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.Demon.predict" title="pandemonium.demons.Demon.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(self, x)</p></td>
+<td><p>Predict the value (or value distribution) of the state</p></td>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Attributes Documentation</p>
-<dl class="attribute">
-<dt id="pandemonium.demons.Demon.avf">
-<code class="sig-name descname">avf</code><a class="headerlink" href="#pandemonium.demons.Demon.avf" title="Permalink to this definition">¶</a></dt>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="pandemonium.demons.Demon.behavior_policy">
+<code class="sig-name descname">behavior_policy</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">s</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon.behavior_policy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specifies behavior of the agent</p>
+<div class="math notranslate nohighlight">
+\[\mu: \mathcal{S} \times \mathcal{A} \mapsto [0, 1]\]</div>
+<p>The distribution across all possible motor commands of the agent
+could be specified in this way.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pandemonium.demons.Demon.delta">
+<code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">self, experience: Union[ForwardRef('Transition'), ForwardRef('Trajectory')]</em><span class="sig-paren">)</span> &#x2192; Tuple[Union[torch.Tensor, NoneType], dict]<a class="headerlink" href="#pandemonium.demons.Demon.delta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specifies the update rule for approximate value function (avf)</p>
+<p>Depending on whether the algorithm is online or offline, the demon will
+be learning from a single <cite>Transition</cite> vs a <cite>Trajectory</cite> of experiences.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pandemonium.demons.Demon.eligibility">
+<code class="sig-name descname">eligibility</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">s</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon.eligibility" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specifies eligibility trace-decay rate</p>
+<div class="math notranslate nohighlight">
+\[\lambda: \mathcal{S} \mapsto \mathbb{R}\]</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="pandemonium.demons.Demon.feature">
+<code class="sig-name descname">feature</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon.feature" title="Permalink to this definition">¶</a></dt>
+<dd><p>A mapping from MDP states to features</p>
+<div class="math notranslate nohighlight">
+\[\phi: \mathcal{S} \mapsto \mathbb{R}^n\]</div>
+<p>Feature tensor could be constructed from the robot’s external
+sensor readings (not just the ones corresponding to light).</p>
+<p>We can use any representation learning module here.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pandemonium.demons.Demon.learn">
+<code class="sig-name descname">learn</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon.learn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="pandemonium.demons.Demon.gvf">
-<code class="sig-name descname">gvf</code><a class="headerlink" href="#pandemonium.demons.Demon.gvf" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="pandemonium.demons.Demon.λ">
-<code class="sig-name descname">λ</code><a class="headerlink" href="#pandemonium.demons.Demon.λ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="pandemonium.demons.Demon.μ">
-<code class="sig-name descname">μ</code><a class="headerlink" href="#pandemonium.demons.Demon.μ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="pandemonium.demons.Demon.φ">
-<code class="sig-name descname">φ</code><a class="headerlink" href="#pandemonium.demons.Demon.φ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="method">
+<dt id="pandemonium.demons.Demon.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">x</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict the value (or value distribution) of the state</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -277,10 +340,10 @@ to learn the approximation are called answers functions:</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="pandemonium.demons.LinearDemon.html" class="btn btn-neutral float-right" title="LinearDemon" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="pandemonium.demons.DuellingMixin.html" class="btn btn-neutral float-right" title="DuellingMixin" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="pandemonium.demons.DeepOfflineTDControl.html" class="btn btn-neutral float-left" title="DeepOfflineTDControl" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="pandemonium.demons.DeepSARSE.html" class="btn btn-neutral float-left" title="DeepSARSE" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

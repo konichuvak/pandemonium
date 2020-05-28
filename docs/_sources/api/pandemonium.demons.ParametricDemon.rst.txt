@@ -6,20 +6,12 @@ ParametricDemon
 .. autoclass:: ParametricDemon
    :show-inheritance:
 
-   .. rubric:: Attributes Summary
+   .. rubric:: Methods Summary
 
    .. autosummary::
 
-      ~ParametricDemon.avf
-      ~ParametricDemon.gvf
-      ~ParametricDemon.λ
-      ~ParametricDemon.μ
-      ~ParametricDemon.φ
+      ~ParametricDemon.forward
 
-   .. rubric:: Attributes Documentation
+   .. rubric:: Methods Documentation
 
-   .. autoattribute:: avf
-   .. autoattribute:: gvf
-   .. autoattribute:: λ
-   .. autoattribute:: μ
-   .. autoattribute:: φ
+   .. automethod:: forward

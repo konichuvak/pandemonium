@@ -1,0 +1,7 @@
+TrueOnlineTD
+============
+
+.. currentmodule:: pandemonium.demons
+
+.. autoclass:: TrueOnlineTD
+   :show-inheritance:

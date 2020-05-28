@@ -96,8 +96,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.networks">pandemonium.networks Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.cumulants">pandemonium.cumulants Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.continuations">pandemonium.continuations Module</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Module</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="../package-ref.html#id14">Classes</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.experience.ER.html">ER</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.experience.PER.html">PER</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.experience.ReplayBuffer.html">ReplayBuffer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.experience.ReplayBufferMixin.html">ReplayBufferMixin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.experience.SegmentedER.html">SegmentedER</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.experience.SkewedER.html">SkewedER</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.experience.Trajectory.html">Trajectory</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">Transition</a></li>
 </ul>
@@ -109,9 +115,13 @@
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Examples and Usecases</span></p>
+<p class="caption"><span class="caption-text">Architectures</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architectures.html">Architectures</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Benchmarks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">Benchmarks</a></li>
 </ul>
 
             
@@ -182,7 +192,7 @@
 <h1>Transition<a class="headerlink" href="#transition" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pandemonium.experience.Transition">
-<em class="property">class </em><code class="sig-prename descclassname">pandemonium.experience.</code><code class="sig-name descname">Transition</code><a class="headerlink" href="#pandemonium.experience.Transition" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Transition</code><a class="headerlink" href="#pandemonium.experience.Transition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
 <p>An experience tuple</p>
 <p>The main purpose of the class is to hold <span class="math notranslate nohighlight">\((s,a,r,s')\)</span> tuples.

@@ -1,9 +1,8 @@
-from functools import reduce
+from typing import Dict
 
 import ray
 import torch
-from gym_minigrid.envs import EmptyEnv
-from gym_minigrid.wrappers import ImgObsWrapper
+from gym_minigrid.wrappers import FullyObsWrapper, ImgObsWrapper
 from ray import tune
 from ray.tune import register_env
 
@@ -12,8 +11,11 @@ from experiments.trainable import Loop
 from pandemonium import GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
+from pandemonium.demons import ControlDemon, PredictionDemon
 from pandemonium.demons.control import DQN
-from pandemonium.envs.wrappers import Torch
+from pandemonium.envs.minigrid import MinigridDisplay, EmptyEnv
+from pandemonium.envs.wrappers import (add_wrappers, Torch,
+                                       OneHotObsWrapper)
 from pandemonium.experience import ReplayBuffer
 from pandemonium.policies.discrete import Egreedy
 from pandemonium.utilities.schedules import ConstantSchedule
@@ -21,9 +23,11 @@ from pandemonium.utilities.schedules import LinearSchedule
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = torch.device('cpu')
+EXPERIMENT_NAME = 'C51'
+RESULT_DIR = EXPERIMENT_DIR / 'tune'
 
 
-def env_creator():
+def env_creator(env_config):
     # TODO: Ignore config for now until all the envs are properly registered
     envs = [
         EmptyEnv(size=10),
@@ -37,18 +41,17 @@ def env_creator():
         # SimplifyActionSpace,
 
         # Observation wrappers
-        # FullyObsWrapper,
+        FullyObsWrapper,
         ImgObsWrapper,
-        # OneHotObsWrapper,
-        # FlatObsWrapper,
-        lambda e: Torch(e, device=device)
+        OneHotObsWrapper,
+        Torch,
     ]
-    env = reduce(lambda e, wrapper: wrapper(e), wrappers, envs[0])
+    env = add_wrappers(base_env=envs[0], wrappers=wrappers)
     env.unwrapped.max_steps = float('inf')
     return env
 
 
-register_env("DQN_env", lambda config: env_creator())
+register_env("DQN_env", env_creator)
 
 
 def create_demons(config, env, φ, μ) -> Horde:
@@ -79,66 +82,118 @@ def create_demons(config, env, φ, μ) -> Horde:
     )
 
 
+def eval_fn(trainer: Loop, eval_workers) -> Dict:
+    """
+
+    Called every `evaluation_interval` to run the current version of the
+    agent in the the evaluation environment for one episode.
+
+    Works for envs with fairly small, enumerable state space like gridworlds.
+
+    Parameters
+    ----------
+    trainer
+    eval_workers
+
+    Returns
+    -------
+
+    """
+    cfg = trainer.config['evaluation_config']
+    env = cfg['eval_env'](cfg['eval_env_config'])
+
+    display = MinigridDisplay(env)
+
+    iteration = trainer.iteration
+
+    # Visualize value functions of each demon
+    for demon in trainer.agent.horde.demons.values():
+
+        if isinstance(demon, ControlDemon):
+            # fig = display.plot_option_values(
+            #     figure_name=f'iteration {iteration}',
+            #     demon=demon,
+            # )
+            fig = display.plot_option_values_separate(
+                figure_name=f'iteration {iteration}',
+                demon=demon,
+            )
+            display.save_figure(fig, f'{trainer.logdir}/{iteration}_qf')
+
+            # if isinstance(demon, CategoricalQ) and hasattr(demon, 'num_atoms'):
+            #     # Plot histograms instead of heatmaps for each state-action pair
+            #     x = demon.feature(STATES)
+            #     z = demon.azf(x)  # (flat_states, actions, atoms)
+            #     # (3, 10, 10, 7, 51)
+            #     # (3, 7, )
+
+        elif isinstance(demon, PredictionDemon):
+            pass
+
+    return {'dummy': None}
+
+
 total_steps = int(1e5)
 
 if __name__ == "__main__":
     ray.init(local_mode=False)
     analysis = tune.run(
         Loop,
-        name='DQN_test',
+        name=EXPERIMENT_NAME,
         stop={
             "timesteps_total": total_steps,
         },
         config={
             # Model a.k.a. Feature Extractor
-            # 'feature_name': 'identity',
-            # 'feature_cfg': {},
-            "feature_name": 'conv_body',
-            "feature_cfg": {
-                'feature_dim': 64,
-                'channels': (8, 16),
-                'kernels': (2, 2),
-                'strides': (1, 1),
-            },
+            'feature_name': 'identity',
+            'feature_cfg': {},
+            # "feature_name": 'conv_body',
+            # "feature_cfg": {
+            #     'feature_dim': 64,
+            #     'channels': (8, 16),
+            #     'kernels': (2, 2),
+            #     'strides': (1, 1),
+            # },
 
             # Policy
-            'policy_name': tune.grid_search(['egreedy', 'softmax']),
+            'policy_name': 'egreedy',
             'policy_cfg': {
                 'param': LinearSchedule(
-                    schedule_timesteps=total_steps,
+                    schedule_timesteps=total_steps // 2,
                     final_p=0.1, initial_p=1,
                     framework='torch'
                 )
             },
 
             # Replay buffer
-            'replay_name': 'er',
-            'replay_cfg': {
-                'size': tune.grid_search([int(1e3), int(1e4)]),
-                'batch_size': tune.grid_search([10, 20])
-            },
-            # 'replay_name': 'per',
+            # 'replay_name': 'er',
             # 'replay_cfg': {
-            #     'size': int(1e3),
-            #     'batch_size': 10,  # TODO: align with rollout length?
-            #     # Since learning happens on a trajectory of size `batch_size`
-            #     # we want it to be relatively small for n-step returns
-            #     # At the same time, we can still collect the experience in
-            #     # larger chunks
-            #     'alpha': 0.6,
-            #     'beta': LinearSchedule(schedule_timesteps=int(1e5), final_p=0.1,
-            #                            initial_p=1, framework='torch'),
-            #     'epsilon': 1e-6
+            #     'size': int(1e5),
+            #     'batch_size': 10,
             # },
+            'replay_name': 'per',
+            'replay_cfg': {
+                'size': int(1e3),
+                'batch_size': 10,  # TODO: align with rollout length?
+                # Since learning happens on a trajectory of size `batch_size`
+                # we want it to be relatively small for n-step returns
+                # At the same time, we can still collect the experience in
+                # larger chunks
+                'alpha': 0.6,
+                'beta': LinearSchedule(schedule_timesteps=total_steps,
+                                       final_p=0.1,
+                                       initial_p=1, framework='torch'),
+                'epsilon': 1e-6
+            },
 
             # Architecture
-            'gamma': tune.grid_search([0.9, 0.99]),
-            'target_update_freq': tune.grid_search([100, 1000]),
+            'gamma': 0.99,
+            'target_update_freq': 100,
             'double': tune.grid_search([False, True]),
             'duelling': tune.grid_search([False, True]),
-            "num_atoms": tune.grid_search([1, 10, 51]),
-            "v_min": -10.0,
-            "v_max": 10.0,
+            "num_atoms": tune.grid_search([1]),
+            "v_min": 0,
+            "v_max": 1,
 
             # Optimizer a.k.a. Horde
             "horde_fn": create_demons,
@@ -146,15 +201,34 @@ if __name__ == "__main__":
             # try to see how to write horde.learn as a SyncSampleOptimizer in ray
 
             # === RLLib params ===
-            "use_pytorch": True,
             "env": "DQN_env",
             "env_config": {},
             "rollout_fragment_length": 10,
+
+            # --- Evaluation ---
+            "evaluation_interval": 10,  # per training iteration
+            "custom_eval_function": eval_fn,
+            "evaluation_num_episodes": 1,
+            "evaluation_config": {
+                'eval_env': env_creator,
+                'eval_env_config': {},
+            },
+
             # used as batch size for exp collector and ER buffer
             # "train_batch_size": 32,
+            "use_pytorch": True,
+            # HACK to get the evaluation through
+            "model": {
+                'conv_filters': [
+                    [8, [2, 2], 1],
+                    [16, [2, 2], 1],
+                    [32, [2, 2], 1],
+                ],
+                'fcnet_hiddens': [256]
+            }
         },
         num_samples=1,
-        local_dir=EXPERIMENT_DIR,
+        local_dir=RESULT_DIR,
         # checkpoint_freq=1000,  # in training iterations
         # checkpoint_at_end=True,
         fail_fast=False,

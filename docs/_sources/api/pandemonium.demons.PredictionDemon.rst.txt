@@ -6,20 +6,12 @@ PredictionDemon
 .. autoclass:: PredictionDemon
    :show-inheritance:
 
-   .. rubric:: Attributes Summary
+   .. rubric:: Methods Summary
 
    .. autosummary::
 
-      ~PredictionDemon.avf
-      ~PredictionDemon.gvf
-      ~PredictionDemon.λ
-      ~PredictionDemon.μ
-      ~PredictionDemon.φ
+      ~PredictionDemon.predict
 
-   .. rubric:: Attributes Documentation
+   .. rubric:: Methods Documentation
 
-   .. autoattribute:: avf
-   .. autoattribute:: gvf
-   .. autoattribute:: λ
-   .. autoattribute:: μ
-   .. autoattribute:: φ
+   .. automethod:: predict

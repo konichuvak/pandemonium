@@ -1,0 +1,17 @@
+DeepSARSE
+=========
+
+.. currentmodule:: pandemonium.demons
+
+.. autoclass:: DeepSARSE
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~DeepSARSE.v_target
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: v_target

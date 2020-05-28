@@ -107,14 +107,18 @@
 <li class="toctree-l3"><a class="reference internal" href="../package-ref.html#id13">Class Inheritance Diagram</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.traces">pandemonium.traces Module</a></li>
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Examples and Usecases</span></p>
+<p class="caption"><span class="caption-text">Architectures</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architectures.html">Architectures</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Benchmarks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">Benchmarks</a></li>
 </ul>
 
             
@@ -185,7 +189,7 @@
 <h1>ConstantContinuation<a class="headerlink" href="#constantcontinuation" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pandemonium.continuations.ConstantContinuation">
-<em class="property">class </em><code class="sig-prename descclassname">pandemonium.continuations.</code><code class="sig-name descname">ConstantContinuation</code><span class="sig-paren">(</span><em class="sig-param">gamma</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.continuations.ConstantContinuation" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">ConstantContinuation</code><span class="sig-paren">(</span><em class="sig-param">gamma</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.continuations.ConstantContinuation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pandemonium.continuations.ContinuationFunction.html#pandemonium.continuations.ContinuationFunction" title="pandemonium.continuations.ContinuationFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.continuations.ContinuationFunction</span></code></a></p>
 <p>Special case of state independent discounting</p>
 <p>Here we hold <span class="math notranslate nohighlight">\(\gamma\)</span> constant at all times, until we receive a termination
@@ -198,7 +202,7 @@ we set <span class="math notranslate nohighlight">\(\gamma=1\)</span>.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.continuations.ConstantContinuation.__call__" title="pandemonium.continuations.ConstantContinuation.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a>(t)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.continuations.ConstantContinuation.__call__" title="pandemonium.continuations.ConstantContinuation.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a>(self, t, …)</p></td>
 <td><p>Call self as a function.</p></td>
 </tr>
 </tbody>
@@ -206,7 +210,7 @@ we set <span class="math notranslate nohighlight">\(\gamma=1\)</span>.</p>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="pandemonium.continuations.ConstantContinuation.__call__">
-<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">t: Union[pandemonium.experience.Transition, pandemonium.experience.Trajectory]</em><span class="sig-paren">)</span> &#x2192; Union[float, torch.Tensor]<a class="headerlink" href="#pandemonium.continuations.ConstantContinuation.__call__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">self, t: Union[pandemonium.experience.experience.Transition, pandemonium.experience.experience.Trajectory]</em><span class="sig-paren">)</span> &#x2192; Union[float, torch.Tensor]<a class="headerlink" href="#pandemonium.continuations.ConstantContinuation.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call self as a function.</p>
 </dd></dl>
 

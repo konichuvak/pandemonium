@@ -5,3 +5,17 @@ DQN
 
 .. autoclass:: DQN
    :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~DQN.learn
+      ~DQN.predict_q
+      ~DQN.v_target
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: learn
+   .. automethod:: predict_q
+   .. automethod:: v_target

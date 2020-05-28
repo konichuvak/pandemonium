@@ -5,21 +5,3 @@ LinearDemon
 
 .. autoclass:: LinearDemon
    :show-inheritance:
-
-   .. rubric:: Attributes Summary
-
-   .. autosummary::
-
-      ~LinearDemon.avf
-      ~LinearDemon.gvf
-      ~LinearDemon.λ
-      ~LinearDemon.μ
-      ~LinearDemon.φ
-
-   .. rubric:: Attributes Documentation
-
-   .. autoattribute:: avf
-   .. autoattribute:: gvf
-   .. autoattribute:: λ
-   .. autoattribute:: μ
-   .. autoattribute:: φ

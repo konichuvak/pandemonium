@@ -38,7 +38,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Curiosity" href="pandemonium.cumulants.Curiosity.html" />
-    <link rel="prev" title="Reshape" href="pandemonium.networks.Reshape.html" /> 
+    <link rel="prev" title="TargetNetMixin" href="pandemonium.networks.TargetNetMixin.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -109,14 +109,18 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.continuations">pandemonium.continuations Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.traces">pandemonium.traces Module</a></li>
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Examples and Usecases</span></p>
+<p class="caption"><span class="caption-text">Architectures</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architectures.html">Architectures</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Benchmarks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">Benchmarks</a></li>
 </ul>
 
             
@@ -187,7 +191,7 @@
 <h1>Cumulant<a class="headerlink" href="#cumulant" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pandemonium.cumulants.Cumulant">
-<em class="property">class </em><code class="sig-prename descclassname">pandemonium.cumulants.</code><code class="sig-name descname">Cumulant</code><a class="headerlink" href="#pandemonium.cumulants.Cumulant" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Cumulant</code><a class="headerlink" href="#pandemonium.cumulants.Cumulant" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A signal of interest <span class="math notranslate nohighlight">\(z\)</span> accumulated over time</p>
 <p>The classical example of a cumulant is a reward from MDP environment.
@@ -205,7 +209,7 @@ in its own prediction by using rolling average TD error.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.cumulants.Cumulant.__call__" title="pandemonium.cumulants.Cumulant.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.cumulants.Cumulant.__call__" title="pandemonium.cumulants.Cumulant.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a>(self, \*args, \*\*kwargs)</p></td>
 <td><p>Call self as a function.</p></td>
 </tr>
 </tbody>
@@ -213,7 +217,7 @@ in its own prediction by using rolling average TD error.</p>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="pandemonium.cumulants.Cumulant.__call__">
-<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.cumulants.Cumulant.__call__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.cumulants.Cumulant.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call self as a function.</p>
 </dd></dl>
 
@@ -232,7 +236,7 @@ in its own prediction by using rolling average TD error.</p>
         <a href="pandemonium.cumulants.Curiosity.html" class="btn btn-neutral float-right" title="Curiosity" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="pandemonium.networks.Reshape.html" class="btn btn-neutral float-left" title="Reshape" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="pandemonium.networks.TargetNetMixin.html" class="btn btn-neutral float-left" title="TargetNetMixin" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

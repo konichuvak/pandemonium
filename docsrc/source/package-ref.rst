@@ -1,6 +1,8 @@
 Library Reference
 =================
 
+.. automodapi:: pandemonium.agent
+
 .. automodapi:: pandemonium.gvf
 
 .. automodapi:: pandemonium.demons

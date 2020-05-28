@@ -129,3 +129,6 @@ class Agent:
                 'episode_reward': episode_reward,
             })
             yield logs
+
+
+__all__ = ['Agent']

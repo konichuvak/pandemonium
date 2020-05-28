@@ -3,6 +3,7 @@ import torch.nn.functional as F
 
 from pandemonium.demons import Demon, Loss, ControlDemon, PredictionDemon
 from pandemonium.experience import Trajectory, Transitions
+from pandemonium.utilities.utilities import get_all_classes
 
 
 class OfflineTD(Demon):
@@ -156,3 +157,6 @@ class TDn(TTD):
             eligibility=lambda trajectory: torch.ones_like(trajectory.r),
             **kwargs
         )
+
+
+__all__ = get_all_classes(__name__)

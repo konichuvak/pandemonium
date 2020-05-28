@@ -24,7 +24,7 @@ class ReplayBuffer(Registrable):
 
 
 @ReplayBuffer.register('er')
-class ER:
+class ER(ReplayBuffer):
     """ Experience Replay buffer
 
     Was originally designed as a means to make RL more data efficient [1].

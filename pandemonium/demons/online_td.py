@@ -3,6 +3,7 @@ from typing import Type
 from pandemonium.demons import PredictionDemon, Demon, Loss, ControlDemon
 from pandemonium.experience import Transition
 from pandemonium.traces import EligibilityTrace, AccumulatingTrace
+from pandemonium.utilities.utilities import get_all_classes
 
 
 class OnlineTD(Demon):
@@ -66,3 +67,6 @@ class SARSAlambda(OnlineTD, ControlDemon):
         _q = self.predict_q(t.x1)[self.behavior_policy(t.x1)]
         δ = z + γ * _q - q
         return δ * e, {'td_error': δ.item(), 'eligibility': e.item()}
+
+
+__all__ = get_all_classes(__name__)

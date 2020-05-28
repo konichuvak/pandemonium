@@ -11,9 +11,7 @@ DiffPolicy
    .. autosummary::
 
       ~DiffPolicy.dist
-      ~DiffPolicy.forward
 
    .. rubric:: Methods Documentation
 
    .. automethod:: dist
-   .. automethod:: forward

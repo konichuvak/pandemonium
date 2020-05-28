@@ -103,14 +103,18 @@
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.networks">pandemonium.networks Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.cumulants">pandemonium.cumulants Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.continuations">pandemonium.continuations Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.traces">pandemonium.traces Module</a></li>
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Examples and Usecases</span></p>
+<p class="caption"><span class="caption-text">Architectures</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architectures.html">Architectures</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Benchmarks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">Benchmarks</a></li>
 </ul>
 
             
@@ -181,7 +185,7 @@
 <h1>Horde<a class="headerlink" href="#horde" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pandemonium.horde.Horde">
-<em class="property">class </em><code class="sig-prename descclassname">pandemonium.horde.</code><code class="sig-name descname">Horde</code><span class="sig-paren">(</span><em class="sig-param">control_demon: pandemonium.demons.demon.ControlDemon, prediction_demons: List[pandemonium.demons.demon.PredictionDemon], aggregation_fn: Callable[[torch.Tensor], torch.Tensor], device: torch.device</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.horde.Horde" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Horde</code><span class="sig-paren">(</span><em class="sig-param">demons: List[pandemonium.demons.demon.Demon], aggregation_fn: Callable[[torch.Tensor], torch.Tensor], device: torch.device</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.horde.Horde" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p>A horde of Demons</p>
 <p>Container class for all the demons of a particular agent.</p>
@@ -200,7 +204,7 @@ however, named_parameters() handles the duplicates somehow!</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.horde.Horde.learn" title="pandemonium.horde.Horde.learn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">learn</span></code></a>(transitions)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.horde.Horde.learn" title="pandemonium.horde.Horde.learn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">learn</span></code></a>(self, transitions)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -208,7 +212,7 @@ however, named_parameters() handles the duplicates somehow!</p>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="pandemonium.horde.Horde.learn">
-<code class="sig-name descname">learn</code><span class="sig-paren">(</span><em class="sig-param">transitions</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#pandemonium.horde.Horde.learn" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">learn</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">transitions</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#pandemonium.horde.Horde.learn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

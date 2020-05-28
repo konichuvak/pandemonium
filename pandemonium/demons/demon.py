@@ -27,15 +27,15 @@ class Demon:
 
     Attributes
     ----------
-    gvf
+    gvf:
         General Value Function to be estimated by the demon
-    avf
+    avf:
         Approximate Value Function learned by the demon to approximate `gvf`
-    φ
+    φ:
         Feature generator learning useful state representations
-    μ
+    μ:
         Behavior policy that collects experience
-    λ
+    λ:
         Eligibility trace assigning credit to experiences
 
     """

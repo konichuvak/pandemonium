@@ -113,14 +113,18 @@
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.networks">pandemonium.networks Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.cumulants">pandemonium.cumulants Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.continuations">pandemonium.continuations Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.traces">pandemonium.traces Module</a></li>
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Examples and Usecases</span></p>
+<p class="caption"><span class="caption-text">Architectures</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architectures.html">Architectures</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Benchmarks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">Benchmarks</a></li>
 </ul>
 
             
@@ -191,7 +195,7 @@
 <h1>Discrete<a class="headerlink" href="#discrete" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pandemonium.policies.Discrete">
-<em class="property">class </em><code class="sig-prename descclassname">pandemonium.policies.</code><code class="sig-name descname">Discrete</code><span class="sig-paren">(</span><em class="sig-param">action_space</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.Discrete" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Discrete</code><span class="sig-paren">(</span><em class="sig-param">action_space</em>, <em class="sig-param">feature_dim</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.Discrete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.policies.policy.Policy</span></code></p>
 <p>Base class for discrete policies</p>
 <p class="rubric">Methods Summary</p>
@@ -201,16 +205,16 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.policies.Discrete.dist" title="pandemonium.policies.Discrete.dist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dist</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Returns a distribution over actions</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.policies.Discrete.dist" title="pandemonium.policies.Discrete.dist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dist</span></code></a>(self, \*args, \*\*kwargs)</p></td>
+<td><p>Produces a distribution over actions</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="pandemonium.policies.Discrete.dist">
-<code class="sig-name descname">dist</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; torch.distributions.distribution.Distribution<a class="headerlink" href="#pandemonium.policies.Discrete.dist" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a distribution over actions</p>
+<code class="sig-name descname">dist</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; torch.distributions.distribution.Distribution<a class="headerlink" href="#pandemonium.policies.Discrete.dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a distribution over actions</p>
 </dd></dl>
 
 </dd></dl>

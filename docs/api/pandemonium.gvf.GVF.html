@@ -103,14 +103,18 @@
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.networks">pandemonium.networks Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.cumulants">pandemonium.cumulants Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.continuations">pandemonium.continuations Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.traces">pandemonium.traces Module</a></li>
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Examples and Usecases</span></p>
+<p class="caption"><span class="caption-text">Architectures</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architectures.html">Architectures</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Benchmarks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">Benchmarks</a></li>
 </ul>
 
             
@@ -181,7 +185,7 @@
 <h1>GVF<a class="headerlink" href="#gvf" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pandemonium.gvf.GVF">
-<em class="property">class </em><code class="sig-prename descclassname">pandemonium.gvf.</code><code class="sig-name descname">GVF</code><span class="sig-paren">(</span><em class="sig-param">target_policy: pandemonium.policies.policy.Policy</em>, <em class="sig-param">continuation: pandemonium.continuations.ContinuationFunction</em>, <em class="sig-param">cumulant: pandemonium.cumulants.Cumulant</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.gvf.GVF" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">GVF</code><span class="sig-paren">(</span><em class="sig-param">target_policy: pandemonium.policies.policy.Policy</em>, <em class="sig-param">continuation: pandemonium.continuations.ContinuationFunction</em>, <em class="sig-param">cumulant: pandemonium.cumulants.Cumulant</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.gvf.GVF" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p><strong>General Value Function</strong></p>
 <p>Consider a stream of data <span class="math notranslate nohighlight">\(\{ (x_t, A_t) \}^{\infty}_{t=0}\)</span>, produced
@@ -212,13 +216,13 @@ each possible action.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.gvf.GVF.continuation" title="pandemonium.gvf.GVF.continuation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">continuation</span></code></a>(s)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.gvf.GVF.continuation" title="pandemonium.gvf.GVF.continuation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">continuation</span></code></a>(self, s)</p></td>
 <td><p>Outputs continuation signal based on the agent’s observation</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.gvf.GVF.cumulant" title="pandemonium.gvf.GVF.cumulant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumulant</span></code></a>(s)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.gvf.GVF.cumulant" title="pandemonium.gvf.GVF.cumulant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumulant</span></code></a>(self, s)</p></td>
 <td><p>Accumulates future values of the signal.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.gvf.GVF.target_policy" title="pandemonium.gvf.GVF.target_policy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_policy</span></code></a>(s)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.gvf.GVF.target_policy" title="pandemonium.gvf.GVF.target_policy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_policy</span></code></a>(self, s)</p></td>
 <td><p>The policy, whose value we would like to learn</p></td>
 </tr>
 </tbody>
@@ -226,7 +230,7 @@ each possible action.</p>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="pandemonium.gvf.GVF.continuation">
-<code class="sig-name descname">continuation</code><span class="sig-paren">(</span><em class="sig-param">s</em><span class="sig-paren">)</span> &#x2192; float<a class="headerlink" href="#pandemonium.gvf.GVF.continuation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">continuation</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">s</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.gvf.GVF.continuation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Outputs continuation signal based on the agent’s observation</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}\gamma: \mathcal{S} \mapsto[0, 1] \\\end{split}\]</div>
@@ -236,7 +240,7 @@ in classic RL. Here we allow the termination to be state-dependent.</p>
 
 <dl class="method">
 <dt id="pandemonium.gvf.GVF.cumulant">
-<code class="sig-name descname">cumulant</code><span class="sig-paren">(</span><em class="sig-param">s</em><span class="sig-paren">)</span> &#x2192; float<a class="headerlink" href="#pandemonium.gvf.GVF.cumulant" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">cumulant</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">s</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.gvf.GVF.cumulant" title="Permalink to this definition">¶</a></dt>
 <dd><p>Accumulates future values of the signal.</p>
 <div class="math notranslate nohighlight">
 \[z: \mathcal{S} \mapsto \mathbb{R}\]</div>
@@ -245,7 +249,7 @@ in classic RL. Here we allow the termination to be state-dependent.</p>
 
 <dl class="method">
 <dt id="pandemonium.gvf.GVF.target_policy">
-<code class="sig-name descname">target_policy</code><span class="sig-paren">(</span><em class="sig-param">s</em><span class="sig-paren">)</span> &#x2192; torch.distributions.distribution.Distribution<a class="headerlink" href="#pandemonium.gvf.GVF.target_policy" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">target_policy</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">s</em><span class="sig-paren">)</span> &#x2192; torch.distributions.distribution.Distribution<a class="headerlink" href="#pandemonium.gvf.GVF.target_policy" title="Permalink to this definition">¶</a></dt>
 <dd><p>The policy, whose value we would like to learn</p>
 <div class="math notranslate nohighlight">
 \[\pi: \mathcal{S} \times \mathcal{A} \mapsto [0, 1]\]</div>

@@ -2,23 +2,29 @@
 **************
 
 .. toctree::
-   :maxdepth: -1
-   :caption: Spinning Up
+    :maxdepth: -1
+    :caption: Spinning Up
 
-   spinning-up.rst
+    spinning-up.rst
 
-
-.. toctree::
-   :maxdepth: -1
-   :caption: Reference
-
-   package-ref.rst
 
 .. toctree::
-   :maxdepth: -1
-   :caption: Examples and Usecases
+    :maxdepth: -1
+    :caption: Reference
 
-   examples.rst
+    package-ref.rst
+
+.. toctree::
+    :maxdepth: -1
+    :caption: Architectures
+
+    architectures.rst
+
+.. toctree::
+    :maxdepth: -1
+    :caption: Benchmarks
+
+    benchmarks.rst
 
 
 Indices and tables

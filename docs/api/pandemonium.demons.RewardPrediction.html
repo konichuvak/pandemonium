@@ -37,8 +37,8 @@
   <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="SARSA" href="pandemonium.demons.SARSA.html" />
-    <link rel="prev" title="QLearning" href="pandemonium.demons.QLearning.html" /> 
+    <link rel="next" title="SARSAlambda" href="pandemonium.demons.SARSAlambda.html" />
+    <link rel="prev" title="PredictionDemon" href="pandemonium.demons.PredictionDemon.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -94,21 +94,30 @@
 <li class="toctree-l3 current"><a class="reference internal" href="../package-ref.html#id1">Classes</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.A2C.html">A2C</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.AC.html">AC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.CategoricalQ.html">CategoricalQ</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.ControlDemon.html">ControlDemon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DQN.html">DQN</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DeepOfflineTDControl.html">DeepOfflineTDControl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DeepSARSA.html">DeepSARSA</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DeepSARSE.html">DeepSARSE</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.Demon.html">Demon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DuellingMixin.html">DuellingMixin</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.LinearDemon.html">LinearDemon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OC.html">OC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OfflineTD.html">OfflineTD</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OfflineTDControl.html">OfflineTDControl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OfflineTDPrediction.html">OfflineTDPrediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OnlineTD.html">OnlineTD</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.ParametricDemon.html">ParametricDemon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.PixelControl.html">PixelControl</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.PredictionDemon.html">PredictionDemon</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.QLearning.html">QLearning</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">RewardPrediction</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.SARSA.html">SARSA</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.SARSE.html">SARSE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.SARSAlambda.html">SARSAlambda</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TD0.html">TD0</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TDAC.html">TDAC</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.UNREAL.html">UNREAL</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TDlambda.html">TDlambda</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TDn.html">TDn</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TTD.html">TTD</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TrueOnlineTD.html">TrueOnlineTD</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.ValueReplay.html">ValueReplay</a></li>
 </ul>
 </li>
@@ -120,14 +129,18 @@
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.networks">pandemonium.networks Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.cumulants">pandemonium.cumulants Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.continuations">pandemonium.continuations Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.traces">pandemonium.traces Module</a></li>
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Examples and Usecases</span></p>
+<p class="caption"><span class="caption-text">Architectures</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architectures.html">Architectures</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Benchmarks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">Benchmarks</a></li>
 </ul>
 
             
@@ -198,59 +211,59 @@
 <h1>RewardPrediction<a class="headerlink" href="#rewardprediction" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pandemonium.demons.RewardPrediction">
-<em class="property">class </em><code class="sig-prename descclassname">pandemonium.demons.</code><code class="sig-name descname">RewardPrediction</code><span class="sig-paren">(</span><em class="sig-param">replay_buffer: pandemonium.utilities.replay.Replay</em>, <em class="sig-param">feature</em>, <em class="sig-param">output_dim: int = 3</em>, <em class="sig-param">sequence_size: int = 3</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.RewardPrediction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.demon.ParametricDemon</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.offline_td.OfflineTDPrediction</span></code></p>
-<p>Classifies reward at the end of a state sequence</p>
-<p>Used as an auxiliary task in UNREAL architecture.</p>
-<p class="rubric">Attributes Summary</p>
+<em class="property">class </em><code class="sig-name descname">RewardPrediction</code><span class="sig-paren">(</span><em class="sig-param">replay_buffer: pandemonium.experience.buffers.SkewedER</em>, <em class="sig-param">feature</em>, <em class="sig-param">output_dim: int = 3</em>, <em class="sig-param">sequence_size: int = 3</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.RewardPrediction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.demon.ParametricDemon</span></code></p>
+<p>A demon that maximizes un-discounted n-step return.</p>
+<p>Learns the sign (+, 0, -) of the reward at the end of a state sequence.
+Used as an auxiliary task in UNREAL architecture.</p>
+<p class="rubric">References</p>
+<p>RL with unsupervised auxiliary tasks (Jaderberd et al., 2016)</p>
+<p class="rubric">Methods Summary</p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.RewardPrediction.avf" title="pandemonium.demons.RewardPrediction.avf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">avf</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.RewardPrediction.delta" title="pandemonium.demons.RewardPrediction.delta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delta</span></code></a>(self, trajectory)</p></td>
+<td><p>Specifies the update rule for approximate value function (avf)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.RewardPrediction.learn" title="pandemonium.demons.RewardPrediction.learn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">learn</span></code></a>(self, transitions)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.RewardPrediction.gvf" title="pandemonium.demons.RewardPrediction.gvf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gvf</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.RewardPrediction.predict" title="pandemonium.demons.RewardPrediction.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(self, x)</p></td>
+<td><p>Predict the value (or value distribution) of the state</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.RewardPrediction.λ" title="pandemonium.demons.RewardPrediction.λ"><code class="xref py py-obj docutils literal notranslate"><span class="pre">λ</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.RewardPrediction.μ" title="pandemonium.demons.RewardPrediction.μ"><code class="xref py py-obj docutils literal notranslate"><span class="pre">μ</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.RewardPrediction.φ" title="pandemonium.demons.RewardPrediction.φ"><code class="xref py py-obj docutils literal notranslate"><span class="pre">φ</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.RewardPrediction.target" title="pandemonium.demons.RewardPrediction.target"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target</span></code></a>(self, trajectory)</p></td>
+<td><p>Ternary classification target for -, 0, + rewards</p></td>
 </tr>
 </tbody>
 </table>
-<p class="rubric">Attributes Documentation</p>
-<dl class="attribute">
-<dt id="pandemonium.demons.RewardPrediction.avf">
-<code class="sig-name descname">avf</code><a class="headerlink" href="#pandemonium.demons.RewardPrediction.avf" title="Permalink to this definition">¶</a></dt>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="pandemonium.demons.RewardPrediction.delta">
+<code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">trajectory: pandemonium.experience.experience.Trajectory</em><span class="sig-paren">)</span> &#x2192; Tuple[Union[torch.Tensor, NoneType], dict]<a class="headerlink" href="#pandemonium.demons.RewardPrediction.delta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specifies the update rule for approximate value function (avf)</p>
+<p>Depending on whether the algorithm is online or offline, the demon will
+be learning from a single <cite>Transition</cite> vs a <cite>Trajectory</cite> of experiences.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pandemonium.demons.RewardPrediction.learn">
+<code class="sig-name descname">learn</code><span class="sig-paren">(</span><em class="sig-param">self, transitions: List[ForwardRef('Transition')]</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.RewardPrediction.learn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="pandemonium.demons.RewardPrediction.gvf">
-<code class="sig-name descname">gvf</code><a class="headerlink" href="#pandemonium.demons.RewardPrediction.gvf" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="method">
+<dt id="pandemonium.demons.RewardPrediction.predict">
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">x</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.RewardPrediction.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict the value (or value distribution) of the state</p>
+</dd></dl>
 
-<dl class="attribute">
-<dt id="pandemonium.demons.RewardPrediction.λ">
-<code class="sig-name descname">λ</code><a class="headerlink" href="#pandemonium.demons.RewardPrediction.λ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="pandemonium.demons.RewardPrediction.μ">
-<code class="sig-name descname">μ</code><a class="headerlink" href="#pandemonium.demons.RewardPrediction.μ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="pandemonium.demons.RewardPrediction.φ">
-<code class="sig-name descname">φ</code><a class="headerlink" href="#pandemonium.demons.RewardPrediction.φ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="method">
+<dt id="pandemonium.demons.RewardPrediction.target">
+<code class="sig-name descname">target</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">trajectory: pandemonium.experience.experience.Trajectory</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.RewardPrediction.target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ternary classification target for -, 0, + rewards</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -264,10 +277,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="pandemonium.demons.SARSA.html" class="btn btn-neutral float-right" title="SARSA" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="pandemonium.demons.SARSAlambda.html" class="btn btn-neutral float-right" title="SARSAlambda" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="pandemonium.demons.QLearning.html" class="btn btn-neutral float-left" title="QLearning" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="pandemonium.demons.PredictionDemon.html" class="btn btn-neutral float-left" title="PredictionDemon" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -6,20 +6,14 @@ TDAC
 .. autoclass:: TDAC
    :show-inheritance:
 
-   .. rubric:: Attributes Summary
+   .. rubric:: Methods Summary
 
    .. autosummary::
 
-      ~TDAC.avf
-      ~TDAC.gvf
-      ~TDAC.λ
-      ~TDAC.μ
-      ~TDAC.φ
+      ~TDAC.critic_loss
+      ~TDAC.v_target
 
-   .. rubric:: Attributes Documentation
+   .. rubric:: Methods Documentation
 
-   .. autoattribute:: avf
-   .. autoattribute:: gvf
-   .. autoattribute:: λ
-   .. autoattribute:: μ
-   .. autoattribute:: φ
+   .. automethod:: critic_loss
+   .. automethod:: v_target

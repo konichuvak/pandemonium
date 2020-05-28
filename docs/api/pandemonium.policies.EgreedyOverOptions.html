@@ -113,14 +113,18 @@
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.networks">pandemonium.networks Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.cumulants">pandemonium.cumulants Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.continuations">pandemonium.continuations Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.traces">pandemonium.traces Module</a></li>
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Examples and Usecases</span></p>
+<p class="caption"><span class="caption-text">Architectures</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architectures.html">Architectures</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Benchmarks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">Benchmarks</a></li>
 </ul>
 
             
@@ -191,7 +195,7 @@
 <h1>EgreedyOverOptions<a class="headerlink" href="#egreedyoveroptions" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pandemonium.policies.EgreedyOverOptions">
-<em class="property">class </em><code class="sig-prename descclassname">pandemonium.policies.</code><code class="sig-name descname">EgreedyOverOptions</code><span class="sig-paren">(</span><em class="sig-param">epsilon: Union[ray.rllib.utils.schedules.ConstantSchedule, ray.rllib.utils.schedules.LinearSchedule], *args, **kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.EgreedyOverOptions" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">EgreedyOverOptions</code><span class="sig-paren">(</span><em class="sig-param">epsilon: Union[pandemonium.utilities.schedules.ConstantSchedule, pandemonium.utilities.schedules.LinearSchedule], *args, **kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.EgreedyOverOptions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.policies.discrete.Egreedy</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.policies.discrete.HierarchicalPolicy</span></code></p>
 <p><span class="math notranslate nohighlight">\(\epsilon\)</span>-greedy policy over options.</p>
 <p>Picks the optimal option wrt to Q with probability 1 - <span class="math notranslate nohighlight">\(\epsilon\)</span>.</p>

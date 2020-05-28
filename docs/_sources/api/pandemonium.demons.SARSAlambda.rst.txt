@@ -1,0 +1,17 @@
+SARSAlambda
+===========
+
+.. currentmodule:: pandemonium.demons
+
+.. autoclass:: SARSAlambda
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~SARSAlambda.delta
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: delta

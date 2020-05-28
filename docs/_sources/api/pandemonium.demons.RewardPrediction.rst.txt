@@ -6,20 +6,18 @@ RewardPrediction
 .. autoclass:: RewardPrediction
    :show-inheritance:
 
-   .. rubric:: Attributes Summary
+   .. rubric:: Methods Summary
 
    .. autosummary::
 
-      ~RewardPrediction.avf
-      ~RewardPrediction.gvf
-      ~RewardPrediction.λ
-      ~RewardPrediction.μ
-      ~RewardPrediction.φ
+      ~RewardPrediction.delta
+      ~RewardPrediction.learn
+      ~RewardPrediction.predict
+      ~RewardPrediction.target
 
-   .. rubric:: Attributes Documentation
+   .. rubric:: Methods Documentation
 
-   .. autoattribute:: avf
-   .. autoattribute:: gvf
-   .. autoattribute:: λ
-   .. autoattribute:: μ
-   .. autoattribute:: φ
+   .. automethod:: delta
+   .. automethod:: learn
+   .. automethod:: predict
+   .. automethod:: target

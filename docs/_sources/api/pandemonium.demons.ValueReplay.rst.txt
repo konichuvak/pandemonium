@@ -6,20 +6,14 @@ ValueReplay
 .. autoclass:: ValueReplay
    :show-inheritance:
 
-   .. rubric:: Attributes Summary
+   .. rubric:: Methods Summary
 
    .. autosummary::
 
-      ~ValueReplay.avf
-      ~ValueReplay.gvf
-      ~ValueReplay.λ
-      ~ValueReplay.μ
-      ~ValueReplay.φ
+      ~ValueReplay.learn
+      ~ValueReplay.v_target
 
-   .. rubric:: Attributes Documentation
+   .. rubric:: Methods Documentation
 
-   .. autoattribute:: avf
-   .. autoattribute:: gvf
-   .. autoattribute:: λ
-   .. autoattribute:: μ
-   .. autoattribute:: φ
+   .. automethod:: learn
+   .. automethod:: v_target

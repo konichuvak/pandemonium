@@ -113,14 +113,18 @@
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.networks">pandemonium.networks Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.cumulants">pandemonium.cumulants Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.continuations">pandemonium.continuations Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.traces">pandemonium.traces Module</a></li>
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Examples and Usecases</span></p>
+<p class="caption"><span class="caption-text">Architectures</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architectures.html">Architectures</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Benchmarks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">Benchmarks</a></li>
 </ul>
 
             
@@ -191,7 +195,7 @@
 <h1>VPG<a class="headerlink" href="#vpg" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pandemonium.policies.VPG">
-<em class="property">class </em><code class="sig-prename descclassname">pandemonium.policies.</code><code class="sig-name descname">VPG</code><span class="sig-paren">(</span><em class="sig-param">feature_dim: int</em>, <em class="sig-param">entropy_coefficient: float = 0.01</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.VPG" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">VPG</code><span class="sig-paren">(</span><em class="sig-param">entropy_coefficient: float = 0.01</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.VPG" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.policies.gradient.DiffPolicy</span></code></p>
 <p>Vanilla Policy Gradient</p>
 <p class="rubric">Methods Summary</p>
@@ -201,24 +205,24 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.policies.VPG.delta" title="pandemonium.policies.VPG.delta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delta</span></code></a>(features, actions, weights)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.policies.VPG.delta" title="pandemonium.policies.VPG.delta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delta</span></code></a>(self, features, actions, weights)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.policies.VPG.dist" title="pandemonium.policies.VPG.dist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dist</span></code></a>(features, *args, **kwargs)</p></td>
-<td><p>Returns a distribution over actions</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.policies.VPG.dist" title="pandemonium.policies.VPG.dist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dist</span></code></a>(self, features, \*args, \*\*kwargs)</p></td>
+<td><p>Produces a distribution over actions</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="pandemonium.policies.VPG.delta">
-<code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">features</em>, <em class="sig-param">actions</em>, <em class="sig-param">weights</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.VPG.delta" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">features</em>, <em class="sig-param">actions</em>, <em class="sig-param">weights</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.VPG.delta" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="pandemonium.policies.VPG.dist">
-<code class="sig-name descname">dist</code><span class="sig-paren">(</span><em class="sig-param">features</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; torch.distributions.categorical.Categorical<a class="headerlink" href="#pandemonium.policies.VPG.dist" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a distribution over actions</p>
+<code class="sig-name descname">dist</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">features</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; torch.distributions.categorical.Categorical<a class="headerlink" href="#pandemonium.policies.VPG.dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a distribution over actions</p>
 </dd></dl>
 
 </dd></dl>

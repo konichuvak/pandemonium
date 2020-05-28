@@ -1,0 +1,17 @@
+DeepSARSA
+=========
+
+.. currentmodule:: pandemonium.demons
+
+.. autoclass:: DeepSARSA
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~DeepSARSA.v_target
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: v_target

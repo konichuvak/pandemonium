@@ -5,3 +5,21 @@ ControlDemon
 
 .. autoclass:: ControlDemon
    :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~ControlDemon.behavior_policy
+      ~ControlDemon.implied_avf
+      ~ControlDemon.predict
+      ~ControlDemon.predict_adv
+      ~ControlDemon.predict_q
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: behavior_policy
+   .. automethod:: implied_avf
+   .. automethod:: predict
+   .. automethod:: predict_adv
+   .. automethod:: predict_q

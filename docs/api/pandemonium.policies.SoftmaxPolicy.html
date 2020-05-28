@@ -113,14 +113,18 @@
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.networks">pandemonium.networks Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.cumulants">pandemonium.cumulants Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.continuations">pandemonium.continuations Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.traces">pandemonium.traces Module</a></li>
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Examples and Usecases</span></p>
+<p class="caption"><span class="caption-text">Architectures</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architectures.html">Architectures</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Benchmarks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">Benchmarks</a></li>
 </ul>
 
             
@@ -191,8 +195,15 @@
 <h1>SoftmaxPolicy<a class="headerlink" href="#softmaxpolicy" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pandemonium.policies.SoftmaxPolicy">
-<em class="property">class </em><code class="sig-prename descclassname">pandemonium.policies.</code><code class="sig-name descname">SoftmaxPolicy</code><span class="sig-paren">(</span><em class="sig-param">temperature: Union[ray.rllib.utils.schedules.ConstantSchedule, ray.rllib.utils.schedules.LinearSchedule], *args, **kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.SoftmaxPolicy" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">SoftmaxPolicy</code><span class="sig-paren">(</span><em class="sig-param">temperature: Union[pandemonium.utilities.schedules.ConstantSchedule, pandemonium.utilities.schedules.LinearSchedule], *args, **kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.SoftmaxPolicy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.policies.discrete.Discrete</span></code></p>
+<p>Picks actions with probability proportional to Q-values.</p>
+<p>Also called Boltzman or Gibbs distribution.</p>
+<p class="rubric">References</p>
+<dl class="simple">
+<dt>Sutton &amp; Barto Section 2.3</dt><dd><p><a class="reference external" href="http://incompleteideas.net/book/ebook/node17.html">http://incompleteideas.net/book/ebook/node17.html</a></p>
+</dd>
+</dl>
 <p class="rubric">Attributes Summary</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -212,11 +223,11 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.policies.SoftmaxPolicy.act" title="pandemonium.policies.SoftmaxPolicy.act"><code class="xref py py-obj docutils literal notranslate"><span class="pre">act</span></code></a>(*args, **kwargs)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.policies.SoftmaxPolicy.act" title="pandemonium.policies.SoftmaxPolicy.act"><code class="xref py py-obj docutils literal notranslate"><span class="pre">act</span></code></a>(self, \*args, \*\*kwargs)</p></td>
+<td><p>Samples an action from a distribution over actions</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.policies.SoftmaxPolicy.dist" title="pandemonium.policies.SoftmaxPolicy.dist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dist</span></code></a>(features, vf)</p></td>
-<td><p>Returns a distribution over actions</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.policies.SoftmaxPolicy.dist" title="pandemonium.policies.SoftmaxPolicy.dist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dist</span></code></a>(self, features, q_fn)</p></td>
+<td><p>Produces a distribution over actions</p></td>
 </tr>
 </tbody>
 </table>
@@ -229,13 +240,14 @@
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="pandemonium.policies.SoftmaxPolicy.act">
-<code class="sig-name descname">act</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.SoftmaxPolicy.act" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">act</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.SoftmaxPolicy.act" title="Permalink to this definition">¶</a></dt>
+<dd><p>Samples an action from a distribution over actions</p>
+</dd></dl>
 
 <dl class="method">
 <dt id="pandemonium.policies.SoftmaxPolicy.dist">
-<code class="sig-name descname">dist</code><span class="sig-paren">(</span><em class="sig-param">features</em>, <em class="sig-param">vf</em><span class="sig-paren">)</span> &#x2192; torch.distributions.categorical.Categorical<a class="headerlink" href="#pandemonium.policies.SoftmaxPolicy.dist" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a distribution over actions</p>
+<code class="sig-name descname">dist</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">features</em>, <em class="sig-param">q_fn</em><span class="sig-paren">)</span> &#x2192; torch.distributions.categorical.Categorical<a class="headerlink" href="#pandemonium.policies.SoftmaxPolicy.dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produces a distribution over actions</p>
 </dd></dl>
 
 </dd></dl>

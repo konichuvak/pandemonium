@@ -94,21 +94,30 @@
 <li class="toctree-l3 current"><a class="reference internal" href="../package-ref.html#id1">Classes</a><ul class="current">
 <li class="toctree-l4 current"><a class="current reference internal" href="#">A2C</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.AC.html">AC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.CategoricalQ.html">CategoricalQ</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.ControlDemon.html">ControlDemon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DQN.html">DQN</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DeepOfflineTDControl.html">DeepOfflineTDControl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DeepSARSA.html">DeepSARSA</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DeepSARSE.html">DeepSARSE</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.Demon.html">Demon</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DuellingMixin.html">DuellingMixin</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.LinearDemon.html">LinearDemon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OC.html">OC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OfflineTD.html">OfflineTD</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OfflineTDControl.html">OfflineTDControl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OfflineTDPrediction.html">OfflineTDPrediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OnlineTD.html">OnlineTD</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.ParametricDemon.html">ParametricDemon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.PixelControl.html">PixelControl</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.PredictionDemon.html">PredictionDemon</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.QLearning.html">QLearning</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.RewardPrediction.html">RewardPrediction</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.SARSA.html">SARSA</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.SARSE.html">SARSE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.SARSAlambda.html">SARSAlambda</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TD0.html">TD0</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TDAC.html">TDAC</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.UNREAL.html">UNREAL</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TDlambda.html">TDlambda</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TDn.html">TDn</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TTD.html">TTD</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TrueOnlineTD.html">TrueOnlineTD</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.ValueReplay.html">ValueReplay</a></li>
 </ul>
 </li>
@@ -120,14 +129,18 @@
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.networks">pandemonium.networks Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.cumulants">pandemonium.cumulants Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.continuations">pandemonium.continuations Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.traces">pandemonium.traces Module</a></li>
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Examples and Usecases</span></p>
+<p class="caption"><span class="caption-text">Architectures</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architectures.html">Architectures</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Benchmarks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">Benchmarks</a></li>
 </ul>
 
             
@@ -198,11 +211,29 @@
 <h1>A2C<a class="headerlink" href="#a2c" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pandemonium.demons.A2C">
-<em class="property">class </em><code class="sig-prename descclassname">pandemonium.demons.</code><code class="sig-name descname">A2C</code><span class="sig-paren">(</span><em class="sig-param">feature</em>, <em class="sig-param">actor</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.A2C" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">A2C</code><span class="sig-paren">(</span><em class="sig-param">feature</em>, <em class="sig-param">actor</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.A2C" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.control.AC</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.offline_td.OfflineTDControl</span></code></p>
 <p>Advantage Actor Critic</p>
 <p>Using two demons to approximate <span class="math notranslate nohighlight">\(v_{\pi_{\theta}}(s)\)</span> and <span class="math notranslate nohighlight">\(q_{\pi_{\theta}}(s, a)\)</span>
 at the same time.</p>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.A2C.critic_loss" title="pandemonium.demons.A2C.critic_loss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">critic_loss</span></code></a>(self, trajectory)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="pandemonium.demons.A2C.critic_loss">
+<code class="sig-name descname">critic_loss</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">trajectory: pandemonium.experience.experience.Trajectory</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.A2C.critic_loss" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 </div>

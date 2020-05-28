@@ -33,9 +33,13 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx_math_dollar',
     'sphinx.ext.autodoc',
+    'sphinx.ext.napoleon',
     'numpydoc'
 
 ]
+add_module_names = False
+autosummary_generate = True
+numpydoc_show_class_members = False
 # autodoc_mock_imports = ['collections', 'pathlib']
 automodsumm_inherited_members = False
 todo_include_todos = True

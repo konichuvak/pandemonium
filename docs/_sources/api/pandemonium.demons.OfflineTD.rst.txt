@@ -1,0 +1,21 @@
+OfflineTD
+=========
+
+.. currentmodule:: pandemonium.demons
+
+.. autoclass:: OfflineTD
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~OfflineTD.delta
+      ~OfflineTD.learn
+      ~OfflineTD.target
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: delta
+   .. automethod:: learn
+   .. automethod:: target

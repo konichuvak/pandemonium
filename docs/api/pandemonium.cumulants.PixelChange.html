@@ -109,14 +109,18 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.continuations">pandemonium.continuations Module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.traces">pandemonium.traces Module</a></li>
 </ul>
 </li>
 </ul>
-<p class="caption"><span class="caption-text">Examples and Usecases</span></p>
+<p class="caption"><span class="caption-text">Architectures</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architectures.html">Architectures</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Benchmarks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">Benchmarks</a></li>
 </ul>
 
             
@@ -187,7 +191,7 @@
 <h1>PixelChange<a class="headerlink" href="#pixelchange" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pandemonium.cumulants.PixelChange">
-<em class="property">class </em><code class="sig-prename descclassname">pandemonium.cumulants.</code><code class="sig-name descname">PixelChange</code><a class="headerlink" href="#pandemonium.cumulants.PixelChange" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">PixelChange</code><a class="headerlink" href="#pandemonium.cumulants.PixelChange" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pandemonium.cumulants.Cumulant.html#pandemonium.cumulants.Cumulant" title="pandemonium.cumulants.Cumulant"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.cumulants.Cumulant</span></code></a></p>
 <p>A 2-dimensional cumulant tracking pixel change from frame to frame</p>
 <p>Maximization of this cumulant is used as an auxiliary task in the
@@ -199,7 +203,7 @@ UNREAL architecture to help representational learning.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.cumulants.PixelChange.__call__" title="pandemonium.cumulants.PixelChange.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a>(traj)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.cumulants.PixelChange.__call__" title="pandemonium.cumulants.PixelChange.__call__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__call__</span></code></a>(self, traj)</p></td>
 <td><p>Call self as a function.</p></td>
 </tr>
 </tbody>
@@ -207,7 +211,7 @@ UNREAL architecture to help representational learning.</p>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="pandemonium.cumulants.PixelChange.__call__">
-<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">traj: pandemonium.experience.Trajectory</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.cumulants.PixelChange.__call__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">traj: pandemonium.experience.experience.Trajectory</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.cumulants.PixelChange.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call self as a function.</p>
 </dd></dl>
 

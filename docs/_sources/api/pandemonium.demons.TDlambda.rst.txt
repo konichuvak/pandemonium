@@ -1,0 +1,17 @@
+TDlambda
+========
+
+.. currentmodule:: pandemonium.demons
+
+.. autoclass:: TDlambda
+   :show-inheritance:
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+
+      ~TDlambda.delta
+
+   .. rubric:: Methods Documentation
+
+   .. automethod:: delta

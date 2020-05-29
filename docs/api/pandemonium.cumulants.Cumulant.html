@@ -26,6 +26,7 @@
         <script type="text/javascript" src="../_static/doctools.js"></script>
         <script type="text/javascript" src="../_static/language_data.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}"}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -199,10 +200,10 @@
 Cumulant is not always maximized; most of the time we are interested
 in predicting the signal. Cumulants can also be vector valued,
 i.e. when we want to learn to predict features of the environment.</p>
-<p>Some interesting cumulants are the once that are tracking a metric in
+<p>Some interesting cumulants are the ones that are tracking a metric in
 the agent itself. In this way we can express intrinsic motivation as a
 cumulant. For example, we might want to track confidence of the agent
-in its own prediction by using rolling average TD error.</p>
+in its own prediction by using rolling average <span class="math notranslate nohighlight">\(\TD\)</span> error.</p>
 <p class="rubric">Methods Summary</p>
 <table class="longtable docutils align-default">
 <colgroup>

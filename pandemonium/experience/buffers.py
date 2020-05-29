@@ -51,6 +51,7 @@ class ER(ReplayBuffer):
         batch_size
             Number of transitions to sample from the buffer
         """
+        super(ER, self).__init__()
         self.batch_size = batch_size
 
         self._storage = []

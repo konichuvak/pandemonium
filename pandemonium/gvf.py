@@ -1,7 +1,8 @@
+from torch.distributions.distribution import Distribution
+
 from pandemonium.continuations import ContinuationFunction
 from pandemonium.cumulants import Cumulant
 from pandemonium.policies import Policy
-from torch.distributions.distribution import Distribution
 
 
 class GVF:

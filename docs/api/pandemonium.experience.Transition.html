@@ -26,6 +26,7 @@
         <script type="text/javascript" src="../_static/doctools.js"></script>
         <script type="text/javascript" src="../_static/language_data.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}"}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -109,7 +110,7 @@
 <li class="toctree-l4 current"><a class="current reference internal" href="#">Transition</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../package-ref.html#id17">Class Inheritance Diagram</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../package-ref.html#id19">Class Inheritance Diagram</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.traces">pandemonium.traces Module</a></li>
@@ -195,12 +196,12 @@
 <dt id="pandemonium.experience.Transition">
 <em class="property">class </em><code class="sig-name descname">Transition</code><a class="headerlink" href="#pandemonium.experience.Transition" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
-<p>An experience tuple</p>
+<p>An experience tuple.</p>
 <p>The main purpose of the class is to hold <span class="math notranslate nohighlight">\((s,a,r,s')\)</span> tuples.
 Additional info required by some algorithms can also be added.</p>
 <div class="admonition-todo admonition" id="id1">
 <p class="admonition-title">Todo</p>
-<p>consider using dataclases from python3.7</p>
+<p>consider using dataclasses from python3.7</p>
 </div>
 </dd></dl>
 

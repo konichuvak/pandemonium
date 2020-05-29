@@ -35,11 +35,11 @@ class Agent:
 
         Parameters
         ----------
-        env
+        env:
             environment in which to take actions
-        s0
+        s0:
             starting state of the environment
-        steps
+        steps:
             number of steps to interact for
 
         Returns

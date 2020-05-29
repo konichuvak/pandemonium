@@ -26,6 +26,7 @@
         <script type="text/javascript" src="../_static/doctools.js"></script>
         <script type="text/javascript" src="../_static/language_data.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}"}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -213,8 +214,8 @@
 <dl class="class">
 <dt id="pandemonium.demons.RewardPrediction">
 <em class="property">class </em><code class="sig-name descname">RewardPrediction</code><span class="sig-paren">(</span><em class="sig-param">replay_buffer: pandemonium.experience.buffers.SkewedER</em>, <em class="sig-param">feature</em>, <em class="sig-param">output_dim: int = 3</em>, <em class="sig-param">sequence_size: int = 3</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.RewardPrediction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.demon.ParametricDemon</span></code></p>
-<p>A demon that maximizes un-discounted n-step return.</p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.demon.PredictionDemon</span></code></p>
+<p>A demon that maximizes un-discounted <span class="math notranslate nohighlight">\(n\)</span>-step return.</p>
 <p>Learns the sign (+, 0, -) of the reward at the end of a state sequence.
 Used as an auxiliary task in UNREAL architecture.</p>
 <p class="rubric">References</p>
@@ -235,7 +236,7 @@ Used as an auxiliary task in UNREAL architecture.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.RewardPrediction.predict" title="pandemonium.demons.RewardPrediction.predict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">predict</span></code></a>(self, x)</p></td>
 <td><p>Predict the value (or value distribution) of the state</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.RewardPrediction.target" title="pandemonium.demons.RewardPrediction.target"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target</span></code></a>(self, trajectory)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.RewardPrediction.target" title="pandemonium.demons.RewardPrediction.target"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target</span></code></a>(trajectory)</p></td>
 <td><p>Ternary classification target for -, 0, + rewards</p></td>
 </tr>
 </tbody>
@@ -262,7 +263,7 @@ be learning from a single <cite>Transition</cite> vs a <cite>Trajectory</cite> o
 
 <dl class="method">
 <dt id="pandemonium.demons.RewardPrediction.target">
-<code class="sig-name descname">target</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">trajectory: pandemonium.experience.experience.Trajectory</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.RewardPrediction.target" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">target</code><span class="sig-paren">(</span><em class="sig-param">trajectory: pandemonium.experience.experience.Trajectory</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.RewardPrediction.target" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ternary classification target for -, 0, + rewards</p>
 </dd></dl>
 

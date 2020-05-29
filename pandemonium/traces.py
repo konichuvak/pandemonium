@@ -2,7 +2,7 @@ import numpy as np
 
 
 class EligibilityTrace:
-    r""" Base class for various eligibility traces in TD learners.
+    r""" Base class for various eligibility traces in :math:`\TD` learners.
 
     Eligibility trace is a mechanism for a short-term memory,
     mathematically represented as a vector, $e_t \in \mathbb{R}^d$,
@@ -11,7 +11,7 @@ class EligibilityTrace:
     The rough intuition is that when a component of $w_t$ participates in
     producing an estimated value, then the corresponding component of $e_t$
     is bumped up and then begins to fade away. Learning will then occur in
-    that component of $w_t$ if a nonzero TD error occurs before the trace
+    that component of $w_t$ if a nonzero $\TD$ error occurs before the trace
     falls back to zero.
 
     The trace-decay parameter $\lambda \mapsto [0, 1]$ determines the rate

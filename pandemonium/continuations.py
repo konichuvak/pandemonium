@@ -1,10 +1,11 @@
 from typing import Union
 
 import torch
-from pandemonium.experience import Trajectory, Transition
-from pandemonium.utilities.utilities import get_all_classes
 from torch import nn
 from torch.distributions import Bernoulli
+
+from pandemonium.experience import Trajectory, Transition
+from pandemonium.utilities.utilities import get_all_classes
 
 
 class ContinuationFunction:
@@ -40,8 +41,8 @@ class ConstantContinuation(ContinuationFunction):
         assert isinstance(gamma, float)
         super().__init__(gamma)
 
-    def __call__(self, t: Union[Transition, Trajectory]) -> Union[
-        float, torch.Tensor]:
+    def __call__(self, t: Union[Transition, Trajectory]
+                 ) -> Union[float, torch.Tensor]:
         if isinstance(t.done, torch.Tensor):
             return abs(t.done.int() - 1) * self.gamma
         return self.γ if not t.done else 0

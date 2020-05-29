@@ -26,6 +26,7 @@
         <script type="text/javascript" src="../_static/doctools.js"></script>
         <script type="text/javascript" src="../_static/language_data.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}"}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -214,17 +215,18 @@
 <dt id="pandemonium.demons.TTD">
 <em class="property">class </em><code class="sig-name descname">TTD</code><span class="sig-paren">(</span><em class="sig-param">criterion=&lt;function smooth_l1_loss&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.TTD" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.offline_td.OfflineTD</span></code></p>
-<p>Truncated <span class="math notranslate nohighlight">\(\text{TD}(\lambda)\)</span></p>
+<p>Truncated <span class="math notranslate nohighlight">\(\TD{(\lambda)}\)</span></p>
 <p class="rubric">Notes</p>
-<p>Generalizes <span class="math notranslate nohighlight">\(n\)</span>-step <span class="math notranslate nohighlight">\(\text{TD}\)</span> by allowing arbitrary mixing of
+<p>Generalizes <span class="math notranslate nohighlight">\(n\)</span>-step <span class="math notranslate nohighlight">\(\TD\)</span> by allowing arbitrary mixing of
 <span class="math notranslate nohighlight">\(n\)</span>-step returns via <span class="math notranslate nohighlight">\(\lambda\)</span> parameter.</p>
 <p>Depending on the algorithm, vector <cite>v</cite> would contain different
 bootstrapped estimates of values:</p>
-<div class="math notranslate nohighlight">
-\[- \text{TD}(\lambda) (forward view): state value estimates \text{V_t}(s)
-- \text{Q}(\lambda): action value estimates \max\limits_{a}(Q_t(s_t, a))
-- \text{SARSA}(\lambda): action value estimates Q_t(s_t, a_t)
-- \text{CategoricalQ}: atom values of the distribution\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\TD(\lambda)\)</span> (forward view): state value estimates <span class="math notranslate nohighlight">\(V_t(s)\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\Q(\lambda)\)</span>: action value estimates <span class="math notranslate nohighlight">\(\max\limits_{a}Q_t(s_t, a)\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\SARSA(\lambda)\)</span>: action value estimates <span class="math notranslate nohighlight">\(Q_t(s_t, a_t)\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\text{CategoricalQ}\)</span>: atom values of the distribution</p></li>
+</ul>
 <p>The resulting vector <cite>u</cite> contains target returns for each state along
 the trajectory, with <span class="math notranslate nohighlight">\(V(S_i)\)</span> for <span class="math notranslate nohighlight">\(i \in \{0, 1, \dots, n-1\}\)</span> getting
 updated towards <span class="math notranslate nohighlight">\([n, n-1, \dots, 1]\)</span>-step <span class="math notranslate nohighlight">\(\lambda\)</span> returns respectively.</p>
@@ -243,7 +245,7 @@ updated towards <span class="math notranslate nohighlight">\([n, n-1, \dots, 1]\
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.TTD.target" title="pandemonium.demons.TTD.target"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target</span></code></a>(self, trajectory, v)</p></td>
-<td><p>Computes discounted returns for each step in the trajectory</p></td>
+<td><p>Computes discounted returns for each step in the trajectory.</p></td>
 </tr>
 </tbody>
 </table>
@@ -251,7 +253,7 @@ updated towards <span class="math notranslate nohighlight">\([n, n-1, \dots, 1]\
 <dl class="method">
 <dt id="pandemonium.demons.TTD.target">
 <code class="sig-name descname">target</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">trajectory: pandemonium.experience.experience.Trajectory</em>, <em class="sig-param">v: torch.Tensor</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.TTD.target" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes discounted returns for each step in the trajectory</p>
+<dd><p>Computes discounted returns for each step in the trajectory.</p>
 </dd></dl>
 
 </dd></dl>

@@ -26,6 +26,7 @@
         <script type="text/javascript" src="../_static/doctools.js"></script>
         <script type="text/javascript" src="../_static/language_data.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}"}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -99,7 +100,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.continuations">pandemonium.continuations Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Package</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../package-ref.html#module-pandemonium.traces">pandemonium.traces Module</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="../package-ref.html#id18">Classes</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../package-ref.html#id20">Classes</a><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.traces.AccumulatingTrace.html">AccumulatingTrace</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.traces.DutchTrace.html">DutchTrace</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">EligibilityTrace</a></li>
@@ -107,7 +108,7 @@
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.traces.Vtrace.html">Vtrace</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../package-ref.html#id19">Class Inheritance Diagram</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../package-ref.html#id21">Class Inheritance Diagram</a></li>
 </ul>
 </li>
 </ul>
@@ -192,14 +193,14 @@
 <dt id="pandemonium.traces.EligibilityTrace">
 <em class="property">class </em><code class="sig-name descname">EligibilityTrace</code><span class="sig-paren">(</span><em class="sig-param">λ</em>, <em class="sig-param">phi_dim</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.traces.EligibilityTrace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Base class for various eligibility traces in TD learners.</p>
+<p>Base class for various eligibility traces in <span class="math notranslate nohighlight">\(\TD\)</span> learners.</p>
 <p>Eligibility trace is a mechanism for a short-term memory,
 mathematically represented as a vector, <span class="math notranslate nohighlight">\(e_t \in \mathbb{R}^d\)</span>,
 that parallels the long-term weight vector <span class="math notranslate nohighlight">\(w_t \in \mathbb{R}^d\)</span>.</p>
 <p>The rough intuition is that when a component of <span class="math notranslate nohighlight">\(w_t\)</span> participates in
 producing an estimated value, then the corresponding component of <span class="math notranslate nohighlight">\(e_t\)</span>
 is bumped up and then begins to fade away. Learning will then occur in
-that component of <span class="math notranslate nohighlight">\(w_t\)</span> if a nonzero TD error occurs before the trace
+that component of <span class="math notranslate nohighlight">\(w_t\)</span> if a nonzero <span class="math notranslate nohighlight">\(\TD\)</span> error occurs before the trace
 falls back to zero.</p>
 <p>The trace-decay parameter <span class="math notranslate nohighlight">\(\lambda \mapsto [0, 1]\)</span> determines the rate
 at which the trace falls.</p>

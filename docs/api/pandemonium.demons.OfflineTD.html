@@ -26,6 +26,7 @@
         <script type="text/javascript" src="../_static/doctools.js"></script>
         <script type="text/javascript" src="../_static/language_data.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}"}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -214,7 +215,7 @@
 <dt id="pandemonium.demons.OfflineTD">
 <em class="property">class </em><code class="sig-name descname">OfflineTD</code><span class="sig-paren">(</span><em class="sig-param">criterion=&lt;function smooth_l1_loss&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.OfflineTD" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.demon.Demon</span></code></p>
-<p>Base class for forward-view <span class="math notranslate nohighlight">\(\text{TD}\)</span> methods.</p>
+<p>Base class for forward-view <span class="math notranslate nohighlight">\(\TD\)</span> methods.</p>
 <p>This class is used as a base for most of the DRL algorithms due to
 synergy with batching.</p>
 <p class="rubric">Methods Summary</p>
@@ -225,13 +226,13 @@ synergy with batching.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.OfflineTD.delta" title="pandemonium.demons.OfflineTD.delta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delta</span></code></a>(self, trajectory)</p></td>
-<td><p>Updates a value of a state using information in the trajectory</p></td>
+<td><p>Updates a value of a state using information in the trajectory.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.OfflineTD.learn" title="pandemonium.demons.OfflineTD.learn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">learn</span></code></a>(self, transitions)</p></td>
 <td><p>As opposed to the online case, where we learn on individual <cite>Transition`s, in the offline case we learn on a sequence of transitions referred to as `Trajectory</cite>.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.OfflineTD.target" title="pandemonium.demons.OfflineTD.target"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target</span></code></a>(self, \*args, \*\*kwargs)</p></td>
-<td><p>Computes discounted returns for each step in the trajectory</p></td>
+<td><p>Computes discounted returns for each step in the trajectory.</p></td>
 </tr>
 </tbody>
 </table>
@@ -239,7 +240,7 @@ synergy with batching.</p>
 <dl class="method">
 <dt id="pandemonium.demons.OfflineTD.delta">
 <code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">trajectory: pandemonium.experience.experience.Trajectory</em><span class="sig-paren">)</span> &#x2192; Tuple[Union[torch.Tensor, NoneType], dict]<a class="headerlink" href="#pandemonium.demons.OfflineTD.delta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates a value of a state using information in the trajectory</p>
+<dd><p>Updates a value of a state using information in the trajectory.</p>
 </dd></dl>
 
 <dl class="method">
@@ -253,7 +254,7 @@ transitions referred to as `Trajectory</cite>.</p>
 <dl class="method">
 <dt id="pandemonium.demons.OfflineTD.target">
 <code class="sig-name descname">target</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.OfflineTD.target" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes discounted returns for each step in the trajectory</p>
+<dd><p>Computes discounted returns for each step in the trajectory.</p>
 </dd></dl>
 
 </dd></dl>

@@ -26,6 +26,7 @@
         <script type="text/javascript" src="../_static/doctools.js"></script>
         <script type="text/javascript" src="../_static/language_data.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}"}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -223,7 +224,7 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.OC.delta" title="pandemonium.demons.OC.delta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delta</span></code></a>(self, traj)</p></td>
-<td><p>Updates a value of a state using information in the trajectory</p></td>
+<td><p>Updates a value of a state using information in the trajectory.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.OC.learn" title="pandemonium.demons.OC.learn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">learn</span></code></a>(self, transitions)</p></td>
 <td><p>As opposed to the online case, where we learn on individual <cite>Transition`s, in the offline case we learn on a sequence of transitions referred to as `Trajectory</cite>.</p></td>
@@ -237,7 +238,7 @@
 <dl class="method">
 <dt id="pandemonium.demons.OC.delta">
 <code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">traj: pandemonium.experience.experience.Trajectory</em><span class="sig-paren">)</span> &#x2192; Tuple[Union[torch.Tensor, NoneType], dict]<a class="headerlink" href="#pandemonium.demons.OC.delta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates a value of a state using information in the trajectory</p>
+<dd><p>Updates a value of a state using information in the trajectory.</p>
 </dd></dl>
 
 <dl class="method">

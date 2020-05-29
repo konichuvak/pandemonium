@@ -11,8 +11,8 @@ PolicyInfo = Dict[str, Distribution]
 class Policy(Registrable):
     r""" Base abstract class for decision making rules
 
-    Mathematically, a policy is a function $\pi: \mathcal{X} -> \mathcal{A}$
-    that maps the space of features onto the space of actions.
+    A policy is a function $\pi: \mathcal{X} \mapsto \mathcal{A}$
+    that maps from the space of features onto the space of actions.
     """
 
     def __init__(self,
@@ -49,6 +49,7 @@ class Policy(Registrable):
         """ Filters the actions available at a given state
 
         Closely relates to option initiation sets:
+
         >>> [o for o in options if o.initiation(state) == 1]
 
         .. seealso:: Interest Functions by K. Khetarpal et al. 2020

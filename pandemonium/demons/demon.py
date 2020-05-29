@@ -67,7 +67,7 @@ class Demon:
 
     def predict(self, x):
         r""" Predict the value (or value distribution) of the state """
-        raise NotImplementedError
+        return self.avf(x)
 
     def feature(self, *args, **kwargs):
         r""" A mapping from MDP states to features
@@ -123,9 +123,6 @@ class PredictionDemon(Demon, ABC):
     Can be thought of as an accumulator of declarative knowledge.
     """
 
-    def predict(self, x):
-        return self.avf(x)
-
 
 class ControlDemon(Demon, ABC):
     r""" Learns the optimal policy while learning to predict
@@ -133,7 +130,7 @@ class ControlDemon(Demon, ABC):
     Can be thought of as an accumulator of procedural knowledge.
 
     In addition to the approximate value function (avf), has a an approximate
-    q-value function (aqf) that produces value estimates for state-action pairs.
+    Q-value function (aqf) that produces value estimates for state-action pairs.
     """
 
     def __init__(self, aqf: Callable, **kwargs):
@@ -152,10 +149,6 @@ class ControlDemon(Demon, ABC):
         TODO: handle predictions made to compute targets via target_aqf
         """
         return (self.μ.dist(x, vf=self.aqf).probs * self.aqf(x)).sum(1)
-
-    def predict(self, x):
-        """ Computes value of a given state """
-        return self.avf(x)
 
     def predict_q(self, x):
         """ Computes action-values in a given state """

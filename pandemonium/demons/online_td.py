@@ -7,17 +7,22 @@ from pandemonium.utilities.utilities import get_all_classes
 
 
 class OnlineTD(Demon):
-    r""" Base class for backward-view (online) :math:`\text{TD}` methods. """
+    r""" Base class for backward-view (online) :math:`\TD` methods. """
 
     def __init__(self,
                  feature,
                  trace_decay: float,
-                 eligibility: Type[EligibilityTrace] = AccumulatingTrace,
+                 eligibility: Type[EligibilityTrace] = Type[AccumulatingTrace],
                  **kwargs):
         e = eligibility(trace_decay, feature.feature_dim)
         super().__init__(eligibility=e, feature=feature, **kwargs)
 
     def delta(self, t: Transition) -> Loss:
+        """ Specifies the update rule for approximate value function (avf)
+
+        Since the algorithms in this family are online, the update rule is
+        applied on every `Transition`.
+        """
         raise NotImplementedError
 
     def learn(self, t: Transition):
@@ -25,7 +30,7 @@ class OnlineTD(Demon):
 
 
 class TDlambda(OnlineTD, PredictionDemon):
-    r""" Semi-gradient :math:`\text{TD}\lambda` rule for estimating :math:`\tilde{v} ≈ v_{\pi}`
+    r""" Semi-gradient :math:`\TD{(\lambda)}` rule for estimating :math:`\tilde{v} \approx v_{\pi}`
 
     .. math::
         \begin{align*}
@@ -43,9 +48,9 @@ class TDlambda(OnlineTD, PredictionDemon):
 
 
 class TD0(TDlambda):
-    r""" A special case of :math:`\text{TD}\lambda` with :math:`\lambda = 0`
+    r""" A special case of :math:`\TD{(\lambda)}` with :math:`\lambda = 0`
 
-    $\text{TD}(0)$ is known as one-step $\text{TD}$ algorithm with
+    $\TD(0)$ is known as one-step $\TD$ algorithm with
     $e_t = \nabla \tilde{v}(x_t)$.
     """
 

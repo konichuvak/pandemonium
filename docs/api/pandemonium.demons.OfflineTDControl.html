@@ -26,6 +26,7 @@
         <script type="text/javascript" src="../_static/doctools.js"></script>
         <script type="text/javascript" src="../_static/language_data.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}"}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -214,6 +215,7 @@
 <dt id="pandemonium.demons.OfflineTDControl">
 <em class="property">class </em><code class="sig-name descname">OfflineTDControl</code><span class="sig-paren">(</span><em class="sig-param">criterion=&lt;function smooth_l1_loss&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.OfflineTDControl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.offline_td.OfflineTD</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.demon.ControlDemon</span></code></p>
+<p>Offline <span class="math notranslate nohighlight">\(\TD\)</span> for control tasks.</p>
 <p class="rubric">Methods Summary</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -222,16 +224,16 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.OfflineTDControl.delta" title="pandemonium.demons.OfflineTDControl.delta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delta</span></code></a>(self, trajectory)</p></td>
-<td><p>Updates a value of a state using information in the trajectory</p></td>
+<td><p>Updates a value of a state using information in the trajectory.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.OfflineTDControl.eval_actions" title="pandemonium.demons.OfflineTDControl.eval_actions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eval_actions</span></code></a>(self, x, a)</p></td>
 <td><p>Computes values associated with actions <cite>a</cite></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.OfflineTDControl.target" title="pandemonium.demons.OfflineTDControl.target"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target</span></code></a>(self, trajectory)</p></td>
-<td><p>Computes discounted returns for each step in the trajectory</p></td>
+<td><p>Computes discounted returns for each step in the trajectory.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.OfflineTDControl.v_target" title="pandemonium.demons.OfflineTDControl.v_target"><code class="xref py py-obj docutils literal notranslate"><span class="pre">v_target</span></code></a>(self, trajectory)</p></td>
-<td><p>Computes value targets from action-value pairs in the trajectory</p></td>
+<td><p>Computes value targets for states in the trajectory.</p></td>
 </tr>
 </tbody>
 </table>
@@ -239,7 +241,7 @@
 <dl class="method">
 <dt id="pandemonium.demons.OfflineTDControl.delta">
 <code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">trajectory: pandemonium.experience.experience.Trajectory</em><span class="sig-paren">)</span> &#x2192; Tuple[Union[torch.Tensor, NoneType], dict]<a class="headerlink" href="#pandemonium.demons.OfflineTDControl.delta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates a value of a state using information in the trajectory</p>
+<dd><p>Updates a value of a state using information in the trajectory.</p>
 </dd></dl>
 
 <dl class="method">
@@ -260,13 +262,13 @@
 <dl class="method">
 <dt id="pandemonium.demons.OfflineTDControl.target">
 <code class="sig-name descname">target</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">trajectory: pandemonium.experience.experience.Trajectory</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.OfflineTDControl.target" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes discounted returns for each step in the trajectory</p>
+<dd><p>Computes discounted returns for each step in the trajectory.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pandemonium.demons.OfflineTDControl.v_target">
 <code class="sig-name descname">v_target</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">trajectory: pandemonium.experience.experience.Trajectory</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.OfflineTDControl.v_target" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes value targets from action-value pairs in the trajectory</p>
+<dd><p>Computes value targets for states in the trajectory.</p>
 </dd></dl>
 
 </dd></dl>

@@ -8,13 +8,13 @@ Transitions = Union[List['Transition']]
 
 
 class Transition(NamedTuple):
-    """ An experience tuple
+    """ An experience tuple.
 
     The main purpose of the class is to hold $(s,a,r,s')$ tuples.
     Additional info required by some algorithms can also be added.
 
     .. todo::
-        consider using dataclases from python3.7
+        consider using dataclasses from python3.7
 
     """
     s0: torch.Tensor  # raw observation before state construction
@@ -32,7 +32,7 @@ class Transition(NamedTuple):
 
 
 class Trajectory(Transition):
-    """ A batch of transitions """
+    """ A batch of ``Transition``s. """
 
     done: torch.Tensor
     ρ: torch.Tensor

@@ -2,15 +2,15 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-from pandemonium.demons.demon import LinearDemon, ParametricDemon, Loss
+from pandemonium.demons.demon import LinearDemon, PredictionDemon, Loss
 from pandemonium.demons.offline_td import TDn, OfflineTDPrediction
 from pandemonium.experience import ER, SkewedER, Trajectory, Transitions
 from pandemonium.networks import Reshape
 from pandemonium.utilities.utilities import get_all_classes
 
 
-class RewardPrediction(ParametricDemon):
-    """ A demon that maximizes un-discounted n-step return.
+class RewardPrediction(PredictionDemon):
+    """ A demon that maximizes un-discounted :math:`n`-step return.
 
     Learns the sign (+, 0, -) of the reward at the end of a state sequence.
     Used as an auxiliary task in UNREAL architecture.
@@ -28,7 +28,7 @@ class RewardPrediction(ParametricDemon):
                  **kwargs):
         self.sequence_size = sequence_size
         avf = nn.Sequential(
-            Reshape(1, -1),  # stacks frames together
+            Reshape(1, -1),  # stacks feature vectors together
             nn.Linear(feature.feature_dim * sequence_size, output_dim),
         )
         super().__init__(
@@ -40,10 +40,8 @@ class RewardPrediction(ParametricDemon):
         self.replay_buffer = replay_buffer
         self.criterion = F.cross_entropy
 
-    def predict(self, x):
-        return self.avf(x)
-
-    def target(self, trajectory: Trajectory):
+    @staticmethod
+    def target(trajectory: Trajectory):
         """ Ternary classification target for -, 0, + rewards """
         g = trajectory.r[-1].item()
         if g > 0:
@@ -77,7 +75,7 @@ class RewardPrediction(ParametricDemon):
 
 
 class ValueReplay(LinearDemon, OfflineTDPrediction, TDn):
-    r""" :math:`n`-step :math:`\text{TD}` performed on the past experiences
+    r""" :math:`n`-step :math:`\TD` performed on the past experiences
 
     This demon re-samples recent historical sequences from the behavior policy
     distribution and performs extra value function regression. It is used

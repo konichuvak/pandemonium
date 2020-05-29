@@ -300,7 +300,7 @@ class DQN(OfflineTDControl,
 
 
 class DeepSARSA(OfflineTDControl):
-    r""" :math:`n`-step semi-gradient :math:`\text{SARSA}` """
+    r""" :math:`n`-step semi-gradient :math:`\SARSA` """
 
     @torch.no_grad()
     def v_target(self, trajectory: Trajectory):
@@ -311,7 +311,7 @@ class DeepSARSA(OfflineTDControl):
 
 
 class DeepSARSE(OfflineTDControl):
-    r""" :math:`n`-step semi-gradient expected :math:`\text{SARSA}` """
+    r""" :math:`n`-step semi-gradient expected :math:`\SARSA` """
 
     @torch.no_grad()
     def v_target(self, trajectory: Trajectory):
@@ -410,12 +410,12 @@ class A2C(AC, OfflineTDControl):
 
 
 class TDAC(AC, OfflineTDPrediction, TTD):
-    r""" A variation of AC that approximates advantage with :math:`\delta`
-
-    This version is using truncated $\lamda$ returns to compute $\delta$, i.e.
+    r""" Actor-Critic that approximates advantage with :math:`\TD` error.
+`
+    This version is using truncated $\lambda$ returns to compute $\delta$, i.e.
 
     .. math::
-        \Delta \theta = (v^{\lambda}_t - v_t(s)) \nabla_{\theta}log\pi_{\theta}(s_t, a_t)
+        \Delta \theta = (v^{\lambda}_t - v_t(s)) \nabla_{\theta}\log\pi_{\theta}(s_t, a_t)
 
     """
 

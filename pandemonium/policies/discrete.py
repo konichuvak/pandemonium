@@ -13,7 +13,7 @@ Schedule = Union[ConstantSchedule, LinearSchedule]
 
 
 class Discrete(Policy):
-    """ Base class for discrete policies """
+    """ Base class for discrete policies. """
 
     def __init__(self, action_space, feature_dim):
         if not isinstance(action_space, gym.spaces.Discrete):
@@ -26,7 +26,7 @@ class Discrete(Policy):
 
 @Policy.register('discrete_random')
 class Random(Discrete):
-    """ Picks an option at random """
+    """ Picks an option at random. """
 
     def dist(self, *args, **kwargs):
         return Uniform(0, self.action_space.n)
@@ -39,7 +39,7 @@ class Random(Discrete):
 class Egreedy(Discrete):
     r""" :math:`\epsilon`-greedy policy for discrete action spaces.
 
-    Picks the optimal action wrt to Q with probability 1 - :math:`\epsilon`
+    Picks the optimal action wrt to Q with probability 1 - $\epsilon$
     """
 
     def __init__(self, epsilon: Schedule, *args, **kwargs):
@@ -58,7 +58,7 @@ class Egreedy(Discrete):
         self.ε = schedule
 
     def dist(self, features, q_fn) -> Categorical:
-        """ Creates a categorical distribution with :math:`\epsilon`-greedy pmf
+        r""" Creates a categorical distribution with :math:`\epsilon`-greedy pmf
 
         Assumes that Q-values are of shape (batch, actions, states)
         """
@@ -169,7 +169,7 @@ class HierarchicalPolicy(Discrete):
 class EgreedyOverOptions(Egreedy, HierarchicalPolicy):
     r""" :math:`\epsilon`-greedy policy over options.
 
-    Picks the optimal option wrt to Q with probability 1 - :math:`\epsilon`.
+    Picks the optimal option wrt to Q with probability 1 - $\epsilon$.
     """
 
 

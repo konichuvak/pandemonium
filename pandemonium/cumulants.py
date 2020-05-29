@@ -13,10 +13,10 @@ class Cumulant:
     in predicting the signal. Cumulants can also be vector valued,
     i.e. when we want to learn to predict features of the environment.
 
-    Some interesting cumulants are the once that are tracking a metric in
+    Some interesting cumulants are the ones that are tracking a metric in
     the agent itself. In this way we can express intrinsic motivation as a
     cumulant. For example, we might want to track confidence of the agent
-    in its own prediction by using rolling average TD error.
+    in its own prediction by using rolling average $\TD$ error.
     """
 
     def __call__(self, *args, **kwargs):
@@ -92,8 +92,8 @@ class Curiosity(Cumulant):
 class Empowerment(Cumulant):
     r""" Measures the amount of causal influence an agent has on the world
 
-    Computed as a $log(S)$, i.e. logarithm of number of reachable (in fixed
-    number of steps) states after performing action A.
+    Computed as a $\log(S)$, i.e. logarithm of number of
+    reachable (in fixed number of steps) states after performing action $A$.
 
     See Salge et al. 2014 for details.
     """

@@ -26,6 +26,7 @@
         <script type="text/javascript" src="../_static/doctools.js"></script>
         <script type="text/javascript" src="../_static/language_data.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}"}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -214,11 +215,11 @@
 <dt id="pandemonium.demons.TDn">
 <em class="property">class </em><code class="sig-name descname">TDn</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.TDn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.offline_td.TTD</span></code></p>
-<p><span class="math notranslate nohighlight">\(\text{n-step TD}\)</span> for estimating <span class="math notranslate nohighlight">\(V ≈ v_{\pi}\)</span></p>
+<p><span class="math notranslate nohighlight">\(n\)</span>-step <span class="math notranslate nohighlight">\(\TD\)</span> for estimating <span class="math notranslate nohighlight">\(V \approx v_{\pi}\)</span></p>
 <p>Targets are calculated using forward view from <span class="math notranslate nohighlight">\(n\)</span>-step returns, where
-<span class="math notranslate nohighlight">\(n\)</span> is determined by the length of trajectory. <span class="math notranslate nohighlight">\(\text{TDn}\)</span> is a special
-case of truncated <span class="math notranslate nohighlight">\(\text{TD}\)</span> with <span class="math notranslate nohighlight">\(\lambda=1\)</span>.</p>
-<p>The actual value of <cite>n</cite> is determined implicitly from the length of the
+<span class="math notranslate nohighlight">\(n\)</span> is determined by the length of trajectory. <span class="math notranslate nohighlight">\(n\)</span>-step <span class="math notranslate nohighlight">\(\TD\)</span> is a
+special case of truncated <span class="math notranslate nohighlight">\(\TD\)</span> with <span class="math notranslate nohighlight">\(\lambda=1\)</span>.</p>
+<p>The actual value of <span class="math notranslate nohighlight">\(n\)</span> is determined implicitly from the length of the
 trajectory (which itself is based on the <cite>rollout_fragment_length</cite>).</p>
 <dl class="simple">
 <dt>TODO: clarify the relationship between n-step, rollout_fragment_length,</dt><dd><p>batch_size, training_iteration</p>

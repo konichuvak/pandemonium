@@ -9,7 +9,7 @@ from pandemonium.utilities.utilities import get_all_classes
 class OfflineTD(Demon):
     # TODO: consider renaming to MultistepTD to remove potential confusion
     #   with batch RL methods
-    r""" Base class for forward-view :math:`\text{TD}` methods.
+    r""" Base class for forward-view :math:`\TD` methods.
 
     This class is used as a base for most of the DRL algorithms due to
     synergy with batching.
@@ -20,11 +20,16 @@ class OfflineTD(Demon):
         self.criterion = criterion
 
     def delta(self, trajectory: Trajectory) -> Loss:
-        """ Updates a value of a state using information in the trajectory """
+        """ Updates a value of a state using information in the trajectory. """
+        raise NotImplementedError
+
+    @torch.no_grad()
+    def v_target(self, trajectory: Trajectory):
+        """ Computes value targets for states in the trajectory. """
         raise NotImplementedError
 
     def target(self, *args, **kwargs):
-        """ Computes discounted returns for each step in the trajectory """
+        """ Computes discounted returns for each step in the trajectory. """
         raise NotImplementedError
 
     def learn(self, transitions: Transitions):
@@ -39,12 +44,7 @@ class OfflineTD(Demon):
 
 
 class OfflineTDPrediction(OfflineTD, PredictionDemon):
-    r""" Offline :math:`\text{TD}(\lambda)` for prediction tasks """
-
-    @torch.no_grad()
-    def v_target(self, trajectory: Trajectory):
-        """ Computes value targets from states in the trajectory """
-        raise NotImplementedError
+    r""" Offline :math:`\TD` for prediction tasks. """
 
     def delta(self, trajectory: Trajectory) -> Loss:
         x = self.feature(trajectory.s0)
@@ -59,11 +59,7 @@ class OfflineTDPrediction(OfflineTD, PredictionDemon):
 
 
 class OfflineTDControl(OfflineTD, ControlDemon):
-
-    @torch.no_grad()
-    def v_target(self, trajectory: Trajectory):
-        """ Computes value targets from action-value pairs in the trajectory """
-        raise NotImplementedError
+    r""" Offline :math:`\TD` for control tasks. """
 
     def eval_actions(self, x, a):
         """ Computes values associated with actions `a`
@@ -97,21 +93,23 @@ class OfflineTDControl(OfflineTD, ControlDemon):
 
 
 class TTD(OfflineTD):
-    r""" Truncated :math:`\text{TD}(\lambda)`
+    r""" Truncated :math:`\TD{(\lambda)}`
 
     Notes
     -----
-    Generalizes $n$-step $\text{TD}$ by allowing arbitrary mixing of
+    Generalizes $n$-step $\TD$ by allowing arbitrary mixing of
     $n$-step returns via $\lambda$ parameter.
 
     Depending on the algorithm, vector `v` would contain different
     bootstrapped estimates of values:
 
-    .. math::
-        - \text{TD}(\lambda) (forward view): state value estimates \text{V_t}(s)
-        - \text{Q}(\lambda): action value estimates \max\limits_{a}(Q_t(s_t, a))
-        - \text{SARSA}(\lambda): action value estimates Q_t(s_t, a_t)
-        - \text{CategoricalQ}: atom values of the distribution
+    - $\TD(\lambda)$ (forward view): state value estimates $V_t(s)$
+
+    - $\Q(\lambda)$: action value estimates $\max\limits_{a}Q_t(s_t, a)$
+
+    - $\SARSA(\lambda)$: action value estimates $Q_t(s_t, a_t)$
+
+    - $\text{CategoricalQ}$: atom values of the distribution
 
     The resulting vector `u` contains target returns for each state along
     the trajectory, with $V(S_i)$ for $i \in \{0, 1, \dots, n-1\}$ getting
@@ -138,13 +136,13 @@ class TTD(OfflineTD):
 
 
 class TDn(TTD):
-    r""" :math:`\text{n-step TD}` for estimating :math:`V ≈ v_{\pi}`
+    r""" :math:`n`-step :math:`\TD` for estimating :math:`V \approx v_{\pi}`
 
     Targets are calculated using forward view from $n$-step returns, where
-    $n$ is determined by the length of trajectory. $\text{TDn}$ is a special
-    case of truncated $\text{TD}$ with $\lambda=1$.
+    $n$ is determined by the length of trajectory. $n$-step $\TD$ is a
+    special case of truncated $\TD$ with $\lambda=1$.
 
-    The actual value of `n` is determined implicitly from the length of the
+    The actual value of $n$ is determined implicitly from the length of the
     trajectory (which itself is based on the `rollout_fragment_length`).
 
     TODO: clarify the relationship between n-step, rollout_fragment_length,

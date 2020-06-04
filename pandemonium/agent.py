@@ -28,7 +28,7 @@ class Agent:
     def interact(self,
                  env,
                  s0: torch.Tensor,
-                 steps: int) -> Tuple[Transitions, dict]:
+                 steps: int) -> Tuple[Transitions, torch.Tensor, dict]:
         """ Perform number of `steps` in the environment
 
         Stops early if the episode is over.
@@ -83,9 +83,9 @@ class Agent:
         if 'temperature' in trajectory.info:
             logs['temperature'] = trajectory.info['temperature'][-1]
 
-        return transitions, logs
+        return transitions, s0, logs
 
-    def learn(self, env, episodes: int, update_horizon: int) -> Iterator[dict]:
+    def learn(self, env, episodes: int, horizon: int) -> Iterator[dict]:
 
         total_steps = 0
         for episode in range(episodes):
@@ -98,11 +98,11 @@ class Agent:
 
             # Initialize environment
             env.seed(1337)  # keeps the env consistent from episode to episode
-            s0 = env.reset()
+            state = env.reset()
 
             while not done:
                 # Collect experience
-                transitions, logs = self.interact(env, s0, update_horizon)
+                transitions, state, logs = self.interact(env, state, horizon)
                 episode_reward += logs.pop('interaction_reward')
                 done = logs.pop('done')
 

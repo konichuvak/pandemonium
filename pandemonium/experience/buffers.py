@@ -19,9 +19,6 @@ __all__ = ['ReplayBuffer', 'ER', 'PER', 'SkewedER', 'SegmentedER',
 class ReplayBuffer(Registrable):
     """ Registrar for replay buffers"""
 
-    def __init__(self, *args, **kwargs):
-        raise NotImplementedError
-
 
 @ReplayBuffer.register('er')
 class ER(ReplayBuffer):
@@ -51,7 +48,6 @@ class ER(ReplayBuffer):
         batch_size
             Number of transitions to sample from the buffer
         """
-        super(ER, self).__init__()
         self.batch_size = batch_size
 
         self._storage = []

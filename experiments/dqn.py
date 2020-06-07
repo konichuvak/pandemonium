@@ -12,7 +12,7 @@ from pandemonium import GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
 from pandemonium.demons import ControlDemon, PredictionDemon
-from pandemonium.demons.control import DQN
+from pandemonium.demons.control import DQN, CategoricalQ
 from pandemonium.envs.minigrid import MinigridDisplay, EmptyEnv
 from pandemonium.envs.wrappers import (add_wrappers, Torch,
                                        OneHotObsWrapper)
@@ -30,7 +30,7 @@ RESULT_DIR = EXPERIMENT_DIR / 'tune'
 def env_creator(env_config):
     # TODO: Ignore config for now until all the envs are properly registered
     envs = [
-        EmptyEnv(size=10),
+        EmptyEnv(size=5),
         # FourRooms(),
         # DoorKeyEnv(size=7),
         # MultiRoomEnv(minNumRooms=4, maxNumRooms=4),
@@ -114,18 +114,19 @@ def eval_fn(trainer: Loop, eval_workers) -> Dict:
             #     figure_name=f'iteration {iteration}',
             #     demon=demon,
             # )
-            fig = display.plot_option_values_separate(
-                figure_name=f'iteration {iteration}',
-                demon=demon,
-            )
-            display.save_figure(fig, f'{trainer.logdir}/{iteration}_qf')
+            # fig = display.plot_option_values_separate(
+            #     figure_name=f'iteration {iteration}',
+            #     demon=demon,
+            # )
+            # display.save_figure(fig, f'{trainer.logdir}/{iteration}_qf')
 
-            # if isinstance(demon, CategoricalQ) and hasattr(demon, 'num_atoms'):
-            #     # Plot histograms instead of heatmaps for each state-action pair
-            #     x = demon.feature(STATES)
-            #     z = demon.azf(x)  # (flat_states, actions, atoms)
-            #     # (3, 10, 10, 7, 51)
-            #     # (3, 7, )
+            if isinstance(demon, CategoricalQ) and hasattr(demon, 'num_atoms'):
+                fig = display.plot_option_value_distributions(
+                    figure_name=f'iteration {iteration}',
+                    demon=demon,
+                )
+                print(f'saving @ {trainer.logdir}/{iteration}_zf')
+                display.save_figure(fig, f'{trainer.logdir}/{iteration}_zf')
 
         elif isinstance(demon, PredictionDemon):
             pass
@@ -136,7 +137,7 @@ def eval_fn(trainer: Loop, eval_workers) -> Dict:
 total_steps = int(1e5)
 
 if __name__ == "__main__":
-    ray.init(local_mode=False)
+    ray.init(local_mode=True)
     analysis = tune.run(
         Loop,
         name=EXPERIMENT_NAME,
@@ -189,9 +190,9 @@ if __name__ == "__main__":
             # Architecture
             'gamma': 0.99,
             'target_update_freq': 100,
-            'double': tune.grid_search([False, True]),
-            'duelling': tune.grid_search([False, True]),
-            "num_atoms": tune.grid_search([1]),
+            'double': tune.grid_search([False]),
+            'duelling': tune.grid_search([False]),
+            "num_atoms": tune.grid_search([2]),
             "v_min": 0,
             "v_max": 1,
 
@@ -206,7 +207,7 @@ if __name__ == "__main__":
             "rollout_fragment_length": 10,
 
             # --- Evaluation ---
-            "evaluation_interval": 10,  # per training iteration
+            "evaluation_interval": 3,  # per training iteration
             "custom_eval_function": eval_fn,
             "evaluation_num_episodes": 1,
             "evaluation_config": {

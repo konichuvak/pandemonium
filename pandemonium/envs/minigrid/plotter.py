@@ -12,6 +12,7 @@ import torch
 from gym_minigrid.minigrid import MiniGridEnv
 
 from pandemonium.demons import Demon, ControlDemon
+from pandemonium.demons.control import CategoricalQ
 from pandemonium.envs.minigrid.utilities import plotlyfig2json
 
 tools.make_subplots = partial(
@@ -122,7 +123,7 @@ class MinigridDisplay:
 
     def plot_option_value_distributions(self,
                                         figure_name: str,
-                                        z: np.ndarray,
+                                        demon: CategoricalQ,
                                         option_ids: Tuple[str] = ACTION_NAMES):
         r"""
 
@@ -131,14 +132,47 @@ class MinigridDisplay:
         ``go.Figure`` with DIRECTIONS x ACTION_SIZE heatmaps as subplots,
         with a histogram of state-action values in each cell of a heatmap.
         """
+        x = demon.φ(self.all_states)
+        z = demon.azf(x)  # (states, actions, atoms)
+        z = z.transpose(0, 1).view(z.shape[1],
+                                   4,
+                                   self.env.height - 2,
+                                   self.env.width - 2,
+                                   demon.num_atoms)
+        z = torch.nn.ConstantPad3d(1, 0)(z)
+        z = z.cpu().detach().numpy()
 
         assert len(z.shape) == 5
 
-        options, probs, directions, w, h = z.shape
+        options, directions, w, h, probs = z.shape
         assert options == len(option_ids)
 
-        for option in range(options):
-            pass
+        offset = {
+            Directions.up: np.array([0 * h + 1, 1 * w + 1]),
+            Directions.down: np.array((2 * h + 1, 1 * w + 1)),
+            Directions.left: np.array((1 * h + 1, 0 * w + 1)),
+            Directions.right: np.array((1 * h + 1, 2 * w + 1)),
+        }
+
+        figures = dict()
+        for option, option_id in zip(range(options), option_ids):
+            fig = tools.make_subplots(cols=3 * w, rows=3 * h)
+            fig = self.remove_tick_labels(fig)
+            for dir in range(directions):
+                for i in range(h):
+                    for j in range(w):
+                        x = z[option, dir, i, j]
+                        loc = offset[dir] + np.array([i, j])
+                        fig.add_trace(go.Histogram(x=x), *loc.tolist())
+            fig.update_layout(
+                title=f'{figure_name}',
+                height=1200, width=1200,
+                coloraxis={'colorscale': 'inferno'}
+            )
+
+            figures[option_id] = fig
+
+        return figures
 
     def plot_option_values_separate(self,
                                     figure_name: str,

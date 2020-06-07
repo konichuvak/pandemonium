@@ -1,4 +1,4 @@
-import numpy as np
+import torch
 
 
 class EligibilityTrace:
@@ -18,10 +18,10 @@ class EligibilityTrace:
     at which the trace falls.
     """
 
-    def __init__(self, λ, phi_dim):
+    def __init__(self, λ, trace_dim):
         assert 0 <= λ <= 1
-        self.λ = λ
-        self.trace = self.eligibility = self.e = np.zeros(phi_dim)
+        self.λ = self.trace_decay = λ
+        self.trace = self.eligibility = self.e = torch.zeros(trace_dim)
 
     def __call__(self, *args, **kwargs):
         raise NotImplementedError
@@ -44,7 +44,7 @@ class DutchTrace(EligibilityTrace):
 
     def __call__(self, gamma, x, alpha, *args, **kwargs):
         λ, γ, α = self.λ, gamma, alpha
-        self.e = λ * γ * self.e + (1 - α * λ * γ * np.dot(self.e, x)) * x
+        self.e = λ * γ * self.e + (1 - α * λ * γ * self.e.dot(x)) * x
         return self.e
 
 

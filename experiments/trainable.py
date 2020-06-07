@@ -67,8 +67,8 @@ class Loop(Trainer):
         self.agent = Agent(feature_extractor, policy, horde)
         self.loop = self.agent.learn(
             env=self.env,
-            episodes=10000,
-            update_horizon=cfg['rollout_fragment_length'],
+            episodes=100000000000,
+            horizon=cfg['rollout_fragment_length'],
         )
 
         self.hist_stats = {

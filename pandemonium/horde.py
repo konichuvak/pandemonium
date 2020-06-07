@@ -1,5 +1,5 @@
 import textwrap
-from typing import List, Callable, Dict
+from typing import List, Callable
 
 import torch
 from torch import nn
@@ -51,18 +51,16 @@ class Horde(torch.nn.Module):
             loss, info = demon.learn(transitions)
             losses[i] = loss if loss is not None else 0
 
-            # HACK
-            for key in ('td_error', 'rp_traj', 'vr_traj', 'ce_loss', 'loss'):
-                info.pop(key, None)  # remove non-leaf tensors from logs
-
-            logs.update({f'{d}': {f'{k}': v for k, v in info.items()}})
+            logs.update({f'{d}': {f'{k}': v for k, v in info.items() if not (
+                    isinstance(v, torch.Tensor) and not v.is_leaf)}})
 
         # Optimize joint objective
         total_loss = self.aggregation_fn(losses)
         if not total_loss.requires_grad:
             # Sometimes (e.g. in experience collection stage) there is no
             # gradient step to be performed
-            pass
+            self.optimizer.step()
+            self.optimizer.zero_grad()
         else:
             self.optimizer.zero_grad()
             total_loss.backward()

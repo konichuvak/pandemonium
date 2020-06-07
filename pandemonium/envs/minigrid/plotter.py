@@ -181,7 +181,7 @@ class MinigridDisplay:
                 fig.add_trace(heatmap, *tiles[dir])
 
             # Add the env image in the middle
-            fig.add_trace(self.env_image, 2, 2)
+            # fig.add_trace(self.env_image, 2, 2)
 
             fig.update_layout(
                 title=f'{figure_name}',

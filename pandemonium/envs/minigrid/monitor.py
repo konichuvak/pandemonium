@@ -10,9 +10,10 @@ from experiments import LIB_ROOT
 from pandemonium.envs.minigrid.plotter import ACTIONS, ACTION_NAMES
 from pandemonium.envs.minigrid.utilities import plotlyfromjson
 
-trial = 'Loop_DQN_env_0_double=False,duelling=False,num_atoms=10_2020-05-18_23-06-22ryi1v20b'
+trial = 'Loop_env_0_size=5,trace_decay=0_2020-06-06_21-56-04vv88k73u'
+experiment = 'DistributionalTD'
 
-LOGDIR = Path('experiments/tune/C51')
+LOGDIR = Path(f'experiments/tune/{experiment}')
 LOGDIR = LIB_ROOT / LOGDIR / trial
 
 # TODO: a global dropdown to choose from all the experiments in C51 dir

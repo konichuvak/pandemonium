@@ -67,7 +67,6 @@ class Horde(torch.nn.Module):
             # torch.nn.utils.clip_grad_norm_(self.parameters(), 1)
             self.optimizer.step()
 
-        # TODO: hack for ray
         logs.update({'total_loss': total_loss.item()})
         return logs
 

@@ -15,6 +15,12 @@ class Transition(NamedTuple):
 
     .. todo::
         consider using dataclasses from python3.7
+        pros:
+            mutability
+        cons:
+            potentially larger memory footprint
+            incompatible with python3.6
+            need to write a custom __iter__ method
 
     """
     s0: torch.Tensor  # raw observation before state construction

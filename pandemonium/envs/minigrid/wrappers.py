@@ -112,14 +112,16 @@ class SimplifyObsSpace(gym.core.ObservationWrapper):
 class SimplifyActionSpace(gym.core.Wrapper):
     """ Simple mini-grids only require navigation actions
 
-    We can thus ignore actions of opening the door or picking up objects.
+    We can thus ignore actions of dropping / picking up / toggling
+    various objects.
     """
 
     class Actions(IntEnum):
-        # Turn left, turn right, move forward
+        # Turn left, turn right, move forward or no-op
         left = 0
         right = 1
         forward = 2
+        done = 6
 
     def __init__(self, env):
         super().__init__(env)

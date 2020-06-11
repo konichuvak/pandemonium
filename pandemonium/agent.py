@@ -53,15 +53,18 @@ class Agent:
         done = False
         total_reward = 0.
 
+        # Initial feature vector and action
         x0 = self.feature_extractor(s0)
+        a0, policy_info = self.behavior_policy(x0)
+
         while len(transitions) < steps and not done:
-            a, policy_info = self.behavior_policy(x0)
-            s1, reward, done, info = env.step(a)
-            x1 = self.feature_extractor(s1)
+            s1, reward, done, info = env.step(a0)
             info.update(**policy_info)
-            t = Transition(s0, a, reward, s1, done, x0, x1, info=info)
+            x1 = self.feature_extractor(s1)
+            a1, policy_info = self.behavior_policy(x1)
+            t = Transition(s0, a0, reward, s1, done, x0, x1, a1=a1, info=info)
             transitions.append(t)
-            s0, x0 = s1, x1
+            s0, x0, a0 = s1, x1, a1
             total_reward += reward
 
         # Record statistics

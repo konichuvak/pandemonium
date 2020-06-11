@@ -24,6 +24,7 @@ class Transition(NamedTuple):
     done: bool = False  # episode termination indicator
     x0: torch.Tensor = None  # current feature vector
     x1: torch.Tensor = None  # next feature vector
+    a1: torch.Tensor = None  # next action selected by the agent
     a_dist: Distribution = None  # distribution from which `a` was generated
     o: 'Option' = None  # an option that was followed during transition
     ρ: float = 1.  # importance sampling weight
@@ -47,11 +48,13 @@ class Trajectory(Transition):
         s1 = torch.cat(batch.s1)
         x0 = torch.cat(batch.x0)
         x1 = torch.cat(batch.x1)
-        a = torch.tensor(batch.a, device=device)
+        a0 = torch.tensor(batch.a, device=device)
+        a1 = torch.tensor(batch.a1, device=device)
         r = torch.tensor(batch.r, dtype=torch.float, device=device)
         done = torch.tensor(batch.done, dtype=torch.bool, device=device)
         ρ = torch.tensor(batch.ρ, device=device).unsqueeze(1)
-        buffer_index = torch.tensor(batch.buffer_index, dtype=torch.long, device=device)
+        buffer_index = torch.tensor(batch.buffer_index, dtype=torch.long,
+                                    device=device)
 
         # Try concatenating information in info dictionary
         info = {k: [d[k] for d in batch.info] for k in batch.info[0]}
@@ -63,7 +66,7 @@ class Trajectory(Transition):
             else:
                 pass
 
-        return cls(s0=s0, a=a, r=r, s1=s1, done=done, x0=x0, x1=x1,
+        return cls(s0=s0, a=a0, r=r, s1=s1, done=done, x0=x0, x1=x1, a1=a1,
                    ρ=ρ, buffer_index=buffer_index, info=info)
 
     def __len__(self):

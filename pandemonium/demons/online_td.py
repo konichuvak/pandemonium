@@ -90,9 +90,8 @@ class SARSA(OnlineTD, ControlDemon, ParametricDemon):
     def delta(self, t: Transition) -> Loss:
         γ = self.gvf.continuation(t)
         z = self.gvf.z(t)
-        a, _ = self.μ.act(t.x1)  # TODO: re-use the action chosen
         Q_tm1 = self.predict_q(t.x0[0])[t.a]
-        Q_t = self.predict_q(t.x1[0])[a].detach()
+        Q_t = self.predict_q(t.x1[0])[t.a1].detach()
         δ = z + γ * Q_t - Q_tm1
 
         if self.λ.trace_decay == 0:
@@ -108,7 +107,7 @@ class SARSA(OnlineTD, ControlDemon, ParametricDemon):
                     param.grad = -δ * e
             loss = None
 
-        return loss, {'td_error': δ.item(), 'action': a}
+        return loss, {'td_error': δ.item()}
 
 
 class QLearning(OnlineTD, ControlDemon, ParametricDemon):

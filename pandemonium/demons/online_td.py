@@ -53,10 +53,16 @@ class TD(OnlineTD, PredictionDemon, ParametricDemon):
 
     def delta(self, t: Transition) -> Loss:
         γ = self.gvf.continuation(t)
-        z = self.gvf.z(t)
+        z = self.gvf.cumulant(t)
         Q_tm1 = self.predict(t.x0)
         Q_t = self.predict(t.x1).detach()
         δ = z + γ * Q_t - Q_tm1
+
+        # Off policy importance sampling correction
+        π = self.gvf.π.dist(t.x0, self.aqf).probs[0][t.a]
+        b = self.μ.dist(t.x0, self.aqf).probs[t.a]
+        ρ = π / b
+        δ *= ρ
 
         if self.λ.trace_decay == 0:
             loss = F.mse_loss(input=Q_tm1, target=z + γ * Q_t)

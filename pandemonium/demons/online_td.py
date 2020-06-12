@@ -54,9 +54,9 @@ class TD(OnlineTD, PredictionDemon, ParametricDemon):
     def delta(self, t: Transition) -> Loss:
         γ = self.gvf.continuation(t)
         z = self.gvf.cumulant(t)
-        Q_tm1 = self.predict(t.x0)
-        Q_t = self.predict(t.x1).detach()
-        δ = z + γ * Q_t - Q_tm1
+        v = self.predict(t.x0)
+        u = z + γ * self.predict(t.x1).detach()
+        δ = u - v
 
         # Off policy importance sampling correction
         π = self.gvf.π.dist(t.x0, self.aqf).probs[0][t.a]
@@ -66,9 +66,9 @@ class TD(OnlineTD, PredictionDemon, ParametricDemon):
 
         info = {'td_error': δ.item()}
         if self.λ.trace_decay == 0:
-            loss = F.mse_loss(input=Q_tm1, target=z + γ * Q_t)
+            loss = F.mse_loss(input=v, target=z + γ * u)
         else:
-            Q_tm1.backward()  # semi-gradient
+            v.backward()  # semi-gradient
             assert self.avf.bias is None
             grad = next(self.avf.parameters()).grad
             e = self.λ(γ, grad)
@@ -88,24 +88,20 @@ class TrueOnlineTD(OnlineTD):
 class SARSA(OnlineTD, ControlDemon, ParametricDemon):
     r""" Semi-gradient :math:`\SARSA{(\lambda)}`
 
-    .. math::
-        \begin{align*}
-            e_t &= γ_t λ e_{t-1} + \nabla \tilde{q}(x_t, a_t) \\
-            w_{t+1} &= w_t + \alpha (z_t + γ_{t+1} \tilde{Q}(x_{t+1}, a_{t+1}) - \tilde{v}(x_t, a_t))e_t
-        \end{align*}
+    Adapts $\TD{(\lambda)}$ to the control case.
     """
 
     def delta(self, t: Transition) -> Loss:
         γ = self.gvf.continuation(t)
         z = self.gvf.z(t)
-        Q_tm1 = self.predict_q(t.x0[0])[t.a]
-        Q_t = self.predict_q(t.x1[0])[t.a1].detach()
-        δ = z + γ * Q_t - Q_tm1
+        v = self.predict_q(t.x0[0])[t.a]
+        u = z + γ * self.predict_q(t.x1[0])[t.a1].detach()
+        δ = u - v
 
         info = {'td_error': δ.item()}
         if self.λ.trace_decay == 0:
             # A shortcut for SARSA(0)
-            loss = F.mse_loss(input=Q_tm1, target=z + γ * Q_t)
+            loss = F.mse_loss(input=v, target=u)
         else:
             Q_tm1.backward()  # semi-gradient
             assert self.aqf.bias is None
@@ -129,9 +125,9 @@ class QLearning(OnlineTD, ControlDemon, ParametricDemon):
     def delta(self, t: Transition) -> Loss:
         γ = self.gvf.continuation(t)
         z = self.gvf.z(t)
-        q = self.predict_q(t.x0[0])[t.a][0]
-        _q = self.predict_q(t.x1[0]).max().detach()
-        loss = F.mse_loss(input=q, target=z + γ * _q)
+        v = self.predict_q(t.x0[0])[t.a][0]
+        u = z + γ * self.predict_q(t.x1[0]).max().detach()
+        loss = F.mse_loss(input=v, target=u)
         return loss, {}
 
 

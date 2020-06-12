@@ -6,6 +6,7 @@ import torch.nn.functional as F
 from pandemonium.demons import (PredictionDemon, Demon, Loss, ControlDemon,
                                 ParametricDemon)
 from pandemonium.experience import Transition
+from pandemonium.policies import Egreedy
 from pandemonium.traces import EligibilityTrace, AccumulatingTrace
 from pandemonium.utilities.utilities import get_all_classes
 
@@ -49,6 +50,12 @@ class TD(OnlineTD, PredictionDemon, ParametricDemon):
             e_t &= γ_t λ e_{t-1} + \nabla \tilde{v}(x_t) \\
             w_{t+1} &= w_t + \alpha (z_t + γ_{t+1} \tilde{v}(x_{t+1}) - \tilde{v}(x_t))e_t
         \end{align*}
+
+    References
+    ----------
+    "Reinforcement Learning: An Introduction"
+        Sutton and Barto (2018) ch. 12.2
+        http://incompleteideas.net/book/the-book.html
     """
 
     def delta(self, t: Transition) -> Loss:
@@ -85,23 +92,24 @@ class TrueOnlineTD(OnlineTD):
     pass
 
 
-class SARSA(OnlineTD, ControlDemon, ParametricDemon):
-    r""" Semi-gradient :math:`\SARSA{(\lambda)}`
+class OnlineTDControl(OnlineTD, ControlDemon, ParametricDemon):
+    r""" Base class for online :math:`\TD` methods for control tasks. """
 
-    Adapts $\TD{(\lambda)}$ to the control case.
-    """
+    @torch.no_grad()
+    def q_t(self, t: Transition):
+        """ Estimates the action-value of the next state. """
+        raise NotImplementedError
 
     def delta(self, t: Transition) -> Loss:
         γ = self.gvf.continuation(t)
         z = self.gvf.z(t)
         v = self.predict_q(t.x0[0])[t.a]
-        u = z + γ * self.predict_q(t.x1[0])[t.a1].detach()
+        u = z + γ * self.q_t(t)
         δ = u - v
 
         info = {'td_error': δ.item()}
         if self.λ.trace_decay == 0:
-            # A shortcut for SARSA(0)
-            loss = F.mse_loss(input=v, target=u)
+            loss = F.mse_loss(input=v, target=u)  # a shortcut
         else:
             v.backward()  # semi-gradient
             assert self.aqf.bias is None
@@ -116,19 +124,70 @@ class SARSA(OnlineTD, ControlDemon, ParametricDemon):
         return loss, info
 
 
-class QLearning(OnlineTD, ControlDemon, ParametricDemon):
+class SARSA(OnlineTDControl):
+    r""" Semi-gradient :math:`\SARSA{(\lambda)}`.
+
+    References
+    ----------
+    "Reinforcement Learning: An Introduction"
+        Sutton and Barto (2018) ch. 12.7
+        http://incompleteideas.net/book/the-book.html
+
+    """
+
+    @torch.no_grad()
+    def q_t(self, t: Transition):
+        q = self.predict_q(t.x1)[0]
+        return q[t.a1]
+
+
+class SARSE(OnlineTDControl):
+    r""" Semi-gradient Expected :math:`\SARSA{(\lambda)}`.
+
+    References
+    ----------
+    "Reinforcement Learning: An Introduction"
+        Sutton and Barto (2018) ch. 6.6
+        http://incompleteideas.net/book/the-book.html
+
+    "A Theoretical and Empirical Analysis of Expected Sarsa"
+        Harm van Seijen et al (2009)
+        http://www.cs.ox.ac.uk/people/shimon.whiteson/pubs/vanseijenadprl09.pdf
+    """
+
+    @torch.no_grad()
+    def q_t(self, t: Transition):
+        q = self.predict_q(t.x1)[0]
+        dist = self.μ.dist(t.x1, q_fn=self.aqf)  # use behaviour policy
+        return q.dot(dist.probs[0])
+
+
+class QLearning(OnlineTDControl):
+    r""" Off-policy version of :math:`\SARSE`.
+
+    Here we use a generalized Q-learning update rule, inspired by $\SARSE$.
+    Since the target policy $\pi$ in canonical Q-learning is greedy wrt to GVF,
+    we have the following equality:
+
+    .. math::
+        \max_\limits{a \in \mathcal{A}}Q(S_{t+1}, a) = \sum_{a \in \mathcal{A}} \pi(a|S_{t+1})Q(S_{t+1}, a)
+
+    .. todo::
+        Add support for eligibility traces
+    """
 
     def __init__(self, **kwargs):
-        # TODO: eligibility traces
         super(QLearning, self).__init__(trace_decay=0, **kwargs)
+        if not isinstance(self.gvf.π, Egreedy):
+            raise TypeError(self.gvf.π)
+        elif self.gvf.π.ε == 0:
+            raise ValueError(self.gvf.π.ε)
 
-    def delta(self, t: Transition) -> Loss:
-        γ = self.gvf.continuation(t)
-        z = self.gvf.z(t)
-        v = self.predict_q(t.x0[0])[t.a][0]
-        u = z + γ * self.predict_q(t.x1[0]).max().detach()
-        loss = F.mse_loss(input=v, target=u)
-        return loss, {}
+    @torch.no_grad()
+    def q_t(self, t: Transition):
+        q = self.predict_q(t.x1)[0]
+        dist = self.gvf.π.dist(t.x1, q_fn=self.aqf)  # use target policy
+        return q.dot(dist.probs[0])
 
 
 __all__ = get_all_classes(__name__)

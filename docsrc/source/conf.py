@@ -49,6 +49,7 @@ mathjax_config = {
             "TD": '\\operatorname{TD}',
             "Q": '\\operatorname{Q}',
             "SARSA": '\\operatorname{SARSA}',
+            "SARSE": '\\operatorname{SARSE}',
         }
     }
 }

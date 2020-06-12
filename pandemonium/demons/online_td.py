@@ -64,6 +64,7 @@ class TD(OnlineTD, PredictionDemon, ParametricDemon):
         ρ = π / b
         δ *= ρ
 
+        info = {'td_error': δ.item()}
         if self.λ.trace_decay == 0:
             loss = F.mse_loss(input=Q_tm1, target=z + γ * Q_t)
         else:
@@ -71,12 +72,13 @@ class TD(OnlineTD, PredictionDemon, ParametricDemon):
             assert self.avf.bias is None
             grad = next(self.avf.parameters()).grad
             e = self.λ(γ, grad)
+            info['eligibility_norm'] = e.pow(2).sum().sqrt().item()
             with torch.no_grad():
                 for param in self.avf.parameters():
                     param.grad = -δ * e
             loss = None
 
-        return loss, {'td_error': δ.item()}
+        return loss, info
 
 
 class TrueOnlineTD(OnlineTD):
@@ -100,6 +102,7 @@ class SARSA(OnlineTD, ControlDemon, ParametricDemon):
         Q_t = self.predict_q(t.x1[0])[t.a1].detach()
         δ = z + γ * Q_t - Q_tm1
 
+        info = {'td_error': δ.item()}
         if self.λ.trace_decay == 0:
             # A shortcut for SARSA(0)
             loss = F.mse_loss(input=Q_tm1, target=z + γ * Q_t)
@@ -108,12 +111,13 @@ class SARSA(OnlineTD, ControlDemon, ParametricDemon):
             assert self.aqf.bias is None
             grad = next(self.aqf.parameters()).grad
             e = self.λ(γ, grad)
+            info['eligibility_norm'] = e.pow(2).sum().sqrt().item()
             with torch.no_grad():
                 for param in self.aqf.parameters():
                     param.grad = -δ * e
             loss = None
 
-        return loss, {'td_error': δ.item()}
+        return loss, info
 
 
 class QLearning(OnlineTD, ControlDemon, ParametricDemon):

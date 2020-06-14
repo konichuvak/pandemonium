@@ -134,8 +134,8 @@ class ControlDemon(Demon, ABC):
     """
 
     def __init__(self, aqf: Callable, **kwargs):
-        super().__init__(avf=self.implied_avf, **kwargs)
         self.aqf = self.target_aqf = aqf
+        super().__init__(avf=self.implied_avf, **kwargs)
 
     def implied_avf(self, x):
         r""" State-value function in terms of action-value function
@@ -151,12 +151,20 @@ class ControlDemon(Demon, ABC):
         return (self.μ.dist(x, vf=self.aqf).probs * self.aqf(x)).sum(1)
 
     def predict_q(self, x):
-        """ Computes action-values in a given state """
+        """ Computes action-values in a given state. """
         return self.aqf(x)
 
+    def predict_target_q(self, x):
+        """ Computes target action-values in a given state. """
+        return self.target_aqf(x)
+
     def predict_adv(self, x):
-        """ Computes the advantage in a given state """
+        """ Computes the advantage in a given state. """
         return self.aqf(x) - self.avf(x)
+
+    def predict_target_adv(self, x):
+        """ Computes the target advantage in a given state. """
+        return self.target_aqf(x) - self.target_aqf(x)
 
     def behavior_policy(self, x: torch.Tensor):
         # Control policies usually require access to value functions.

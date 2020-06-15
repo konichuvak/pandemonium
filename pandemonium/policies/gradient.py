@@ -1,7 +1,6 @@
 from torch import nn
 from torch.distributions import Distribution, Categorical
 
-from pandemonium.demons import Loss
 from pandemonium.policies import Policy
 from pandemonium.utilities.utilities import get_all_classes
 
@@ -17,7 +16,7 @@ class DiffPolicy(Policy, nn.Module):
     def dist(self, *args, **kwargs) -> Distribution:
         raise NotImplementedError
 
-    def delta(self, *args, **kwargs) -> Loss:
+    def delta(self, *args, **kwargs):
         raise NotImplementedError
 
 
@@ -34,7 +33,7 @@ class VPG(DiffPolicy):
         logits = self.policy_head(features)
         return Categorical(logits=logits)
 
-    def delta(self, features, actions, weights) -> Loss:
+    def delta(self, features, actions, weights):
         dist = self.dist(features)
         policy_loss = -(dist.log_prob(actions) * weights).mean(0)
         entropy_loss = dist.entropy().mean(0)

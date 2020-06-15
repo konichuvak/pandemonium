@@ -38,9 +38,12 @@ class DuellingMixin:
                             f'by control algorithms')
         self.avf = nn.Linear(self.φ.feature_dim, 1)
 
-    def predict_q(self, x, target: bool = False):
-        v = self.avf(x) if not target else self.target_aqf(x)
-        q = self.aqf(x) if not target else self.target_aqf(x)
+    def predict_q(self, x):
+        v, q = self.avf(x), self.aqf(x)
+        return q - (q - v).mean(1, keepdim=True)
+
+    def predict_target_q(self, x):
+        q, v = self.target_avf(x), self.target_aqf(x)
         return q - (q - v).mean(1, keepdim=True)
 
 

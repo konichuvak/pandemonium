@@ -21,8 +21,8 @@ class Demon:
 
     Demon learns an approximate value function $\tilde{V}$ (avf), to the
     general value function (gvf) that corresponds to the setting of the
-    three question functions: $\pi$, $\gamma$, and z. The tools that the demon
-    uses to learn the approximation are called answers functions and are
+    three "question" functions: $\pi$, $\gamma$, and z. The tools that the demon
+    uses to learn the approximation are called "answer" functions and are
     comprised of $\mu$, $\phi$ and $\lambda$.
 
     Attributes
@@ -168,7 +168,7 @@ class ControlDemon(Demon, ABC):
 
     def behavior_policy(self, x: torch.Tensor):
         # Control policies usually require access to value functions.
-        return self.μ(x, vf=self.aqf)
+        return self.μ(x, q_fn=self.aqf)
 
 
 class ParametricDemon(Demon, torch.nn.Module, ABC):

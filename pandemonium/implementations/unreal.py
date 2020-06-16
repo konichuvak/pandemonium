@@ -98,9 +98,6 @@ class ValueReplay(LinearDemon, OfflineTDPrediction, TDn):
         super().__init__(output_dim=1, **kwargs)
         self.replay_buffer = replay_buffer
 
-    def v_t(self, trajectory: Trajectory):
-        return self.avf(trajectory.x1)
-
     def learn(self, transitions: Transitions):
         self.replay_buffer.add_batch(transitions)
 

@@ -147,15 +147,14 @@ class QLearning(TDControl):
 
     # TODO: integrate
         online:
-            double
             duelling
         offline:
             duelling
             traces
     """
 
-    def __init__(self, double: bool, **kwargs):
-        super(QLearning, self).__init__(trace_decay=0, **kwargs)
+    def __init__(self, **kwargs):
+        super().__init__(trace_decay=0, **kwargs)
 
         # Ensures that target policy is greedy wrt to the Q function
         if not isinstance(self.gvf.π, Egreedy):
@@ -163,23 +162,10 @@ class QLearning(TDControl):
         elif self.gvf.π.ε == 0:
             raise ValueError(self.gvf.π.ε)
 
-        # Decouples action selection from action evaluation, tackling
-        # maximization bias
-        self.double = double
-
-        if isinstance(self, OnlineTDControl):
-            raise NotImplementedError('Double Q-learning is only implemented '
-                                      'for offline methods with target network')
-
     @torch.no_grad()
     def q_t(self, exp: Experience):
-        q = self.predict_target_q(exp.x1)
-        if self.double:
-            mask = torch_argmax_mask(self.predict_q(exp.x1), 1)
-            q = (mask * q).sum(1)
-        else:
-            q = q.max(1)[0]
-        return q
+        q = self.predict_q(exp.x1)
+        return q.max(1)[0]
 
 
 class DuellingMixin:

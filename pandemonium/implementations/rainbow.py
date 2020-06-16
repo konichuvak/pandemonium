@@ -1,6 +1,7 @@
 from functools import partial
 from warnings import warn
 
+import torch
 from torch import nn
 
 from pandemonium.demons import ParametricDemon
@@ -10,7 +11,7 @@ from pandemonium.demons.offline_td import TDn
 from pandemonium.experience import (ER, PER, ReplayBufferMixin, Trajectory,
                                     Transitions)
 from pandemonium.networks import TargetNetMixin
-from pandemonium.policies import Policy
+from pandemonium.policies import Policy, torch_argmax_mask
 
 
 class DQN(OfflineTDControl,
@@ -90,6 +91,19 @@ class DQN(OfflineTDControl,
         # Ensures that that target network exists
         if self.double:
             assert target_update_freq > 0
+
+    def q_tm1(self, x, a):
+        return self.predict_q(x)[torch.arange(a.size(0)), a]
+
+    @torch.no_grad()
+    def q_t(self, trajectory: Trajectory):
+        q = self.predict_target_q(trajectory.x1)
+        if self.double:
+            mask = torch_argmax_mask(self.predict_q(trajectory.x1), 1)
+            q = (mask * q).sum(1)
+        else:
+            q = q.max(1)[0]
+        return q
 
     def learn(self, transitions: Transitions):
 

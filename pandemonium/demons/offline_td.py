@@ -38,21 +38,6 @@ class OfflineTD(Demon):
         return self.delta(trajectory)
 
 
-class OfflineTDPrediction(OfflineTD, PredictionDemon):
-    r""" Offline :math:`\TD` for prediction tasks. """
-
-    def delta(self, trajectory: Trajectory) -> Loss:
-        x = self.feature(trajectory.s0)
-        v = self.predict(x)
-        u = self.target(trajectory).detach()
-        loss = self.criterion(input=v, target=u, reduction='none')
-        loss = (loss * trajectory.ρ).mean()  # weighted IS
-        return loss, {'loss': loss.item(), 'td_error': u - v}
-
-    def target(self, trajectory: Trajectory):
-        return super().target(trajectory, v=self.v_target(trajectory))
-
-
 class TTD(OfflineTD):
     r""" Truncated :math:`\TD{(\lambda)}`
 

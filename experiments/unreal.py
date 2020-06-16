@@ -12,13 +12,13 @@ from experiments.trainable import Loop
 from pandemonium import GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness, PixelChange
-from pandemonium.implementations.unreal import ValueReplay, RewardPrediction, PixelControl, AC
 from pandemonium.envs import DeepmindLabEnv
 from pandemonium.envs.wrappers import Torch
 from pandemonium.experience import Transition, Trajectory
 from pandemonium.experience.buffers import ER, SkewedER
-from pandemonium.policies.discrete import Egreedy
-from pandemonium.utilities.schedules import ConstantSchedule
+from pandemonium.implementations.unreal import (ValueReplay, RewardPrediction,
+                                                PixelControl, AC)
+from pandemonium.policies.discrete import Greedy
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = torch.device('cpu')
@@ -49,13 +49,11 @@ optimizer_params = {
 }
 
 
-def create_demons(config, env, feature_extractor, policy) -> Horde:
+def create_demons(config, env, φ, μ) -> Horde:
     demons = list()
 
     # Target policy is greedy
-    π = Egreedy(epsilon=ConstantSchedule(0., framework='torch'),
-                feature_dim=feature_extractor.feature_dim,
-                action_space=env.action_space)
+    π = Greedy(feature_dim=φ.feature_dim, action_space=env.action_space)
 
     # ==========================================================================
     # Main task performed by control demon
@@ -69,8 +67,8 @@ def create_demons(config, env, feature_extractor, policy) -> Horde:
     )
 
     demons.append(AC(gvf=optimal_control,
-                     behavior_policy=policy,
-                     feature=feature_extractor))
+                     behavior_policy=μ,
+                     feature=φ))
 
     # ==========================================================================
     # Auxiliary tasks performed by a mix of prediction and control demons
@@ -92,8 +90,8 @@ def create_demons(config, env, feature_extractor, policy) -> Horde:
                 cumulant=PixelChange(),
                 continuation=ConstantContinuation(config['gamma']),
             ),
-            feature=feature_extractor,
-            behavior_policy=policy,
+            feature=φ,
+            behavior_policy=μ,
             replay_buffer=replay,  # shared with value replay demon
             target_update_freq=config['target_update_freq'],
             double=True,
@@ -104,8 +102,8 @@ def create_demons(config, env, feature_extractor, policy) -> Horde:
     # --------------------------------------------------------------------------
     if config['vr_weight']:
         demons.append(ValueReplay(gvf=optimal_control,
-                                  feature=feature_extractor,
-                                  behavior_policy=policy,
+                                  feature=φ,
+                                  behavior_policy=μ,
                                   replay_buffer=replay))
 
     # --------------------------------------------------------------------------
@@ -114,12 +112,12 @@ def create_demons(config, env, feature_extractor, policy) -> Horde:
     if config['rp_weight']:
         demons.append(RewardPrediction(
             gvf=GVF(
-                target_policy=policy,
+                target_policy=π,
                 cumulant=Fitness(env),
                 continuation=ConstantContinuation(0.),
             ),
-            feature=feature_extractor,
-            behavior_policy=policy,
+            feature=φ,
+            behavior_policy=μ,
             replay_buffer=SkewedER(config['buffer_size'],
                                    config['rollout_fragment_length'])
         ))

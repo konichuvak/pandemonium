@@ -13,13 +13,11 @@ from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
 from pandemonium.demons import ControlDemon, PredictionDemon
 from pandemonium.demons.control import CategoricalQ
-from pandemonium.implementations.rainbow import DQN
 from pandemonium.envs.minigrid import MinigridDisplay, EmptyEnv
-from pandemonium.envs.wrappers import (add_wrappers, Torch,
-                                       OneHotObsWrapper)
+from pandemonium.envs.wrappers import add_wrappers, Torch, OneHotObsWrapper
 from pandemonium.experience import ReplayBuffer
-from pandemonium.policies.discrete import Egreedy
-from pandemonium.utilities.schedules import ConstantSchedule
+from pandemonium.implementations.rainbow import DQN
+from pandemonium.policies.discrete import Greedy
 from pandemonium.utilities.schedules import LinearSchedule
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -56,15 +54,16 @@ register_env("DQN_env", env_creator)
 
 
 def create_demons(config, env, φ, μ) -> Horde:
-    π = Egreedy(epsilon=ConstantSchedule(0., framework='torch'),
-                feature_dim=φ.feature_dim,
-                action_space=env.action_space)
-
     replay_cls = ReplayBuffer.by_name(config['replay_name'])
     control_demon = DQN(
-        gvf=GVF(target_policy=π,
-                cumulant=Fitness(env),
-                continuation=ConstantContinuation(config['gamma'])),
+        gvf=GVF(
+            target_policy=Greedy(
+                feature_dim=φ.feature_dim,
+                action_space=env.action_space
+            ),
+            cumulant=Fitness(env),
+            continuation=ConstantContinuation(config['gamma'])
+        ),
         feature=φ,
         behavior_policy=μ,
         replay_buffer=replay_cls(**config['replay_cfg']),

@@ -78,6 +78,13 @@ class Egreedy(Discrete):
         return f'ε-greedy({self.ε})'
 
 
+@Policy.register('greedy')
+class Greedy(Egreedy):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(ConstantSchedule(0, 'torch'), *args, **kwargs)
+
+
 @Policy.register('softmax')
 class SoftmaxPolicy(Discrete):
     """ Picks actions with probability proportional to Q-values.

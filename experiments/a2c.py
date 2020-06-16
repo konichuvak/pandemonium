@@ -13,13 +13,10 @@ from experiments.trainable import Loop
 from pandemonium import GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
-from pandemonium.demons import LinearDemon
-from pandemonium.demons.control import TDAC
-from pandemonium.demons.offline_td import TDn
 from pandemonium.envs.minigrid import MinigridDisplay
 from pandemonium.envs.wrappers import Torch
-from pandemonium.policies.discrete import Egreedy
-from pandemonium.utilities.schedules import ConstantSchedule
+from pandemonium.implementations import AC
+from pandemonium.policies.discrete import Greedy
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = torch.device('cpu')
@@ -56,20 +53,14 @@ register_env("A2C_env", env_creator)
 
 
 def create_demons(config, env, feature_extractor, policy) -> Horde:
-    π = Egreedy(epsilon=ConstantSchedule(0., framework='torch'),
-                feature_dim=feature_extractor.feature_dim,
-                action_space=env.action_space)
-
-    # N-step Actor-Critic agent
-    class AC(TDAC, LinearDemon, TDn):
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs, output_dim=1)
-
     control_demon = AC(
-        gvf=GVF(target_policy=π,
-                cumulant=Fitness(env),
-                continuation=ConstantContinuation(.9)),
+        gvf=GVF(
+            target_policy=Greedy(
+                feature_dim=feature_extractor.feature_dim,
+                action_space=env.action_space
+            ),
+            cumulant=Fitness(env),
+            continuation=ConstantContinuation(config['gamma'])),
         behavior_policy=policy,
         feature=feature_extractor,
         criterion=mse_loss
@@ -137,6 +128,8 @@ if __name__ == "__main__":
                 'entropy_coefficient': 0.01,
             },
 
+            'gamma': 0.9,
+
             # Optimizer a.k.a. Horde
             "horde_fn": create_demons,
             # optimizer.step performed in the trainer_template is same as agent.learn and includes exp collection and sgd
@@ -149,22 +142,22 @@ if __name__ == "__main__":
             "rollout_fragment_length": 16,  # batch size for exp collector
             # "train_batch_size": 32,
 
-            # --- Evaluation ---
-            "evaluation_interval": 100,  # per training iteration
-            "custom_eval_function": eval_fn,
-            "evaluation_num_episodes": 1,
-            "evaluation_config": {
-                "env_config": {},
-            },
-            # HACK to get the evaluation through
-            "model": {
-                'conv_filters': [
-                    [8, [2, 2], 1],
-                    [16, [2, 2], 1],
-                    [32, [2, 2], 1],
-                ],
-                'fcnet_hiddens': [256]
-            }
+            # # --- Evaluation ---
+            # "evaluation_interval": 100,  # per training iteration
+            # "custom_eval_function": eval_fn,
+            # "evaluation_num_episodes": 1,
+            # "evaluation_config": {
+            #     "env_config": {},
+            # },
+            # # HACK to get the evaluation through
+            # "model": {
+            #     'conv_filters': [
+            #         [8, [2, 2], 1],
+            #         [16, [2, 2], 1],
+            #         [32, [2, 2], 1],
+            #     ],
+            #     'fcnet_hiddens': [256]
+            # }
 
         },
         num_samples=1,

@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}", "SARSE": "\\operatorname{SARSE}"}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
@@ -205,9 +205,9 @@
             
   <div class="section" id="tdcontrol">
 <h1>TDControl<a class="headerlink" href="#tdcontrol" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="pandemonium.demons.TDControl">
-<em class="property">class </em><code class="sig-name descname">TDControl</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.TDControl" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">TDControl</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.TDControl" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.demon.ParametricDemon</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.demon.ControlDemon</span></code></p>
 <p class="rubric">Methods Summary</p>
 <table class="longtable docutils align-default">
@@ -228,9 +228,9 @@
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.demons.TDControl.q_t">
-<code class="sig-name descname">q_t</code><span class="sig-paren">(</span><em class="sig-param">self, exp: Union[ForwardRef('Transition'), ForwardRef('Trajectory')]</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.TDControl.q_t" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">q_t</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">exp</span><span class="p">:</span> <span class="n">Union[ForwardRef(‘Transition’), ForwardRef(‘Trajectory’)]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.TDControl.q_t" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes action-value targets <span class="math notranslate nohighlight">\(Q(s_{t+1}, \hat{a})\)</span>.</p>
 <p>Algorithms differ in the way <span class="math notranslate nohighlight">\(\hat{a}\)</span> is chosen.</p>
 <div class="math notranslate nohighlight">
@@ -240,9 +240,9 @@
 \end{align*}\end{split}\]</div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.demons.TDControl.q_tm1">
-<code class="sig-name descname">q_tm1</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">x</em>, <em class="sig-param">a</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.TDControl.q_tm1" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">q_tm1</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">x</span></em>, <em class="sig-param"><span class="n">a</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.TDControl.q_tm1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes values associated with action batch <cite>a</cite></p>
 <p>Is overridden by distributional agents that use <cite>azf</cite> to evaluate
 actions instead of <cite>aqf</cite>.</p>
@@ -256,9 +256,9 @@ actions instead of <cite>aqf</cite>.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.demons.TDControl.target">
-<code class="sig-name descname">target</code><span class="sig-paren">(</span><em class="sig-param">self, exp: Union[ForwardRef('Transition'), ForwardRef('Trajectory')]</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.TDControl.target" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">target</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">exp</span><span class="p">:</span> <span class="n">Union[ForwardRef(‘Transition’), ForwardRef(‘Trajectory’)]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.TDControl.target" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

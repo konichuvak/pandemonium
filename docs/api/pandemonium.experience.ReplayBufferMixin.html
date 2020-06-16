@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}", "SARSE": "\\operatorname{SARSE}"}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
@@ -193,9 +193,9 @@
             
   <div class="section" id="replaybuffermixin">
 <h1>ReplayBufferMixin<a class="headerlink" href="#replaybuffermixin" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="pandemonium.experience.ReplayBufferMixin">
-<em class="property">class </em><code class="sig-name descname">ReplayBufferMixin</code><span class="sig-paren">(</span><em class="sig-param">replay_buffer: pandemonium.experience.buffers.ER</em>, <em class="sig-param">priority_measure: str = 'td_error'</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.experience.ReplayBufferMixin" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">ReplayBufferMixin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">replay_buffer</span><span class="p">:</span> <span class="n">pandemonium.experience.buffers.ER</span></em>, <em class="sig-param"><span class="n">priority_measure</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'td_error'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.experience.ReplayBufferMixin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Mixin that adds a replay buffer to an agent.</p>
 <p class="rubric">Methods Summary</p>
@@ -211,9 +211,9 @@
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.experience.ReplayBufferMixin.store">
-<code class="sig-name descname">store</code><span class="sig-paren">(</span><em class="sig-param">self, transitions: List[ForwardRef('Transition')]</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.experience.ReplayBufferMixin.store" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">store</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">transitions</span><span class="p">:</span> <span class="n">List[ForwardRef(‘Transition’)]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.experience.ReplayBufferMixin.store" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds transitions to the replay buffer.</p>
 <p>Pre-computes priorities in case Prioritized Experience Replay is used.</p>
 </dd></dl>

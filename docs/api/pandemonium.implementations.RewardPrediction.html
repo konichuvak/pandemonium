@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}", "SARSE": "\\operatorname{SARSE}"}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
@@ -194,9 +194,9 @@
             
   <div class="section" id="rewardprediction">
 <h1>RewardPrediction<a class="headerlink" href="#rewardprediction" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="pandemonium.implementations.RewardPrediction">
-<em class="property">class </em><code class="sig-name descname">RewardPrediction</code><span class="sig-paren">(</span><em class="sig-param">replay_buffer: pandemonium.experience.buffers.SkewedER</em>, <em class="sig-param">feature</em>, <em class="sig-param">output_dim: int = 3</em>, <em class="sig-param">sequence_size: int = 3</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.implementations.RewardPrediction" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">RewardPrediction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">replay_buffer</span><span class="p">:</span> <span class="n">pandemonium.experience.buffers.SkewedER</span></em>, <em class="sig-param"><span class="n">feature</span></em>, <em class="sig-param"><span class="n">output_dim</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">3</span></em>, <em class="sig-param"><span class="n">sequence_size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">3</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.implementations.RewardPrediction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.demon.PredictionDemon</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.demon.ParametricDemon</span></code></p>
 <p>A demon that maximizes un-discounted <span class="math notranslate nohighlight">\(n\)</span>-step return.</p>
 <p>Learns the sign (+, 0, -) of the reward at the end of a state sequence.
@@ -222,22 +222,22 @@ Used as an auxiliary task in UNREAL architecture.</p>
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.implementations.RewardPrediction.delta">
-<code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">trajectory: pandemonium.experience.experience.Trajectory</em><span class="sig-paren">)</span> &#x2192; Tuple[Union[torch.Tensor, NoneType], dict]<a class="headerlink" href="#pandemonium.implementations.RewardPrediction.delta" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">trajectory</span><span class="p">:</span> <span class="n">pandemonium.experience.experience.Trajectory</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>Union<span class="p">[</span>torch.Tensor<span class="p">, </span>NoneType<span class="p">]</span><span class="p">, </span>dict<span class="p">]</span><a class="headerlink" href="#pandemonium.implementations.RewardPrediction.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Specifies the update rule for approximate value function (avf)</p>
 <p>Depending on whether the algorithm is online or offline, the demon will
 be learning from a single <cite>Transition</cite> vs a <cite>Trajectory</cite> of experiences.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.implementations.RewardPrediction.learn">
-<code class="sig-name descname">learn</code><span class="sig-paren">(</span><em class="sig-param">self, transitions: List[ForwardRef('Transition')]</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.implementations.RewardPrediction.learn" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">learn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">transitions</span><span class="p">:</span> <span class="n">List[ForwardRef(‘Transition’)]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.implementations.RewardPrediction.learn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.implementations.RewardPrediction.target">
-<em class="property">static </em><code class="sig-name descname">target</code><span class="sig-paren">(</span><em class="sig-param">trajectory: pandemonium.experience.experience.Trajectory</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.implementations.RewardPrediction.target" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">target</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trajectory</span><span class="p">:</span> <span class="n">pandemonium.experience.experience.Trajectory</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.implementations.RewardPrediction.target" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ternary classification target for -, 0, + rewards</p>
 </dd></dl>
 

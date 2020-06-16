@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}", "SARSE": "\\operatorname{SARSE}"}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
@@ -193,9 +193,9 @@
             
   <div class="section" id="per">
 <h1>PER<a class="headerlink" href="#per" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="pandemonium.experience.PER">
-<em class="property">class </em><code class="sig-name descname">PER</code><span class="sig-paren">(</span><em class="sig-param">size: int</em>, <em class="sig-param">batch_size: int</em>, <em class="sig-param">alpha: float = 0.6</em>, <em class="sig-param">beta: ray.rllib.utils.schedules.schedule.Schedule = ConstantSchedule(0.4)</em>, <em class="sig-param">epsilon: float = 1e-06</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.experience.PER" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">PER</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">size</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.6</span></em>, <em class="sig-param"><span class="n">beta</span><span class="p">:</span> <span class="n">ray.rllib.utils.schedules.schedule.Schedule</span> <span class="o">=</span> <span class="default_value">ConstantSchedule(0.4)</span></em>, <em class="sig-param"><span class="n">epsilon</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1e-06</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.experience.PER" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.experience.buffers.ER</span></code></p>
 <p>Prioritized Experience Replay buffer</p>
 <p class="rubric">References</p>
@@ -222,14 +222,14 @@
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.experience.PER.add">
-<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">transition: pandemonium.experience.experience.Transition</em>, <em class="sig-param">weight: float = None</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.experience.PER.add" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">transition</span><span class="p">:</span> <span class="n">pandemonium.experience.experience.Transition</span></em>, <em class="sig-param"><span class="n">weight</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.experience.PER.add" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.experience.PER.sample">
-<code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">batch_size: int = None</em>, <em class="sig-param">contiguous: bool = True</em><span class="sig-paren">)</span> &#x2192; List[pandemonium.experience.experience.Transition]<a class="headerlink" href="#pandemonium.experience.PER.sample" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">contiguous</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>pandemonium.experience.experience.Transition<span class="p">]</span><a class="headerlink" href="#pandemonium.experience.PER.sample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Randomly draws a batch of transitions</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -242,9 +242,9 @@ This is particularly useful when using <span class="math notranslate nohighlight
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.experience.PER.update_priorities">
-<code class="sig-name descname">update_priorities</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">idxes</em>, <em class="sig-param">priorities</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.experience.PER.update_priorities" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">update_priorities</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">idxes</span></em>, <em class="sig-param"><span class="n">priorities</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.experience.PER.update_priorities" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update priorities of sampled transitions.</p>
 <p>Sets priority of transition at index idxes[i] to priorities[i].</p>
 <dl class="field-list simple">

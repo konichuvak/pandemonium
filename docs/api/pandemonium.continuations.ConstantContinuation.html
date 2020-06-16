@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}", "SARSE": "\\operatorname{SARSE}"}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
@@ -190,9 +190,9 @@
             
   <div class="section" id="constantcontinuation">
 <h1>ConstantContinuation<a class="headerlink" href="#constantcontinuation" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="pandemonium.continuations.ConstantContinuation">
-<em class="property">class </em><code class="sig-name descname">ConstantContinuation</code><span class="sig-paren">(</span><em class="sig-param">gamma</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.continuations.ConstantContinuation" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">ConstantContinuation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gamma</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.continuations.ConstantContinuation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pandemonium.continuations.ContinuationFunction.html#pandemonium.continuations.ContinuationFunction" title="pandemonium.continuations.ContinuationFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.continuations.ContinuationFunction</span></code></a></p>
 <p>Special case of state independent discounting</p>
 <p>Here we hold <span class="math notranslate nohighlight">\(\gamma\)</span> constant at all times, until we receive a termination
@@ -211,9 +211,9 @@ we set <span class="math notranslate nohighlight">\(\gamma=1\)</span>.</p>
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.continuations.ConstantContinuation.__call__">
-<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">self, t: Union[pandemonium.experience.experience.Transition, pandemonium.experience.experience.Trajectory]</em><span class="sig-paren">)</span> &#x2192; Union[float, torch.Tensor]<a class="headerlink" href="#pandemonium.continuations.ConstantContinuation.__call__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">t</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>pandemonium.experience.experience.Transition<span class="p">, </span>pandemonium.experience.experience.Trajectory<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; Union<span class="p">[</span>float<span class="p">, </span>torch.Tensor<span class="p">]</span><a class="headerlink" href="#pandemonium.continuations.ConstantContinuation.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call self as a function.</p>
 </dd></dl>
 

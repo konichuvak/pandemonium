@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}", "SARSE": "\\operatorname{SARSE}"}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
@@ -205,9 +205,9 @@
             
   <div class="section" id="demon">
 <h1>Demon<a class="headerlink" href="#demon" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="pandemonium.demons.Demon">
-<em class="property">class </em><code class="sig-name descname">Demon</code><span class="sig-paren">(</span><em class="sig-param">gvf: pandemonium.gvf.GVF, avf: Callable, feature, behavior_policy: pandemonium.policies.policy.Policy, eligibility: Optional[pandemonium.traces.EligibilityTrace]</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Demon</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gvf</span><span class="p">:</span> <span class="n"><a class="reference internal" href="pandemonium.gvf.GVF.html#pandemonium.gvf.GVF" title="pandemonium.gvf.GVF">pandemonium.gvf.GVF</a></span></em>, <em class="sig-param"><span class="n">avf</span><span class="p">:</span> <span class="n">Callable</span></em>, <em class="sig-param"><span class="n">feature</span></em>, <em class="sig-param"><span class="n">behavior_policy</span><span class="p">:</span> <span class="n">pandemonium.policies.policy.Policy</span></em>, <em class="sig-param"><span class="n">eligibility</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span><a class="reference internal" href="pandemonium.traces.EligibilityTrace.html#pandemonium.traces.EligibilityTrace" title="pandemonium.traces.EligibilityTrace">pandemonium.traces.EligibilityTrace</a><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p><strong>General Value Function Approximator</strong></p>
 <p>Each demon is an independent reinforcement learning agent responsible
@@ -218,33 +218,33 @@ general value function (gvf) that corresponds to the setting of the
 three “question” functions: <span class="math notranslate nohighlight">\(\pi\)</span>, <span class="math notranslate nohighlight">\(\gamma\)</span>, and z. The tools that the demon
 uses to learn the approximation are called “answer” functions and are
 comprised of <span class="math notranslate nohighlight">\(\mu\)</span>, <span class="math notranslate nohighlight">\(\phi\)</span> and <span class="math notranslate nohighlight">\(\lambda\)</span>.</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="pandemonium.demons.Demon.gvf">
 <code class="sig-name descname">gvf</code><a class="headerlink" href="#pandemonium.demons.Demon.gvf" title="Permalink to this definition">¶</a></dt>
 <dd><p>General Value Function to be estimated by the demon</p>
 </dd></dl>
 
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="pandemonium.demons.Demon.avf">
 <code class="sig-name descname">avf</code><a class="headerlink" href="#pandemonium.demons.Demon.avf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Approximate Value Function learned by the demon to approximate <cite>gvf</cite></p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="pandemonium.demons.Demon.φ">
-<code class="sig-name descname">φ</code><a class="headerlink" href="#pandemonium.demons.Demon.φ" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="pandemonium.demons.Demon.">
+<span id="pandemonium.demons.Demon.φ"></span><code class="sig-name descname">φ</code><a class="headerlink" href="#pandemonium.demons.Demon." title="Permalink to this definition">¶</a></dt>
 <dd><p>Feature generator learning useful state representations</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="pandemonium.demons.Demon.μ">
-<code class="sig-name descname">μ</code><a class="headerlink" href="#pandemonium.demons.Demon.μ" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="pandemonium.demons.Demon.">
+<span id="pandemonium.demons.Demon.μ"></span><code class="sig-name descname">μ</code><a class="headerlink" href="#pandemonium.demons.Demon." title="Permalink to this definition">¶</a></dt>
 <dd><p>Behavior policy that collects experience</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="pandemonium.demons.Demon.λ">
-<code class="sig-name descname">λ</code><a class="headerlink" href="#pandemonium.demons.Demon.λ" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt id="pandemonium.demons.Demon.">
+<span id="pandemonium.demons.Demon.λ"></span><code class="sig-name descname">λ</code><a class="headerlink" href="#pandemonium.demons.Demon." title="Permalink to this definition">¶</a></dt>
 <dd><p>Eligibility trace assigning credit to experiences</p>
 </dd></dl>
 
@@ -276,9 +276,9 @@ comprised of <span class="math notranslate nohighlight">\(\mu\)</span>, <span cl
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.demons.Demon.behavior_policy">
-<code class="sig-name descname">behavior_policy</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">s</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon.behavior_policy" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">behavior_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon.behavior_policy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Specifies behavior of the agent</p>
 <div class="math notranslate nohighlight">
 \[\mu: \mathcal{S} \times \mathcal{A} \mapsto [0, 1]\]</div>
@@ -286,25 +286,25 @@ comprised of <span class="math notranslate nohighlight">\(\mu\)</span>, <span cl
 could be specified in this way.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.demons.Demon.delta">
-<code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param">self, experience: Union[ForwardRef('Transition'), ForwardRef('Trajectory')]</em><span class="sig-paren">)</span> &#x2192; Tuple[Union[torch.Tensor, NoneType], dict]<a class="headerlink" href="#pandemonium.demons.Demon.delta" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">delta</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">experience</span><span class="p">:</span> <span class="n">Union[ForwardRef(‘Transition’), ForwardRef(‘Trajectory’)]</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>Union<span class="p">[</span>torch.Tensor<span class="p">, </span>NoneType<span class="p">]</span><span class="p">, </span>dict<span class="p">]</span><a class="headerlink" href="#pandemonium.demons.Demon.delta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Specifies the update rule for approximate value function (avf)</p>
 <p>Depending on whether the algorithm is online or offline, the demon will
 be learning from a single <cite>Transition</cite> vs a <cite>Trajectory</cite> of experiences.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.demons.Demon.eligibility">
-<code class="sig-name descname">eligibility</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">s</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon.eligibility" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">eligibility</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">s</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon.eligibility" title="Permalink to this definition">¶</a></dt>
 <dd><p>Specifies eligibility trace-decay rate</p>
 <div class="math notranslate nohighlight">
 \[\lambda: \mathcal{S} \mapsto \mathbb{R}\]</div>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.demons.Demon.feature">
-<code class="sig-name descname">feature</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon.feature" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">feature</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">\*args</em>, <em class="sig-param">\*\*kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon.feature" title="Permalink to this definition">¶</a></dt>
 <dd><p>A mapping from MDP states to features</p>
 <div class="math notranslate nohighlight">
 \[\phi: \mathcal{S} \mapsto \mathbb{R}^n\]</div>
@@ -313,14 +313,14 @@ sensor readings (not just the ones corresponding to light).</p>
 <p>We can use any representation learning module here.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.demons.Demon.learn">
-<code class="sig-name descname">learn</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon.learn" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">learn</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">\*args</em>, <em class="sig-param">\*\*kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon.learn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.demons.Demon.predict">
-<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">x</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon.predict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.Demon.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predict the value (or value distribution) of the state</p>
 </dd></dl>
 

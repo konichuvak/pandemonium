@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}", "SARSE": "\\operatorname{SARSE}"}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
@@ -197,9 +197,9 @@
             
   <div class="section" id="egreedyoveroptions">
 <h1>EgreedyOverOptions<a class="headerlink" href="#egreedyoveroptions" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="pandemonium.policies.EgreedyOverOptions">
-<em class="property">class </em><code class="sig-name descname">EgreedyOverOptions</code><span class="sig-paren">(</span><em class="sig-param">epsilon: Union[pandemonium.utilities.schedules.ConstantSchedule, pandemonium.utilities.schedules.LinearSchedule], *args, **kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.EgreedyOverOptions" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">EgreedyOverOptions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">epsilon</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>pandemonium.utilities.schedules.ConstantSchedule<span class="p">, </span>pandemonium.utilities.schedules.LinearSchedule<span class="p">]</span></span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.EgreedyOverOptions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.policies.discrete.Egreedy</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.policies.discrete.HierarchicalPolicy</span></code></p>
 <p><span class="math notranslate nohighlight">\(\epsilon\)</span>-greedy policy over options.</p>
 <p>Picks the optimal option wrt to Q with probability 1 - <span class="math notranslate nohighlight">\(\epsilon\)</span>.</p>

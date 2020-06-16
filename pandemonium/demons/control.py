@@ -1,20 +1,185 @@
-from collections import OrderedDict
-from functools import partial
-from warnings import warn
-
 import torch
+import torch.nn.functional as F
 from torch import nn
 
 from pandemonium.demons import Loss, ParametricDemon, ControlDemon
-from pandemonium.demons.offline_td import OfflineTDControl
-from pandemonium.demons.offline_td import TTD, TDn, OfflineTDPrediction
-from pandemonium.experience import (ER, PER, ReplayBufferMixin, Trajectory,
-                                    Transitions)
-from pandemonium.networks import Reshape, TargetNetMixin
-from pandemonium.policies import Policy, HierarchicalPolicy, DiffPolicy
+from pandemonium.demons.offline_td import OfflineTD, TDn
+from pandemonium.demons.online_td import OnlineTD
+from pandemonium.experience import Trajectory, Experience, Transition
+from pandemonium.networks import Reshape
+from pandemonium.policies import Policy, Egreedy
 from pandemonium.policies.utils import torch_argmax_mask
 from pandemonium.utilities.distributions import cross_entropy, l2_projection
 from pandemonium.utilities.utilities import get_all_classes
+
+
+class TDControl(ParametricDemon, ControlDemon):
+
+    def q_tm1(self, x, a):
+        """ Computes values associated with action batch `a`
+
+        Is overridden by distributional agents that use `azf` to evaluate
+        actions instead of `aqf`.
+
+        Returns
+        -------
+        A batch of action values $Q(s_{t-1}, a_{t-1})$.
+        """
+        return self.aqf(x)[torch.arange(a.size(0)), a]
+
+    @torch.no_grad()
+    def q_t(self, exp: Experience):
+        r""" Computes action-value targets $Q(s_{t+1}, \cdot)$.
+
+        Algorithms differ in the way $\cdot$ is chosen.
+        Q-learning takes max, SARSA takes action according to behavior policy.
+        """
+        raise NotImplementedError
+
+    def target(self, exp: Experience):
+        return super().target(exp, v=self.q_t(exp))
+
+
+class OnlineTDControl(TDControl, OnlineTD):
+    r""" Base class for online :math:`\TD` methods for control tasks. """
+
+    def delta(self, t: Transition) -> Loss:
+        γ = self.gvf.continuation(t)
+        z = self.gvf.z(t)
+        v = self.q_tm1(t.x0, t.a)
+        u = z + γ * self.q_t(t)
+        δ = u - v
+
+        info = {'td_error': δ.item()}
+        if self.λ.trace_decay == 0:
+            loss = F.mse_loss(input=v, target=u)  # a shortcut
+        else:
+            v.backward()  # semi-gradient
+            assert self.aqf.bias is None
+            grad = next(self.aqf.parameters()).grad
+            e = self.λ(γ, grad)
+            info['eligibility_norm'] = e.pow(2).sum().sqrt().item()
+            with torch.no_grad():
+                for param in self.aqf.parameters():
+                    param.grad = -δ * e
+            loss = None
+
+        return loss, info
+
+
+class OfflineTDControl(TDControl, OfflineTD):
+    r""" Offline :math:`\TD` for control tasks. """
+
+    def delta(self, trajectory: Trajectory) -> Loss:
+        x = self.feature(trajectory.s0)  # could use trajectory.x1 instead
+        v = self.q_tm1(x, trajectory.a)
+        u = self.target(trajectory).detach()
+        assert u.shape == v.shape, f'{u.shape} vs {v.shape}'
+        loss = self.criterion(input=v, target=u, reduction='none')
+        loss = loss.view(len(trajectory), -1)
+        batch_loss = (loss * trajectory.ρ).mean()  # weighted IS
+        # TODO: td-error is not necessarily u-v depending on the criterion
+        return batch_loss, {'batch_loss': batch_loss.item(),
+                            'loss': loss,
+                            'td_error': u - v}
+
+
+class SARSA(TDControl):
+    r""" Semi-gradient :math:`\SARSA{(\lambda)}`.
+
+    References
+    ----------
+    "Reinforcement Learning: An Introduction"
+        Sutton and Barto (2018) ch. 12.7
+        http://incompleteideas.net/book/the-book.html
+
+    """
+
+    @torch.no_grad()
+    def q_t(self, exp: Experience):
+        q = self.predict_q(exp.x1)
+        return q[torch.arange(q.size(0)), exp.a1]
+
+
+class SARSE(TDControl):
+    r""" Semi-gradient Expected :math:`\SARSA{(\lambda)}`.
+
+    References
+    ----------
+    "Reinforcement Learning: An Introduction"
+        Sutton and Barto (2018) ch. 6.6
+        http://incompleteideas.net/book/the-book.html
+
+    "A Theoretical and Empirical Analysis of Expected Sarsa"
+        Harm van Seijen et al (2009)
+        http://www.cs.ox.ac.uk/people/shimon.whiteson/pubs/vanseijenadprl09.pdf
+    """
+
+    @torch.no_grad()
+    def q_t(self, exp: Experience):
+        q = self.predict_q(exp.x1)
+        dist = self.gvf.π.dist(exp.x1, q_fn=self.aqf)
+        return torch.einsum('ba,ba->b', q, dist.probs)
+
+
+class QLearning(TDControl):
+    r""" Classic Q-learning update rule.
+
+    Notes
+    -----
+    Can be interpreted as an off-policy version of :math:`\SARSE`.
+    Since the target policy $\pi$ in canonical Q-learning is greedy wrt to GVF,
+    we have the following equality:
+
+    .. math::
+        \max_\limits{a \in \mathcal{A}}Q(S_{t+1}, a) = \sum_{a \in \mathcal{A}} \pi(a|S_{t+1})Q(S_{t+1}, a)
+
+    In this case the target Q-value estimator would be:
+    ```
+    @torch.no_grad()
+    def q_t(self, exp: Experience):
+        q = self.target_aqf(exp.x1)
+        dist = self.gvf.π.dist(exp.x1, q_fn=self.aqf)
+        return torch.einsum('ba,ba->b', q, dist.probs)
+    ```
+    We do not actually use this update in here since taking a max is more
+    efficient than computing weights and taking a dot product.
+
+    # TODO: integrate
+        online:
+            double
+            duelling
+        offline:
+            duelling
+            traces
+    """
+
+    def __init__(self, double: bool, **kwargs):
+        super(QLearning, self).__init__(trace_decay=0, **kwargs)
+
+        # Ensures that target policy is greedy wrt to the Q function
+        if not isinstance(self.gvf.π, Egreedy):
+            raise TypeError(self.gvf.π)
+        elif self.gvf.π.ε == 0:
+            raise ValueError(self.gvf.π.ε)
+
+        # Decouples action selection from action evaluation, tackling
+        # maximization bias
+        self.double = double
+
+        if isinstance(self, OnlineTDControl):
+            raise NotImplementedError('Double Q-learning is only implemented '
+                                      'for offline methods with target network')
+
+    @torch.no_grad()
+    def q_t(self, exp: Experience):
+        q = self.predict_target_q(exp.x1)
+        if self.double:
+            mask = torch_argmax_mask(self.predict_q(exp.x1), 1)
+            q = (mask * q).sum(1)
+        else:
+            q = q.max(1)[0]
+        return q
 
 
 class DuellingMixin:
@@ -36,15 +201,20 @@ class DuellingMixin:
         if not isinstance(self, ControlDemon):
             raise TypeError(f'Duelling architecture is only supported'
                             f'by control algorithms')
-        self.avf = nn.Linear(self.φ.feature_dim, 1)
+        if not isinstance(self.avf, torch.nn.Module):
+            self.avf = nn.Linear(self.φ.feature_dim, 1)
 
-    def predict_q(self, x):
-        v, q = self.avf(x), self.aqf(x)
-        return q - (q - v).mean(1, keepdim=True)
+        def predict_q_(x):
+            v, q = self.avf(x), self.aqf(x)
+            return q - (q - v).mean(1, keepdim=True)
 
-    def predict_target_q(self, x):
-        q, v = self.target_avf(x), self.target_aqf(x)
-        return q - (q - v).mean(1, keepdim=True)
+        self.predict_q = predict_q_
+
+        def predict_target_q_(x):
+            v, q = self.target_avf(x), self.target_aqf(x)
+            return q - (q - v).mean(1, keepdim=True)
+
+        self.predict_target_q = predict_target_q_
 
 
 class CategoricalQ:
@@ -168,161 +338,6 @@ class CategoricalQ:
             return projected_probs
 
         self.target = target
-
-
-class DQN(OfflineTDControl,
-          TDn,
-          ParametricDemon,
-          ReplayBufferMixin,
-          TargetNetMixin,
-          CategoricalQ,
-          DuellingMixin):
-    """ Deep Q-Network with all the bells and whistles mixed in.
-
-    References
-    ----------
-    "Rainbow: Combining Improvements in Deep RL" by Hessel et. al
-        https://arxiv.org/pdf/1710.02298.pdf
-    """
-
-    def __init__(self,
-                 feature: callable,
-                 behavior_policy: Policy,
-                 replay_buffer: ER,
-                 target_update_freq: int = 0,
-                 warm_up_period: int = None,
-                 num_atoms: int = 1,
-                 v_min: float = None,
-                 v_max: float = None,
-                 duelling: bool = False,
-                 double: bool = False,
-                 **kwargs):
-
-        # Adds a replay buffer
-        priority = None
-        if isinstance(replay_buffer, PER):
-            # Use cross-entropy loss as a measure of priority
-            priority = 'ce_loss' if num_atoms > 1 else 'td_error'
-        ReplayBufferMixin.__init__(self, replay_buffer, priority)
-
-        # By default, learning does not start until the replay buffer is full
-        if warm_up_period is None:
-            warm_up_period = replay_buffer.capacity // replay_buffer.batch_size
-        self.warm_up_period = warm_up_period
-
-        # Initialize Q-network demon
-        aqf = nn.Linear(feature.feature_dim, behavior_policy.action_space.n)
-        super(DQN, self).__init__(aqf=aqf, feature=feature,
-                                  behavior_policy=behavior_policy, **kwargs)
-
-        # Replaces `avf` implied by `aqf` with an independent estimator
-        self.duelling = duelling
-        if duelling:
-            DuellingMixin.__init__(self)
-
-        # Adds ability to approximate expected values
-        # via learning a distribution
-        if num_atoms > 1:
-            CategoricalQ.__init__(self, num_atoms=num_atoms,
-                                  v_min=v_min, v_max=v_max)
-
-        # Value-based policies require a value function to determine the
-        # preference for actions. Since we now know what our action-value
-        # function is (after possibly being affected by CategoricalQ mixin),
-        # we can pass it to the policy via `partial`
-        self.μ.act = partial(self.μ.act, q_fn=self.aqf)
-
-        # Adds a target network to stabilize SGD
-        TargetNetMixin.__init__(self, target_update_freq)
-        if self.target_aqf == self.aqf:
-            # TODO: fix the distributional case
-            warn('target aqf == aqf')
-        if self.target_avf == self.avf:
-            warn('target avf == avf')
-
-        # Adds double Q-learning for tackling maximization bias
-        self.double = double
-        if double:
-            assert target_update_freq > 0
-
-    def predict_q(self, x, target: bool = False):
-        return self.aqf(x) if not target else self.target_aqf(x)
-
-    @torch.no_grad()
-    def v_target(self, trajectory: Trajectory):
-        q = self.predict_q(trajectory.x1, target=True)
-        if self.double:
-            if isinstance(self, PixelControl):
-                # TODO: q[mask] returns flat obs
-                raise NotImplementedError
-            v = q[torch_argmax_mask(self.aqf(trajectory.x1), 1)].unsqueeze(-1)
-        else:
-            v = q.max(1, keepdim=True)[0]
-        return v
-
-    def learn(self, transitions: Transitions):
-
-        self.store(transitions)
-        self.sync_target()
-
-        # Wait until warm up period is over
-        self.update_counter += 1  # TODO: move the counter up the hierarchy?
-        if self.update_counter < self.warm_up_period:
-            return None, dict()
-
-        # Learn from experience
-        # TODO: differentiate between n-step and batched one-step
-        #   We can EITHER sample n transitions at random from a replay buffer
-        #   and do a batched one-step backup on them OR we can sample n
-        #   consequent transition and do a multistep update with them.
-        #   This should be controlled via `n_step` parameter passed to DQN upon
-        #   initialization.
-        transitions = self.replay_buffer.sample()
-        if not transitions:
-            return None, dict()  # not enough experience in the buffer
-        trajectory = Trajectory.from_transitions(transitions)
-        δ, info = self.delta(trajectory)
-
-        # Update the priorities of the collected transitions
-        if isinstance(self.replay_buffer, PER):
-            self._update_priorities(trajectory, info)
-
-        return δ, info
-
-    def __repr__(self):
-        demon = ParametricDemon().__repr__()
-        params = f'(replay_buffer): {repr(self.replay_buffer)}\n' \
-                 f'(warmup): {self.warm_up_period}\n' \
-                 f'(target_update_freq): {self.target_update_freq}\n' \
-                 f'(double): {self.double}\n' \
-                 f'(duelling): {self.duelling}\n'
-        return f'{demon}\n{params}'
-
-    def __str__(self):
-        return super().__str__()
-
-
-class DeepSARSA(OfflineTDControl):
-    r""" :math:`n`-step semi-gradient :math:`\SARSA` """
-
-    @torch.no_grad()
-    def v_target(self, trajectory: Trajectory):
-        q = self.predict_q(trajectory.x1)
-        a = self.gvf.π(trajectory.x1, vf=self.aqf)
-        v = q[torch.arange(q.size(0)), a]
-        return v
-
-
-class DeepSARSE(OfflineTDControl):
-    r""" :math:`n`-step semi-gradient expected :math:`\SARSA` """
-
-    @torch.no_grad()
-    def v_target(self, trajectory: Trajectory):
-        q = self.predict_q(trajectory.x1)
-        dist = self.gvf.π.dist(trajectory.x1, vf=self.aqf)
-        v = q * dist.probs
-        return v
-
 
 
 __all__ = get_all_classes(__name__)

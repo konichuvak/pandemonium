@@ -12,7 +12,8 @@ from pandemonium import GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
 from pandemonium.demons import ControlDemon, PredictionDemon
-from pandemonium.demons.control import DQN, CategoricalQ
+from pandemonium.demons.control import CategoricalQ
+from pandemonium.implementations.rainbow import DQN
 from pandemonium.envs.minigrid import MinigridDisplay, EmptyEnv
 from pandemonium.envs.wrappers import (add_wrappers, Torch,
                                        OneHotObsWrapper)
@@ -192,9 +193,9 @@ if __name__ == "__main__":
             'target_update_freq': 100,
             'double': tune.grid_search([False]),
             'duelling': tune.grid_search([False]),
-            "num_atoms": tune.grid_search([2]),
-            "v_min": 0,
-            "v_max": 1,
+            "num_atoms": tune.grid_search([1]),
+            # "v_min": 0,
+            # "v_max": 1,
 
             # Optimizer a.k.a. Horde
             "horde_fn": create_demons,
@@ -207,13 +208,13 @@ if __name__ == "__main__":
             "rollout_fragment_length": 10,
 
             # --- Evaluation ---
-            "evaluation_interval": 3,  # per training iteration
-            "custom_eval_function": eval_fn,
-            "evaluation_num_episodes": 1,
-            "evaluation_config": {
-                'eval_env': env_creator,
-                'eval_env_config': {},
-            },
+            # "evaluation_interval": 3,  # per training iteration
+            # "custom_eval_function": eval_fn,
+            # "evaluation_num_episodes": 1,
+            # "evaluation_config": {
+            #     'eval_env': env_creator,
+            #     'eval_env_config': {},
+            # },
 
             # used as batch size for exp collector and ER buffer
             # "train_batch_size": 32,

@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 
-from pandemonium.demons import Demon, Loss, ControlDemon, PredictionDemon
+from pandemonium.demons import Demon, Loss
 from pandemonium.experience import Trajectory, Transitions
 from pandemonium.utilities.utilities import get_all_classes
 
@@ -23,12 +23,7 @@ class OfflineTD(Demon):
         """ Updates a value of a state using information in the trajectory. """
         raise NotImplementedError
 
-    @torch.no_grad()
-    def v_target(self, trajectory: Trajectory):
-        """ Computes value targets for states in the trajectory. """
-        raise NotImplementedError
-
-    def target(self, *args, **kwargs):
+    def target(self, trajectory: Trajectory, v: torch.Tensor):
         """ Computes discounted returns for each step in the trajectory. """
         raise NotImplementedError
 
@@ -53,40 +48,6 @@ class OfflineTDPrediction(OfflineTD, PredictionDemon):
         loss = self.criterion(input=v, target=u, reduction='none')
         loss = (loss * trajectory.ρ).mean()  # weighted IS
         return loss, {'loss': loss.item(), 'td_error': u - v}
-
-    def target(self, trajectory: Trajectory):
-        return super().target(trajectory, v=self.v_target(trajectory))
-
-
-class OfflineTDControl(OfflineTD, ControlDemon):
-    r""" Offline :math:`\TD` for control tasks. """
-
-    def eval_actions(self, x, a):
-        """ Computes values associated with actions `a`
-
-        Is overridden by distributional agents that use `azf`
-
-        Returns
-        -------
-        (N, 1) vector of values for each action in the `a` vector.
-        """
-        return self.aqf(x)[torch.arange(a.size(0)), a].unsqueeze(1)
-
-    def delta(self, trajectory: Trajectory) -> Loss:
-        x = self.feature(trajectory.s0)  # could use trajectory.x1 instead
-        v = self.eval_actions(x, trajectory.a)
-        u = self.target(trajectory).detach()
-        assert u.shape == v.shape, f'{u.shape} vs {v.shape}'
-        loss = self.criterion(input=v, target=u, reduction='none')
-        if len(loss.shape) > 2:
-            # Pixel Control task?
-            # take average across states
-            loss = loss.mean(tuple(range(2, len(loss.shape))))
-        batch_loss = (loss * trajectory.ρ).mean()  # weighted IS
-        # TODO: td-error is not necessarily u-v depending on the criterion
-        return batch_loss, {'batch_loss': batch_loss.item(),
-                            'loss': loss,
-                            'td_error': u - v}
 
     def target(self, trajectory: Trajectory):
         return super().target(trajectory, v=self.v_target(trajectory))

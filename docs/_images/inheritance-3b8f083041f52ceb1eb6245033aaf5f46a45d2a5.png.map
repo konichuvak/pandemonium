@@ -1,8 +1,0 @@
-<map id="inheritancea195c6c22d" name="inheritancea195c6c22d">
-<area shape="rect" id="node1" title="ABC for all networks that allows for registration" alt="" coords="173,55,283,80"/>
-<area shape="rect" id="node4" title="A convolutional neural network, also known as `nature CNN` in RL" alt="" coords="331,5,419,31"/>
-<area shape="rect" id="node2" title="Base class for all neural network modules." alt="" coords="29,104,101,129"/>
-<area shape="rect" id="node3" title="Any class that inherits from ``Registrable`` gains access to a named" alt="" coords="18,55,113,80"/>
-<area shape="rect" id="node5" title="A convolutional neural net with a recurrent LSTM layer on top" alt="" coords="467,5,556,31"/>
-<area shape="rect" id="node10" href="api/pandemonium.networks.TargetNetMixin.html#pandemonium.networks.TargetNetMixin" target="_top" title="Mixin that adds a target network to the agent." alt="" coords="5,5,125,31"/>
-</map>

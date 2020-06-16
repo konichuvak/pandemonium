@@ -18,6 +18,7 @@ class MultistepQLearning(QLearning, OfflineTDControl, TDn):
 
 
 class OnlineQLearning(QLearning, OnlineTDControl):
+    """ Simple online Q-learning. """
 
     def __init__(self, **kwargs):
         super().__init__(trace_decay=0., **kwargs)

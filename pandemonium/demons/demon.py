@@ -133,9 +133,9 @@ class ControlDemon(Demon, ABC):
     Q-value function (aqf) that produces value estimates for state-action pairs.
     """
 
-    def __init__(self, aqf: Callable, **kwargs):
+    def __init__(self, aqf: Callable, avf: Callable = None, **kwargs):
         self.aqf = self.target_aqf = aqf
-        super().__init__(avf=self.implied_avf, **kwargs)
+        super().__init__(avf=self.implied_avf if avf is None else avf, **kwargs)
 
     def implied_avf(self, x):
         r""" State-value function in terms of action-value function

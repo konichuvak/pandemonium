@@ -12,10 +12,7 @@ from experiments.trainable import Loop
 from pandemonium import GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness, PixelChange
-from pandemonium.demons import LinearDemon
-from pandemonium.demons.control import PixelControl, TDAC
-from pandemonium.demons.offline_td import TDn
-from pandemonium.demons.prediction import ValueReplay, RewardPrediction
+from pandemonium.implementations.unreal import ValueReplay, RewardPrediction, PixelControl, AC
 from pandemonium.envs import DeepmindLabEnv
 from pandemonium.envs.wrappers import Torch
 from pandemonium.experience import Transition, Trajectory
@@ -37,8 +34,8 @@ env_config = {
 model_cfg = tune.grid_search(['shallow', 'deep'])
 
 replay_params = {
-    'buffer_size': 2000,
-    'target_update_freq': tune.grid_search([100, 500]),
+    'buffer_size': 100,
+    'target_update_freq': tune.grid_search([100]),
 }
 
 policy_cfg = {'entropy_coefficient': 0.01}
@@ -46,12 +43,9 @@ policy_cfg = {'entropy_coefficient': 0.01}
 # Horde vs Ray optimizer?
 optimizer_params = {
     'ac_weight': 1,
-    'vr_weight': 1,
-    'pc_weight': 1,
-    'rp_weight': 1,
-    # 'vr_weight': tune.grid_search([0, 1]),
-    # 'pc_weight': tune.grid_search([0, 1]),
-    # 'rp_weight': tune.grid_search([0, 1]),
+    'vr_weight': tune.grid_search([1]),
+    'pc_weight': tune.grid_search([1]),
+    'rp_weight': tune.grid_search([1]),
 }
 
 
@@ -73,12 +67,6 @@ def create_demons(config, env, feature_extractor, policy) -> Horde:
         cumulant=Fitness(env),
         continuation=ConstantContinuation(config['gamma'])
     )
-
-    # Main N-step Actor-Critic agent
-    class AC(TDAC, LinearDemon, TDn):
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs, output_dim=1)
 
     demons.append(AC(gvf=optimal_control,
                      behavior_policy=policy,
@@ -108,6 +96,7 @@ def create_demons(config, env, feature_extractor, policy) -> Horde:
             behavior_policy=policy,
             replay_buffer=replay,  # shared with value replay demon
             target_update_freq=config['target_update_freq'],
+            double=True,
         ))
 
     # --------------------------------------------------------------------------
@@ -251,18 +240,25 @@ def trial_the_creator(trial: Trial):
 
 
 if __name__ == "__main__":
-    ray.init(local_mode=False)
+    ray.init(local_mode=True)
     analysis = tune.run(
         Loop,
         # scheduler=scheduler,
         name='UNREAL',
+        num_samples=3,
         # stop={
         #     "episodes_total": 10000,
         # },
         config={
             # Model a.k.a. Feature Extractor
             "feature_name": 'conv_body',
-            "feature_cfg": model_cfg,
+            # "feature_cfg": model_cfg,
+            "feature_cfg": {
+                'feature_dim': 512,
+                'channels': (16, 32),
+                'kernels': (8, 4),
+                'strides': (4, 2),
+            },
 
             # Policy
             "policy_name": 'VPG',
@@ -275,7 +271,7 @@ if __name__ == "__main__":
             # optimizer.step performed in the trainer_template is same as agent.learn and includes exp collection and sgd
             # try to see how to write horde.learn as a SyncSampleOptimizer in ray
 
-            'gamma': tune.grid_search([0.9, 0.99]),
+            'gamma': tune.grid_search([0.9]),
 
             # === RLLib params ===
             "use_pytorch": True,
@@ -286,11 +282,9 @@ if __name__ == "__main__":
             # "train_batch_size": 32,
         },
         trial_name_creator=trial_the_creator,
-        num_samples=1,
         local_dir=EXPERIMENT_DIR,
         checkpoint_freq=1000,  # in training iterations
         checkpoint_at_end=True,
-        fail_fast=True,
         verbose=1,
         # resume='PROMPT',
     )

@@ -1,5 +1,0 @@
-<map id="inheritancecdeac919ff" name="inheritancecdeac919ff">
-<area shape="rect" id="node1" href="api/pandemonium.traces.AccumulatingTrace.html#pandemonium.traces.AccumulatingTrace" target="_top" title="AccumulatingTrace" alt="" coords="171,5,316,31"/>
-<area shape="rect" id="node2" href="api/pandemonium.traces.EligibilityTrace.html#pandemonium.traces.EligibilityTrace" target="_top" title="Base class for various eligibility traces in TD learners." alt="" coords="5,31,123,56"/>
-<area shape="rect" id="node3" href="api/pandemonium.traces.DutchTrace.html#pandemonium.traces.DutchTrace" target="_top" title="DutchTrace" alt="" coords="196,55,291,80"/>
-</map>

@@ -26,7 +26,7 @@
         <script type="text/javascript" src="_static/doctools.js"></script>
         <script type="text/javascript" src="_static/language_data.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}"}}})</script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}", "SARSE": "\\operatorname{SARSE}"}}})</script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -108,44 +108,53 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pandemonium.demons">pandemonium.demons Package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id3">Classes</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.A2C.html">A2C</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.AC.html">AC</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.CategoricalQ.html">CategoricalQ</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.ControlDemon.html">ControlDemon</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.DQN.html">DQN</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.DeepSARSA.html">DeepSARSA</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.DeepSARSE.html">DeepSARSE</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.Demon.html">Demon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.DuellingMixin.html">DuellingMixin</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.LinearDemon.html">LinearDemon</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.OC.html">OC</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.OfflineTD.html">OfflineTD</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.OfflineTDControl.html">OfflineTDControl</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.OfflineTDPrediction.html">OfflineTDPrediction</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.OnlineTD.html">OnlineTD</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.OnlineTDControl.html">OnlineTDControl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.OnlineTDPrediction.html">OnlineTDPrediction</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.ParametricDemon.html">ParametricDemon</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.PixelControl.html">PixelControl</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.PredictionDemon.html">PredictionDemon</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.RewardPrediction.html">RewardPrediction</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.SARSAlambda.html">SARSAlambda</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.TD0.html">TD0</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.TDAC.html">TDAC</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.TDlambda.html">TDlambda</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.QLearning.html">QLearning</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.SARSA.html">SARSA</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.SARSE.html">SARSE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.TDControl.html">TDControl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.TDPrediction.html">TDPrediction</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.TDn.html">TDn</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.TTD.html">TTD</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.TrueOnlineTD.html">TrueOnlineTD</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.demons.ValueReplay.html">ValueReplay</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#id4">Class Inheritance Diagram</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#module-pandemonium.horde">pandemonium.horde Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-pandemonium.implementations">pandemonium.implementations Package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#id5">Classes</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.horde.Horde.html">Horde</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.implementations.DQN.html">DQN</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.implementations.DoubleQLearning.html">DoubleQLearning</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.implementations.MultistepQLearning.html">MultistepQLearning</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.implementations.MultistepSARSA.html">MultistepSARSA</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.implementations.OnlineQLearning.html">OnlineQLearning</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.implementations.OnlineSARSA.html">OnlineSARSA</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.implementations.PixelControl.html">PixelControl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.implementations.RewardPrediction.html">RewardPrediction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.implementations.ValueReplay.html">ValueReplay</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#id6">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-pandemonium.horde">pandemonium.horde Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.horde.Horde.html">Horde</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Class Inheritance Diagram</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pandemonium.policies">pandemonium.policies Package</a><ul>
@@ -154,12 +163,13 @@
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.torch_argmax_mask.html">torch_argmax_mask</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#id7">Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">Classes</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.Continuous.html">Continuous</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.DiffPolicy.html">DiffPolicy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.Discrete.html">Discrete</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.Egreedy.html">Egreedy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.EgreedyOverOptions.html">EgreedyOverOptions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.Greedy.html">Greedy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.HierarchicalPolicy.html">HierarchicalPolicy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.Policy.html">Policy</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.Random.html">Random</a></li>
@@ -167,17 +177,17 @@
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.policies.VPG.html">VPG</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#id8">Class Inheritance Diagram</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">Class Inheritance Diagram</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pandemonium.networks">pandemonium.networks Package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id9">Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id11">Functions</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.networks.conv2d_size_out.html">conv2d_size_out</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.networks.deconv2d_size_out.html">deconv2d_size_out</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.networks.layer_init.html">layer_init</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#id10">Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id12">Classes</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.networks.BaseNetwork.html">BaseNetwork</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.networks.ConvBody.html">ConvBody</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.networks.ConvLSTM.html">ConvLSTM</a></li>
@@ -188,11 +198,11 @@
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.networks.TargetNetMixin.html">TargetNetMixin</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#id11">Class Inheritance Diagram</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">Class Inheritance Diagram</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pandemonium.cumulants">pandemonium.cumulants Module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id12">Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id14">Classes</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.cumulants.Cumulant.html">Cumulant</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.cumulants.Curiosity.html">Curiosity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.cumulants.Empowerment.html">Empowerment</a></li>
@@ -202,11 +212,11 @@
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.cumulants.Surprise.html">Surprise</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#id13">Class Inheritance Diagram</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15">Class Inheritance Diagram</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pandemonium.continuations">pandemonium.continuations Module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id14">Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id16">Classes</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.continuations.ConstantContinuation.html">ConstantContinuation</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.continuations.ContinuationFunction.html">ContinuationFunction</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.continuations.DiffContinuation.html">DiffContinuation</a></li>
@@ -214,11 +224,11 @@
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.continuations.TerminationCritic.html">TerminationCritic</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#id15">Class Inheritance Diagram</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17">Class Inheritance Diagram</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pandemonium.experience">pandemonium.experience Package</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id16">Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id18">Classes</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.experience.ER.html">ER</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.experience.PER.html">PER</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.experience.ReplayBuffer.html">ReplayBuffer</a></li>
@@ -229,11 +239,11 @@
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.experience.Transition.html">Transition</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#id19">Class Inheritance Diagram</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id21">Class Inheritance Diagram</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-pandemonium.traces">pandemonium.traces Module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id20">Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id22">Classes</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.traces.AccumulatingTrace.html">AccumulatingTrace</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.traces.DutchTrace.html">DutchTrace</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.traces.EligibilityTrace.html">EligibilityTrace</a></li>
@@ -241,7 +251,7 @@
 <li class="toctree-l4"><a class="reference internal" href="api/pandemonium.traces.Vtrace.html">Vtrace</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#id21">Class Inheritance Diagram</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id23">Class Inheritance Diagram</a></li>
 </ul>
 </li>
 </ul>
@@ -376,101 +386,125 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.A2C.html#pandemonium.demons.A2C" title="pandemonium.demons.A2C"><code class="xref py py-obj docutils literal notranslate"><span class="pre">A2C</span></code></a>(feature, actor, **kwargs)</p></td>
-<td><p>Advantage Actor Critic</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.demons.AC.html#pandemonium.demons.AC" title="pandemonium.demons.AC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AC</span></code></a>(behavior_policy, **kwargs)</p></td>
-<td><p>Base class for Actor-Critic architectures that operate on batches</p></td>
-</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.CategoricalQ.html#pandemonium.demons.CategoricalQ" title="pandemonium.demons.CategoricalQ"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CategoricalQ</span></code></a>(num_atoms, v_min, v_max)</p></td>
 <td><p>Categorical Q-learning mixin.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.demons.ControlDemon.html#pandemonium.demons.ControlDemon" title="pandemonium.demons.ControlDemon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ControlDemon</span></code></a>(aqf, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.demons.ControlDemon.html#pandemonium.demons.ControlDemon" title="pandemonium.demons.ControlDemon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ControlDemon</span></code></a>(aqf[, avf])</p></td>
 <td><p>Learns the optimal policy while learning to predict</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.DQN.html#pandemonium.demons.DQN" title="pandemonium.demons.DQN"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DQN</span></code></a>(feature, behavior_policy, replay_buffer)</p></td>
-<td><p>Deep Q-Network with all the bells and whistles mixed in.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.demons.DeepSARSA.html#pandemonium.demons.DeepSARSA" title="pandemonium.demons.DeepSARSA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DeepSARSA</span></code></a>([criterion])</p></td>
-<td><p><span class="math notranslate nohighlight">\(n\)</span>-step semi-gradient <span class="math notranslate nohighlight">\(\SARSA\)</span></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.DeepSARSE.html#pandemonium.demons.DeepSARSE" title="pandemonium.demons.DeepSARSE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DeepSARSE</span></code></a>([criterion])</p></td>
-<td><p><span class="math notranslate nohighlight">\(n\)</span>-step semi-gradient expected <span class="math notranslate nohighlight">\(\SARSA\)</span></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.demons.Demon.html#pandemonium.demons.Demon" title="pandemonium.demons.Demon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Demon</span></code></a>(gvf, avf, feature, behavior_policy, …)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.Demon.html#pandemonium.demons.Demon" title="pandemonium.demons.Demon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Demon</span></code></a>(gvf, avf, feature, behavior_policy, …)</p></td>
 <td><p><strong>General Value Function Approximator</strong></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.DuellingMixin.html#pandemonium.demons.DuellingMixin" title="pandemonium.demons.DuellingMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DuellingMixin</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.demons.DuellingMixin.html#pandemonium.demons.DuellingMixin" title="pandemonium.demons.DuellingMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DuellingMixin</span></code></a>()</p></td>
 <td><p>Mixin for value-based control algorithms that uses two separate estimators for action-values and state-values.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.demons.LinearDemon.html#pandemonium.demons.LinearDemon" title="pandemonium.demons.LinearDemon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LinearDemon</span></code></a>(feature, output_dim, *args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.LinearDemon.html#pandemonium.demons.LinearDemon" title="pandemonium.demons.LinearDemon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LinearDemon</span></code></a>(feature, output_dim, *args, **kwargs)</p></td>
 <td><p>Approximates state or state-action values using linear projection</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.OC.html#pandemonium.demons.OC" title="pandemonium.demons.OC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OC</span></code></a>(actor, **kwargs)</p></td>
-<td><p>DQN style Option-Critic architecture</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.demons.OfflineTD.html#pandemonium.demons.OfflineTD" title="pandemonium.demons.OfflineTD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OfflineTD</span></code></a>([criterion])</p></td>
 <td><p>Base class for forward-view <span class="math notranslate nohighlight">\(\TD\)</span> methods.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.OfflineTDControl.html#pandemonium.demons.OfflineTDControl" title="pandemonium.demons.OfflineTDControl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OfflineTDControl</span></code></a>([criterion])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.OfflineTDControl.html#pandemonium.demons.OfflineTDControl" title="pandemonium.demons.OfflineTDControl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OfflineTDControl</span></code></a>(**kwargs)</p></td>
 <td><p>Offline <span class="math notranslate nohighlight">\(\TD\)</span> for control tasks.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.demons.OfflineTDPrediction.html#pandemonium.demons.OfflineTDPrediction" title="pandemonium.demons.OfflineTDPrediction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OfflineTDPrediction</span></code></a>([criterion])</p></td>
 <td><p>Offline <span class="math notranslate nohighlight">\(\TD\)</span> for prediction tasks.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.OnlineTD.html#pandemonium.demons.OnlineTD" title="pandemonium.demons.OnlineTD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OnlineTD</span></code></a>(feature, trace_decay[, eligibility])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.OnlineTD.html#pandemonium.demons.OnlineTD" title="pandemonium.demons.OnlineTD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OnlineTD</span></code></a>(trace_decay[, eligibility, criterion])</p></td>
 <td><p>Base class for backward-view (online) <span class="math notranslate nohighlight">\(\TD\)</span> methods.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.demons.OnlineTDControl.html#pandemonium.demons.OnlineTDControl" title="pandemonium.demons.OnlineTDControl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OnlineTDControl</span></code></a>(**kwargs)</p></td>
+<td><p>Base class for online <span class="math notranslate nohighlight">\(\TD\)</span> methods for control tasks.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.OnlineTDPrediction.html#pandemonium.demons.OnlineTDPrediction" title="pandemonium.demons.OnlineTDPrediction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OnlineTDPrediction</span></code></a>(trace_decay[, …])</p></td>
+<td><p>Semi-gradient <span class="math notranslate nohighlight">\(\TD{(\lambda)}\)</span> rule for estimating <span class="math notranslate nohighlight">\(\tilde{v} \approx v_{\pi}\)</span></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.demons.ParametricDemon.html#pandemonium.demons.ParametricDemon" title="pandemonium.demons.ParametricDemon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ParametricDemon</span></code></a>(**kwargs)</p></td>
 <td><p>Base class fot parametrized Demons implemented in PyTorch</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.PixelControl.html#pandemonium.demons.PixelControl" title="pandemonium.demons.PixelControl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PixelControl</span></code></a>(feature, behavior_policy[, …])</p></td>
-<td><p>Duelling de-convolutional network for auxiliary pixel control task</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.demons.PredictionDemon.html#pandemonium.demons.PredictionDemon" title="pandemonium.demons.PredictionDemon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PredictionDemon</span></code></a>(gvf, avf, feature, …)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.PredictionDemon.html#pandemonium.demons.PredictionDemon" title="pandemonium.demons.PredictionDemon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PredictionDemon</span></code></a>(gvf, avf, feature, …)</p></td>
 <td><p>Collects factual knowledge about environment by learning to predict</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.RewardPrediction.html#pandemonium.demons.RewardPrediction" title="pandemonium.demons.RewardPrediction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RewardPrediction</span></code></a>(replay_buffer, feature[, …])</p></td>
-<td><p>A demon that maximizes un-discounted <span class="math notranslate nohighlight">\(n\)</span>-step return.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.demons.QLearning.html#pandemonium.demons.QLearning" title="pandemonium.demons.QLearning"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QLearning</span></code></a>(**kwargs)</p></td>
+<td><p>Classic Q-learning update rule.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.demons.SARSAlambda.html#pandemonium.demons.SARSAlambda" title="pandemonium.demons.SARSAlambda"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SARSAlambda</span></code></a>(feature, trace_decay[, eligibility])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.SARSA.html#pandemonium.demons.SARSA" title="pandemonium.demons.SARSA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SARSA</span></code></a>(**kwargs)</p></td>
+<td><p>Semi-gradient <span class="math notranslate nohighlight">\(\SARSA{(\lambda)}\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.demons.SARSE.html#pandemonium.demons.SARSE" title="pandemonium.demons.SARSE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SARSE</span></code></a>(**kwargs)</p></td>
+<td><p>Semi-gradient Expected <span class="math notranslate nohighlight">\(\SARSA{(\lambda)}\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.TDControl.html#pandemonium.demons.TDControl" title="pandemonium.demons.TDControl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TDControl</span></code></a>(**kwargs)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.TD0.html#pandemonium.demons.TD0" title="pandemonium.demons.TD0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TD0</span></code></a>(**kwargs)</p></td>
-<td><p>A special case of <span class="math notranslate nohighlight">\(\TD{(\lambda)}\)</span> with <span class="math notranslate nohighlight">\(\lambda = 0\)</span></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.demons.TDPrediction.html#pandemonium.demons.TDPrediction" title="pandemonium.demons.TDPrediction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TDPrediction</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.demons.TDAC.html#pandemonium.demons.TDAC" title="pandemonium.demons.TDAC"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TDAC</span></code></a>(behavior_policy, **kwargs)</p></td>
-<td><p>Actor-Critic that approximates advantage with <span class="math notranslate nohighlight">\(\TD\)</span> error.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.TDlambda.html#pandemonium.demons.TDlambda" title="pandemonium.demons.TDlambda"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TDlambda</span></code></a>(feature, trace_decay[, eligibility])</p></td>
-<td><p>Semi-gradient <span class="math notranslate nohighlight">\(\TD{(\lambda)}\)</span> rule for estimating <span class="math notranslate nohighlight">\(\tilde{v} \approx v_{\pi}\)</span></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.demons.TDn.html#pandemonium.demons.TDn" title="pandemonium.demons.TDn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TDn</span></code></a>(**kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.TDn.html#pandemonium.demons.TDn" title="pandemonium.demons.TDn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TDn</span></code></a>(**kwargs)</p></td>
 <td><p><span class="math notranslate nohighlight">\(n\)</span>-step <span class="math notranslate nohighlight">\(\TD\)</span> for estimating <span class="math notranslate nohighlight">\(V \approx v_{\pi}\)</span></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.TTD.html#pandemonium.demons.TTD" title="pandemonium.demons.TTD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TTD</span></code></a>([criterion])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.demons.TTD.html#pandemonium.demons.TTD" title="pandemonium.demons.TTD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TTD</span></code></a>([criterion])</p></td>
 <td><p>Truncated <span class="math notranslate nohighlight">\(\TD{(\lambda)}\)</span></p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.demons.TrueOnlineTD.html#pandemonium.demons.TrueOnlineTD" title="pandemonium.demons.TrueOnlineTD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TrueOnlineTD</span></code></a>(feature, trace_decay[, eligibility])</p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.demons.ValueReplay.html#pandemonium.demons.ValueReplay" title="pandemonium.demons.ValueReplay"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ValueReplay</span></code></a>(replay_buffer, **kwargs)</p></td>
-<td><p><span class="math notranslate nohighlight">\(n\)</span>-step <span class="math notranslate nohighlight">\(\TD\)</span> performed on the past experiences</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="section" id="id4">
 <h3>Class Inheritance Diagram<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
-<div class="graphviz"><img src="_images/inheritance-7fd69536a82638afb05cd9d5facf5bb7590ecfde.png" alt="Inheritance diagram of pandemonium.demons.control.A2C, pandemonium.demons.control.AC, pandemonium.demons.control.CategoricalQ, pandemonium.demons.demon.ControlDemon, pandemonium.demons.control.DQN, pandemonium.demons.control.DeepSARSA, pandemonium.demons.control.DeepSARSE, pandemonium.demons.demon.Demon, pandemonium.demons.control.DuellingMixin, pandemonium.demons.demon.LinearDemon, pandemonium.demons.control.OC, pandemonium.demons.offline_td.OfflineTD, pandemonium.demons.offline_td.OfflineTDControl, pandemonium.demons.offline_td.OfflineTDPrediction, pandemonium.demons.online_td.OnlineTD, pandemonium.demons.demon.ParametricDemon, pandemonium.demons.control.PixelControl, pandemonium.demons.demon.PredictionDemon, pandemonium.demons.prediction.RewardPrediction, pandemonium.demons.online_td.SARSAlambda, pandemonium.demons.online_td.TD0, pandemonium.demons.control.TDAC, pandemonium.demons.online_td.TDlambda, pandemonium.demons.offline_td.TDn, pandemonium.demons.offline_td.TTD, pandemonium.demons.online_td.TrueOnlineTD, pandemonium.demons.prediction.ValueReplay" usemap="#inheritancea086ac94d2" class="inheritance graphviz" /></div>
-<map id="inheritancea086ac94d2" name="inheritancea086ac94d2">
-<area shape="rect" id="node12" href="api/pandemonium.networks.TargetNetMixin.html#pandemonium.networks.TargetNetMixin" target="_top" title="Mixin that adds a target network to the agent." alt="" coords="417,567,514,588"/>
+<div class="graphviz"><img src="_images/inheritance-343a9a0251117b85d04889ecae193d4ff963b863.png" alt="Inheritance diagram of pandemonium.demons.control.CategoricalQ, pandemonium.demons.demon.ControlDemon, pandemonium.demons.demon.Demon, pandemonium.demons.control.DuellingMixin, pandemonium.demons.demon.LinearDemon, pandemonium.demons.offline_td.OfflineTD, pandemonium.demons.control.OfflineTDControl, pandemonium.demons.prediction.OfflineTDPrediction, pandemonium.demons.online_td.OnlineTD, pandemonium.demons.control.OnlineTDControl, pandemonium.demons.prediction.OnlineTDPrediction, pandemonium.demons.demon.ParametricDemon, pandemonium.demons.demon.PredictionDemon, pandemonium.demons.control.QLearning, pandemonium.demons.control.SARSA, pandemonium.demons.control.SARSE, pandemonium.demons.control.TDControl, pandemonium.demons.prediction.TDPrediction, pandemonium.demons.offline_td.TDn, pandemonium.demons.offline_td.TTD" class="inheritance graphviz" /></div>
+</div>
+</div>
+<div class="section" id="module-pandemonium.implementations">
+<span id="pandemonium-implementations-package"></span><h2>pandemonium.implementations Package<a class="headerlink" href="#module-pandemonium.implementations" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id5">
+<h3>Classes<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.implementations.DQN.html#pandemonium.implementations.DQN" title="pandemonium.implementations.DQN"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DQN</span></code></a>(feature, behavior_policy, replay_buffer)</p></td>
+<td><p>Deep Q-Network with all the bells and whistles mixed in.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.implementations.DoubleQLearning.html#pandemonium.implementations.DoubleQLearning" title="pandemonium.implementations.DoubleQLearning"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DoubleQLearning</span></code></a>(**kwargs)</p></td>
+<td><p>Implements online version of Double Q-learning.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.implementations.MultistepQLearning.html#pandemonium.implementations.MultistepQLearning" title="pandemonium.implementations.MultistepQLearning"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MultistepQLearning</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.implementations.MultistepSARSA.html#pandemonium.implementations.MultistepSARSA" title="pandemonium.implementations.MultistepSARSA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MultistepSARSA</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.implementations.OnlineQLearning.html#pandemonium.implementations.OnlineQLearning" title="pandemonium.implementations.OnlineQLearning"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OnlineQLearning</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.implementations.OnlineSARSA.html#pandemonium.implementations.OnlineSARSA" title="pandemonium.implementations.OnlineSARSA"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OnlineSARSA</span></code></a>(**kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.implementations.PixelControl.html#pandemonium.implementations.PixelControl" title="pandemonium.implementations.PixelControl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PixelControl</span></code></a>(feature, behavior_policy[, …])</p></td>
+<td><p>Duelling de-convolutional network for auxiliary pixel control task</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.implementations.RewardPrediction.html#pandemonium.implementations.RewardPrediction" title="pandemonium.implementations.RewardPrediction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RewardPrediction</span></code></a>(replay_buffer, feature[, …])</p></td>
+<td><p>A demon that maximizes un-discounted <span class="math notranslate nohighlight">\(n\)</span>-step return.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.implementations.ValueReplay.html#pandemonium.implementations.ValueReplay" title="pandemonium.implementations.ValueReplay"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ValueReplay</span></code></a>(replay_buffer, **kwargs)</p></td>
+<td><p><span class="math notranslate nohighlight">\(n \text{-step} \TD\)</span> performed on the past experiences</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id6">
+<h3>Class Inheritance Diagram<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="graphviz"><img src="_images/inheritance-e7f59f6631c74caf5e36de27a298d8a96cb7fdb0.png" alt="Inheritance diagram of pandemonium.implementations.rainbow.DQN, pandemonium.implementations.q_learning.DoubleQLearning, pandemonium.implementations.q_learning.MultistepQLearning, pandemonium.implementations.sarsa.MultistepSARSA, pandemonium.implementations.q_learning.OnlineQLearning, pandemonium.implementations.sarsa.OnlineSARSA, pandemonium.implementations.unreal.PixelControl, pandemonium.implementations.unreal.RewardPrediction, pandemonium.implementations.unreal.ValueReplay" usemap="#inheritance3ab98ef52d" class="inheritance graphviz" /></div>
+<map id="inheritance3ab98ef52d" name="inheritance3ab98ef52d">
+<area shape="rect" id="node10" href="api/pandemonium.networks.TargetNetMixin.html#pandemonium.networks.TargetNetMixin" target="_top" title="Mixin that adds a target network to the agent." alt="" coords="381,415,470,434"/>
 </map></div>
 </div>
 <div class="section" id="module-pandemonium.horde">
 <span id="pandemonium-horde-module"></span><h2>pandemonium.horde Module<a class="headerlink" href="#module-pandemonium.horde" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id5">
-<h3>Classes<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id7">
+<h3>Classes<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -483,8 +517,8 @@
 </tbody>
 </table>
 </div>
-<div class="section" id="id6">
-<h3>Class Inheritance Diagram<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id8">
+<h3>Class Inheritance Diagram<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
 <div class="graphviz"><img src="_images/inheritance-4b81e32f26d21a5d0df8795968a3758830fd92a7.png" alt="Inheritance diagram of pandemonium.horde.Horde" usemap="#inheritancecc63a6c4cf" class="inheritance graphviz" /></div>
 <map id="inheritancecc63a6c4cf" name="inheritancecc63a6c4cf">
 <area shape="rect" id="node1" href="api/pandemonium.horde.Horde.html#pandemonium.horde.Horde" target="_top" title="A horde of Demons" alt="" coords="125,5,197,31"/>
@@ -509,8 +543,8 @@
 </tbody>
 </table>
 </div>
-<div class="section" id="id7">
-<h3>Classes<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id9">
+<h3>Classes<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -532,33 +566,36 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.policies.EgreedyOverOptions.html#pandemonium.policies.EgreedyOverOptions" title="pandemonium.policies.EgreedyOverOptions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EgreedyOverOptions</span></code></a>(epsilon, *args, **kwargs)</p></td>
 <td><p><span class="math notranslate nohighlight">\(\epsilon\)</span>-greedy policy over options.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.policies.HierarchicalPolicy.html#pandemonium.policies.HierarchicalPolicy" title="pandemonium.policies.HierarchicalPolicy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HierarchicalPolicy</span></code></a>(option_space)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.policies.Greedy.html#pandemonium.policies.Greedy" title="pandemonium.policies.Greedy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Greedy</span></code></a>(*args, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.policies.HierarchicalPolicy.html#pandemonium.policies.HierarchicalPolicy" title="pandemonium.policies.HierarchicalPolicy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">HierarchicalPolicy</span></code></a>(option_space)</p></td>
 <td><p>A decision rule for discrete option spaces.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.policies.Policy.html#pandemonium.policies.Policy" title="pandemonium.policies.Policy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Policy</span></code></a>(feature_dim, action_space, **params)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.policies.Policy.html#pandemonium.policies.Policy" title="pandemonium.policies.Policy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Policy</span></code></a>(feature_dim, action_space, **params)</p></td>
 <td><p>Base abstract class for decision making rules</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.policies.Random.html#pandemonium.policies.Random" title="pandemonium.policies.Random"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Random</span></code></a>(action_space, feature_dim)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.policies.Random.html#pandemonium.policies.Random" title="pandemonium.policies.Random"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Random</span></code></a>(action_space, feature_dim)</p></td>
 <td><p>Picks an option at random.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.policies.SoftmaxPolicy.html#pandemonium.policies.SoftmaxPolicy" title="pandemonium.policies.SoftmaxPolicy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SoftmaxPolicy</span></code></a>(temperature, *args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.policies.SoftmaxPolicy.html#pandemonium.policies.SoftmaxPolicy" title="pandemonium.policies.SoftmaxPolicy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SoftmaxPolicy</span></code></a>(temperature, *args, **kwargs)</p></td>
 <td><p>Picks actions with probability proportional to Q-values.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.policies.VPG.html#pandemonium.policies.VPG" title="pandemonium.policies.VPG"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VPG</span></code></a>([entropy_coefficient])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.policies.VPG.html#pandemonium.policies.VPG" title="pandemonium.policies.VPG"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VPG</span></code></a>([entropy_coefficient])</p></td>
 <td><p>Vanilla Policy Gradient</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="section" id="id8">
-<h3>Class Inheritance Diagram<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
-<div class="graphviz"><img src="_images/inheritance-702055bcc19847c95ea559fbf5ca7f9bc06c3bcb.png" alt="Inheritance diagram of pandemonium.policies.continuous.Continuous, pandemonium.policies.gradient.DiffPolicy, pandemonium.policies.discrete.Discrete, pandemonium.policies.discrete.Egreedy, pandemonium.policies.discrete.EgreedyOverOptions, pandemonium.policies.discrete.HierarchicalPolicy, pandemonium.policies.policy.Policy, pandemonium.policies.discrete.Random, pandemonium.policies.discrete.SoftmaxPolicy, pandemonium.policies.gradient.VPG" class="inheritance graphviz" /></div>
+<div class="section" id="id10">
+<h3>Class Inheritance Diagram<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<div class="graphviz"><img src="_images/inheritance-c9ca5439398877ea0c779acca51fbc36ab0c0330.png" alt="Inheritance diagram of pandemonium.policies.continuous.Continuous, pandemonium.policies.gradient.DiffPolicy, pandemonium.policies.discrete.Discrete, pandemonium.policies.discrete.Egreedy, pandemonium.policies.discrete.EgreedyOverOptions, pandemonium.policies.discrete.Greedy, pandemonium.policies.discrete.HierarchicalPolicy, pandemonium.policies.policy.Policy, pandemonium.policies.discrete.Random, pandemonium.policies.discrete.SoftmaxPolicy, pandemonium.policies.gradient.VPG" class="inheritance graphviz" /></div>
 </div>
 </div>
 <div class="section" id="module-pandemonium.networks">
 <span id="pandemonium-networks-package"></span><h2>pandemonium.networks Package<a class="headerlink" href="#module-pandemonium.networks" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id9">
-<h3>Functions<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id11">
+<h3>Functions<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -580,8 +617,8 @@
 </tbody>
 </table>
 </div>
-<div class="section" id="id10">
-<h3>Classes<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id12">
+<h3>Classes<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -618,8 +655,8 @@
 </tbody>
 </table>
 </div>
-<div class="section" id="id11">
-<h3>Class Inheritance Diagram<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id13">
+<h3>Class Inheritance Diagram<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
 <div class="graphviz"><img src="_images/inheritance-3b8f083041f52ceb1eb6245033aaf5f46a45d2a5.png" alt="Inheritance diagram of pandemonium.networks.bodies.BaseNetwork, pandemonium.networks.bodies.ConvBody, pandemonium.networks.bodies.ConvLSTM, pandemonium.networks.bodies.FCBody, pandemonium.networks.bodies.Identity, pandemonium.networks.heads.LinearNet, pandemonium.networks.heads.Reshape, pandemonium.networks.TargetNetMixin" usemap="#inheritancea195c6c22d" class="inheritance graphviz" /></div>
 <map id="inheritancea195c6c22d" name="inheritancea195c6c22d">
 <area shape="rect" id="node10" href="api/pandemonium.networks.TargetNetMixin.html#pandemonium.networks.TargetNetMixin" target="_top" title="Mixin that adds a target network to the agent." alt="" coords="5,5,125,31"/>
@@ -627,8 +664,8 @@
 </div>
 <div class="section" id="module-pandemonium.cumulants">
 <span id="pandemonium-cumulants-module"></span><h2>pandemonium.cumulants Module<a class="headerlink" href="#module-pandemonium.cumulants" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id12">
-<h3>Classes<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id14">
+<h3>Classes<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -659,8 +696,8 @@
 </tbody>
 </table>
 </div>
-<div class="section" id="id13">
-<h3>Class Inheritance Diagram<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id15">
+<h3>Class Inheritance Diagram<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
 <div class="graphviz"><img src="_images/inheritance-d5f3e34fffaa139494f1e38ca0948511d57c2b2d.png" alt="Inheritance diagram of pandemonium.cumulants.Cumulant, pandemonium.cumulants.Curiosity, pandemonium.cumulants.Empowerment, pandemonium.cumulants.FeatureCumulant, pandemonium.cumulants.Fitness, pandemonium.cumulants.PixelChange, pandemonium.cumulants.Surprise" usemap="#inheritance5dcc06f3c6" class="inheritance graphviz" /></div>
 <map id="inheritance5dcc06f3c6" name="inheritance5dcc06f3c6">
 <area shape="rect" id="node1" href="api/pandemonium.cumulants.Cumulant.html#pandemonium.cumulants.Cumulant" target="_top" title="A signal of interest :math:`z` accumulated over time" alt="" coords="5,129,91,155"/>
@@ -674,8 +711,8 @@
 </div>
 <div class="section" id="module-pandemonium.continuations">
 <span id="pandemonium-continuations-module"></span><h2>pandemonium.continuations Module<a class="headerlink" href="#module-pandemonium.continuations" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id14">
-<h3>Classes<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id16">
+<h3>Classes<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -700,8 +737,8 @@
 </tbody>
 </table>
 </div>
-<div class="section" id="id15">
-<h3>Class Inheritance Diagram<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id17">
+<h3>Class Inheritance Diagram<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
 <div class="graphviz"><img src="_images/inheritance-ac8c6fb44a63ee1718324a72c7462851aff2f298.png" alt="Inheritance diagram of pandemonium.continuations.ConstantContinuation, pandemonium.continuations.ContinuationFunction, pandemonium.continuations.DiffContinuation, pandemonium.continuations.SigmoidContinuation, pandemonium.continuations.TerminationCritic" usemap="#inheritanceb75acfbdc6" class="inheritance graphviz" /></div>
 <map id="inheritanceb75acfbdc6" name="inheritanceb75acfbdc6">
 <area shape="rect" id="node1" href="api/pandemonium.continuations.ConstantContinuation.html#pandemonium.continuations.ConstantContinuation" target="_top" title="Special case of state independent discounting" alt="" coords="212,5,375,31"/>
@@ -713,8 +750,8 @@
 </div>
 <div class="section" id="module-pandemonium.experience">
 <span id="pandemonium-experience-package"></span><h2>pandemonium.experience Package<a class="headerlink" href="#module-pandemonium.experience" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id16">
-<h3>Classes<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id18">
+<h3>Classes<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -727,7 +764,7 @@
 <tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.experience.PER.html#pandemonium.experience.PER" title="pandemonium.experience.PER"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PER</span></code></a>(size, batch_size[, alpha, beta, epsilon])</p></td>
 <td><p>Prioritized Experience Replay buffer</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.experience.ReplayBuffer.html#pandemonium.experience.ReplayBuffer" title="pandemonium.experience.ReplayBuffer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReplayBuffer</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.experience.ReplayBuffer.html#pandemonium.experience.ReplayBuffer" title="pandemonium.experience.ReplayBuffer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReplayBuffer</span></code></a></p></td>
 <td><p>Registrar for replay buffers</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.experience.ReplayBufferMixin.html#pandemonium.experience.ReplayBufferMixin" title="pandemonium.experience.ReplayBufferMixin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReplayBufferMixin</span></code></a>(replay_buffer[, …])</p></td>
@@ -740,7 +777,7 @@
 <td><p>Used in the UNREAL architecture for the auxiliary reward prediction task.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.experience.Trajectory.html#pandemonium.experience.Trajectory" title="pandemonium.experience.Trajectory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Trajectory</span></code></a></p></td>
-<td><p>A batch of <a href="#id17"><span class="problematic" id="id18">``</span></a>Transition``s.</p></td>
+<td><p>A batch of <a href="#id19"><span class="problematic" id="id20">``</span></a>Transition``s.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.experience.Transition.html#pandemonium.experience.Transition" title="pandemonium.experience.Transition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Transition</span></code></a></p></td>
 <td><p>An experience tuple.</p></td>
@@ -748,41 +785,41 @@
 </tbody>
 </table>
 </div>
-<div class="section" id="id19">
-<h3>Class Inheritance Diagram<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id21">
+<h3>Class Inheritance Diagram<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h3>
 <div class="graphviz"><img src="_images/inheritance-16345a4e62890faf0aa8c30abd0fd13bc2bf39fe.png" alt="Inheritance diagram of pandemonium.experience.buffers.ER, pandemonium.experience.buffers.PER, pandemonium.experience.buffers.ReplayBuffer, pandemonium.experience.buffers.ReplayBufferMixin, pandemonium.experience.buffers.SegmentedER, pandemonium.experience.buffers.SkewedER, pandemonium.experience.experience.Trajectory, pandemonium.experience.experience.Transition" class="inheritance graphviz" /></div>
 </div>
 </div>
 <div class="section" id="module-pandemonium.traces">
 <span id="pandemonium-traces-module"></span><h2>pandemonium.traces Module<a class="headerlink" href="#module-pandemonium.traces" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id20">
-<h3>Classes<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id22">
+<h3>Classes<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.traces.AccumulatingTrace.html#pandemonium.traces.AccumulatingTrace" title="pandemonium.traces.AccumulatingTrace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AccumulatingTrace</span></code></a>(λ, phi_dim)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.traces.AccumulatingTrace.html#pandemonium.traces.AccumulatingTrace" title="pandemonium.traces.AccumulatingTrace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AccumulatingTrace</span></code></a>(λ, trace_dim)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.traces.DutchTrace.html#pandemonium.traces.DutchTrace" title="pandemonium.traces.DutchTrace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DutchTrace</span></code></a>(λ, phi_dim)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.traces.DutchTrace.html#pandemonium.traces.DutchTrace" title="pandemonium.traces.DutchTrace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DutchTrace</span></code></a>(λ, trace_dim)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.traces.EligibilityTrace.html#pandemonium.traces.EligibilityTrace" title="pandemonium.traces.EligibilityTrace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EligibilityTrace</span></code></a>(λ, phi_dim)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.traces.EligibilityTrace.html#pandemonium.traces.EligibilityTrace" title="pandemonium.traces.EligibilityTrace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EligibilityTrace</span></code></a>(λ, trace_dim)</p></td>
 <td><p>Base class for various eligibility traces in <span class="math notranslate nohighlight">\(\TD\)</span> learners.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.traces.Retrace.html#pandemonium.traces.Retrace" title="pandemonium.traces.Retrace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Retrace</span></code></a>(λ, phi_dim)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="api/pandemonium.traces.Retrace.html#pandemonium.traces.Retrace" title="pandemonium.traces.Retrace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Retrace</span></code></a>(λ, trace_dim)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.traces.Vtrace.html#pandemonium.traces.Vtrace" title="pandemonium.traces.Vtrace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vtrace</span></code></a>(λ, phi_dim)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/pandemonium.traces.Vtrace.html#pandemonium.traces.Vtrace" title="pandemonium.traces.Vtrace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Vtrace</span></code></a>(λ, trace_dim)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="section" id="id21">
-<h3>Class Inheritance Diagram<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id23">
+<h3>Class Inheritance Diagram<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h3>
 <div class="graphviz"><img src="_images/inheritance-f5e3510d952eb294823f9598b1253d8dd8059f81.png" alt="Inheritance diagram of pandemonium.traces.AccumulatingTrace, pandemonium.traces.DutchTrace, pandemonium.traces.EligibilityTrace, pandemonium.traces.Retrace, pandemonium.traces.Vtrace" usemap="#inheritance3764e7e29b" class="inheritance graphviz" /></div>
 <map id="inheritance3764e7e29b" name="inheritance3764e7e29b">
 <area shape="rect" id="node1" href="api/pandemonium.traces.AccumulatingTrace.html#pandemonium.traces.AccumulatingTrace" target="_top" title="AccumulatingTrace" alt="" coords="171,5,316,31"/>

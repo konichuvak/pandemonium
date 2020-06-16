@@ -5,13 +5,3 @@ PredictionDemon
 
 .. autoclass:: PredictionDemon
    :show-inheritance:
-
-   .. rubric:: Methods Summary
-
-   .. autosummary::
-
-      ~PredictionDemon.predict
-
-   .. rubric:: Methods Documentation
-
-   .. automethod:: predict

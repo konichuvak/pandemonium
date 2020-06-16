@@ -8,6 +8,9 @@ Library Reference
 .. automodapi:: pandemonium.demons
     :inheritance-diagram:
 
+.. automodapi:: pandemonium.implementations
+    :inheritance-diagram:
+
 .. automodapi:: pandemonium.horde
 
 .. automodapi:: pandemonium.policies

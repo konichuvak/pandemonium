@@ -10,8 +10,10 @@ DiffPolicy
 
    .. autosummary::
 
+      ~DiffPolicy.delta
       ~DiffPolicy.dist
 
    .. rubric:: Methods Documentation
 
+   .. automethod:: delta
    .. automethod:: dist

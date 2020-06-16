@@ -1,0 +1,25 @@
+<map id="inheritanceb0cfb89022" name="inheritanceb0cfb89022">
+<area shape="rect" id="node1" title="Categorical Q&#45;learning mixin." alt="" coords="7,207,112,232"/>
+<area shape="rect" id="node2" title="Learns the optimal policy while learning to predict" alt="" coords="172,109,286,134"/>
+<area shape="rect" id="node3" title="**General Value Function Approximator**" alt="" coords="24,159,95,183"/>
+<area shape="rect" id="node6" title="Base class fot parametrized Demons implemented in PyTorch" alt="" coords="161,60,298,85"/>
+<area shape="rect" id="node8" title="Base class for forward&#45;view :math:`TD` methods." alt="" coords="358,274,439,299"/>
+<area shape="rect" id="node13" title="Base class for backward&#45;view (online) :math:`TD` methods." alt="" coords="358,159,439,183"/>
+<area shape="rect" id="node16" title="Collects factual knowledge about environment by learning to predict" alt="" coords="163,208,296,233"/>
+<area shape="rect" id="node4" title="Mixin for value&#45;based control algorithms that uses two separate" alt="" coords="5,12,114,37"/>
+<area shape="rect" id="node5" title="Approximates state or state&#45;action values using linear projection" alt="" coords="345,58,452,83"/>
+<area shape="rect" id="node7" title="Base class for all neural network modules." alt="" coords="24,60,95,85"/>
+<area shape="rect" id="node9" title="Offline :math:`TD` for control tasks." alt="" coords="508,248,636,273"/>
+<area shape="rect" id="node11" title="Offline :math:`TD` for prediction tasks." alt="" coords="499,296,645,321"/>
+<area shape="rect" id="node21" title="Truncated :math:`TD{(
+ambda)}`" alt="" coords="537,345,607,370"/>
+<area shape="rect" id="node14" title="Base class for online :math:`TD` methods for control tasks." alt="" coords="509,151,636,176"/>
+<area shape="rect" id="node17" title="Classic Q&#45;learning update rule." alt="" coords="529,102,615,127"/>
+<area shape="rect" id="node18" title="Semi&#45;gradient :math:`SARSA{(
+ambda)}`." alt="" coords="537,5,607,30"/>
+<area shape="rect" id="node19" title="Semi&#45;gradient Expected :math:`SARSA{(
+ambda)}`." alt="" coords="537,54,607,79"/>
+<area shape="rect" id="node15" title="Semi&#45;gradient :math:`TD{(
+ambda)}` rule for estimating :math:`tilde{v} approx v_{pi}`" alt="" coords="500,199,644,224"/>
+<area shape="rect" id="node20" title=":math:`n`&#45;step :math:`TD` for estimating :math:`V approx v_{pi}`" alt="" coords="692,345,763,370"/>
+</map>

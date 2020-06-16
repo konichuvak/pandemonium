@@ -5,13 +5,3 @@ DuellingMixin
 
 .. autoclass:: DuellingMixin
    :show-inheritance:
-
-   .. rubric:: Methods Summary
-
-   .. autosummary::
-
-      ~DuellingMixin.predict_q
-
-   .. rubric:: Methods Documentation
-
-   .. automethod:: predict_q

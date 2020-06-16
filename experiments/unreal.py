@@ -16,8 +16,9 @@ from pandemonium.envs import DeepmindLabEnv
 from pandemonium.envs.wrappers import Torch
 from pandemonium.experience import Transition, Trajectory
 from pandemonium.experience.buffers import ER, SkewedER
+from pandemonium.implementations.a2c import AC
 from pandemonium.implementations.unreal import (ValueReplay, RewardPrediction,
-                                                PixelControl, AC)
+                                                PixelControl)
 from pandemonium.policies.discrete import Greedy
 
 # device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

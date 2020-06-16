@@ -13,8 +13,7 @@ class Transition(NamedTuple):
     The main purpose of the class is to hold $(s,a,r,s')$ tuples.
     Additional info required by some algorithms can also be added.
 
-    .. todo::
-        consider using dataclasses from python3.7
+    TODO: consider using dataclasses from python3.7
         pros:
             mutability
         cons:
@@ -39,7 +38,7 @@ class Transition(NamedTuple):
 
 
 class Trajectory(Transition):
-    """ A batch of ``Transition``s. """
+    r""" A batch of ``Transition``s. """
 
     done: torch.Tensor
     ρ: torch.Tensor
@@ -52,8 +51,12 @@ class Trajectory(Transition):
 
         s0 = torch.cat(batch.s0)
         s1 = torch.cat(batch.s1)
+
+        # TODO: asses the trade-offs with replacing by a batched version
+        #   i.e. demon.feature(batch.x0)
         x0 = torch.cat(batch.x0)
         x1 = torch.cat(batch.x1)
+
         a0 = torch.tensor(batch.a, device=device)
         a1 = torch.tensor(batch.a1, device=device)
         r = torch.tensor(batch.r, dtype=torch.float, device=device)

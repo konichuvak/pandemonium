@@ -26,7 +26,7 @@
         <script type="text/javascript" src="../_static/doctools.js"></script>
         <script type="text/javascript" src="../_static/language_data.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}"}}})</script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}", "SARSE": "\\operatorname{SARSE}"}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -38,7 +38,7 @@
   <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="ParametricDemon" href="pandemonium.demons.ParametricDemon.html" />
+    <link rel="next" title="OnlineTDControl" href="pandemonium.demons.OnlineTDControl.html" />
     <link rel="prev" title="OfflineTDPrediction" href="pandemonium.demons.OfflineTDPrediction.html" /> 
 </head>
 
@@ -94,38 +94,32 @@
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.gvf">pandemonium.gvf Module</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../package-ref.html#module-pandemonium.demons">pandemonium.demons Package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="../package-ref.html#id3">Classes</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.A2C.html">A2C</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.AC.html">AC</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.CategoricalQ.html">CategoricalQ</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.ControlDemon.html">ControlDemon</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DQN.html">DQN</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DeepSARSA.html">DeepSARSA</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DeepSARSE.html">DeepSARSE</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.Demon.html">Demon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DuellingMixin.html">DuellingMixin</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.LinearDemon.html">LinearDemon</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OC.html">OC</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OfflineTD.html">OfflineTD</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OfflineTDControl.html">OfflineTDControl</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OfflineTDPrediction.html">OfflineTDPrediction</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">OnlineTD</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OnlineTDControl.html">OnlineTDControl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OnlineTDPrediction.html">OnlineTDPrediction</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.ParametricDemon.html">ParametricDemon</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.PixelControl.html">PixelControl</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.PredictionDemon.html">PredictionDemon</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.RewardPrediction.html">RewardPrediction</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.SARSAlambda.html">SARSAlambda</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TD0.html">TD0</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TDAC.html">TDAC</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TDlambda.html">TDlambda</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.QLearning.html">QLearning</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.SARSA.html">SARSA</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.SARSE.html">SARSE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TDControl.html">TDControl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TDPrediction.html">TDPrediction</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TDn.html">TDn</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TTD.html">TTD</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TrueOnlineTD.html">TrueOnlineTD</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.ValueReplay.html">ValueReplay</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../package-ref.html#id4">Class Inheritance Diagram</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.implementations">pandemonium.implementations Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.horde">pandemonium.horde Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.policies">pandemonium.policies Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.networks">pandemonium.networks Package</a></li>
@@ -213,7 +207,7 @@
 <h1>OnlineTD<a class="headerlink" href="#onlinetd" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pandemonium.demons.OnlineTD">
-<em class="property">class </em><code class="sig-name descname">OnlineTD</code><span class="sig-paren">(</span><em class="sig-param">feature, trace_decay: float, eligibility: Type[pandemonium.traces.EligibilityTrace] = typing.Type[pandemonium.traces.AccumulatingTrace], **kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.OnlineTD" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">OnlineTD</code><span class="sig-paren">(</span><em class="sig-param">trace_decay: float</em>, <em class="sig-param">eligibility: Type[pandemonium.traces.EligibilityTrace] = &lt;class 'pandemonium.traces.AccumulatingTrace'&gt;</em>, <em class="sig-param">criterion: callable = &lt;function smooth_l1_loss&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.OnlineTD" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.demon.Demon</span></code></p>
 <p>Base class for backward-view (online) <span class="math notranslate nohighlight">\(\TD\)</span> methods.</p>
 <p class="rubric">Methods Summary</p>
@@ -228,6 +222,9 @@
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.demons.OnlineTD.learn" title="pandemonium.demons.OnlineTD.learn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">learn</span></code></a>(self, t)</p></td>
 <td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.demons.OnlineTD.target" title="pandemonium.demons.OnlineTD.target"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target</span></code></a>(self, t, v)</p></td>
+<td><p>Computes one-step update target.</p></td>
 </tr>
 </tbody>
 </table>
@@ -245,6 +242,12 @@ applied on every <cite>Transition</cite>.</p>
 <code class="sig-name descname">learn</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">t: pandemonium.experience.experience.Transition</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.OnlineTD.learn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="method">
+<dt id="pandemonium.demons.OnlineTD.target">
+<code class="sig-name descname">target</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">t: pandemonium.experience.experience.Transition</em>, <em class="sig-param">v: torch.Tensor</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.OnlineTD.target" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes one-step update target.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -257,7 +260,7 @@ applied on every <cite>Transition</cite>.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="pandemonium.demons.ParametricDemon.html" class="btn btn-neutral float-right" title="ParametricDemon" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="pandemonium.demons.OnlineTDControl.html" class="btn btn-neutral float-right" title="OnlineTDControl" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="pandemonium.demons.OfflineTDPrediction.html" class="btn btn-neutral float-left" title="OfflineTDPrediction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

@@ -11,7 +11,7 @@ from pandemonium.experience import Experience
 from pandemonium.policies import DiffPolicy
 
 
-class AC(ParametricDemon):
+class ActorCritic(ParametricDemon):
     r""" Base class for Actor-Critic architectures.
 
     .. math::
@@ -59,7 +59,7 @@ class AC(ParametricDemon):
         return loss, stats
 
 
-class A2C(AC, TDControl):
+class A2C(ActorCritic, TDControl):
     r""" Advantage Actor Critic.
 
     Uses two demons to approximate $v_{\pi_{\theta}}(s)$ and
@@ -79,7 +79,7 @@ class A2C(AC, TDControl):
         return loss, info.pop('td_error'), info
 
 
-class TDAC(AC, TDPrediction):
+class TDAC(ActorCritic, TDPrediction):
     r""" Actor-Critic that approximates advantage with :math:`\TD` error.
 
     .. math::

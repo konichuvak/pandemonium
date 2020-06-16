@@ -26,7 +26,7 @@
         <script type="text/javascript" src="../_static/doctools.js"></script>
         <script type="text/javascript" src="../_static/language_data.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}"}}})</script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}", "SARSE": "\\operatorname{SARSE}"}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -39,7 +39,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="DuellingMixin" href="pandemonium.demons.DuellingMixin.html" />
-    <link rel="prev" title="DeepSARSE" href="pandemonium.demons.DeepSARSE.html" /> 
+    <link rel="prev" title="ControlDemon" href="pandemonium.demons.ControlDemon.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -94,38 +94,32 @@
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.gvf">pandemonium.gvf Module</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="../package-ref.html#module-pandemonium.demons">pandemonium.demons Package</a><ul class="current">
 <li class="toctree-l3 current"><a class="reference internal" href="../package-ref.html#id3">Classes</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.A2C.html">A2C</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.AC.html">AC</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.CategoricalQ.html">CategoricalQ</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.ControlDemon.html">ControlDemon</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DQN.html">DQN</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DeepSARSA.html">DeepSARSA</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DeepSARSE.html">DeepSARSE</a></li>
 <li class="toctree-l4 current"><a class="current reference internal" href="#">Demon</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.DuellingMixin.html">DuellingMixin</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.LinearDemon.html">LinearDemon</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OC.html">OC</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OfflineTD.html">OfflineTD</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OfflineTDControl.html">OfflineTDControl</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OfflineTDPrediction.html">OfflineTDPrediction</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OnlineTD.html">OnlineTD</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OnlineTDControl.html">OnlineTDControl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.OnlineTDPrediction.html">OnlineTDPrediction</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.ParametricDemon.html">ParametricDemon</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.PixelControl.html">PixelControl</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.PredictionDemon.html">PredictionDemon</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.RewardPrediction.html">RewardPrediction</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.SARSAlambda.html">SARSAlambda</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TD0.html">TD0</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TDAC.html">TDAC</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TDlambda.html">TDlambda</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.QLearning.html">QLearning</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.SARSA.html">SARSA</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.SARSE.html">SARSE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TDControl.html">TDControl</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TDPrediction.html">TDPrediction</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TDn.html">TDn</a></li>
 <li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TTD.html">TTD</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.TrueOnlineTD.html">TrueOnlineTD</a></li>
-<li class="toctree-l4"><a class="reference internal" href="pandemonium.demons.ValueReplay.html">ValueReplay</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../package-ref.html#id4">Class Inheritance Diagram</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.implementations">pandemonium.implementations Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.horde">pandemonium.horde Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.policies">pandemonium.policies Package</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.networks">pandemonium.networks Package</a></li>
@@ -221,8 +215,8 @@ for learning one piece of predictive knowledge about the main agent’s
 interaction with its environment.</p>
 <p>Demon learns an approximate value function <span class="math notranslate nohighlight">\(\tilde{V}\)</span> (avf), to the
 general value function (gvf) that corresponds to the setting of the
-three question functions: <span class="math notranslate nohighlight">\(\pi\)</span>, <span class="math notranslate nohighlight">\(\gamma\)</span>, and z. The tools that the demon
-uses to learn the approximation are called answers functions and are
+three “question” functions: <span class="math notranslate nohighlight">\(\pi\)</span>, <span class="math notranslate nohighlight">\(\gamma\)</span>, and z. The tools that the demon
+uses to learn the approximation are called “answer” functions and are
 comprised of <span class="math notranslate nohighlight">\(\mu\)</span>, <span class="math notranslate nohighlight">\(\phi\)</span> and <span class="math notranslate nohighlight">\(\lambda\)</span>.</p>
 <dl class="attribute">
 <dt id="pandemonium.demons.Demon.gvf">
@@ -345,7 +339,7 @@ sensor readings (not just the ones corresponding to light).</p>
         <a href="pandemonium.demons.DuellingMixin.html" class="btn btn-neutral float-right" title="DuellingMixin" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="pandemonium.demons.DeepSARSE.html" class="btn btn-neutral float-left" title="DeepSARSE" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="pandemonium.demons.ControlDemon.html" class="btn btn-neutral float-left" title="ControlDemon" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -9,6 +9,7 @@ from pandemonium.demons.control import (QLearning, OfflineTDControl,
 from pandemonium.demons.offline_td import TDn
 from pandemonium.experience import Transition
 from pandemonium.policies.utils import torch_argmax_mask
+from pandemonium.utilities.utilities import get_all_classes
 
 
 class MultistepQLearning(QLearning, OfflineTDControl, TDn):
@@ -17,10 +18,12 @@ class MultistepQLearning(QLearning, OfflineTDControl, TDn):
 
 
 class OnlineQLearning(QLearning, OnlineTDControl):
-    ...
+
+    def __init__(self, **kwargs):
+        super().__init__(trace_decay=0., **kwargs)
 
 
-class DoubleQLearning(QLearning, OnlineTDControl):
+class DoubleQLearning(OnlineQLearning):
     """ Implements online version of Double Q-learning. """
 
     def __init__(self, **kwargs):
@@ -47,3 +50,6 @@ class DoubleQLearning(QLearning, OnlineTDControl):
         δ = z + γ * q_t - q_tm1
         loss = self.criterion(input=q_tm1, target=z + γ * q_t)
         return loss, {'td_error': δ.item()}
+
+
+__all__ = get_all_classes(__name__)

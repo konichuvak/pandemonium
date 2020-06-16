@@ -1,7 +1,0 @@
-PixelControl
-============
-
-.. currentmodule:: pandemonium.demons
-
-.. autoclass:: PixelControl
-   :show-inheritance:

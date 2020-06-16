@@ -29,10 +29,15 @@ class TDControl(ParametricDemon, ControlDemon):
 
     @torch.no_grad()
     def q_t(self, exp: Experience):
-        r""" Computes action-value targets $Q(s_{t+1}, \cdot)$.
+        r""" Computes action-value targets :math:`Q(s_{t+1}, \hat{a})`.
 
-        Algorithms differ in the way $\cdot$ is chosen.
-        Q-learning takes max, SARSA takes action according to behavior policy.
+        Algorithms differ in the way $\hat{a}$ is chosen.
+
+        .. math::
+            \begin{align*}
+                \text{Q-learning} &: \hat{a} = \argmax_{a \in \mathcal{A}}Q(s_{t+1}, a) \\
+                \SARSA &: \hat{a} = \mu(s_{t+1})
+            \end{align*}
         """
         raise NotImplementedError
 
@@ -135,17 +140,19 @@ class QLearning(TDControl):
         \max_\limits{a \in \mathcal{A}}Q(S_{t+1}, a) = \sum_{a \in \mathcal{A}} \pi(a|S_{t+1})Q(S_{t+1}, a)
 
     In this case the target Q-value estimator would be:
-    ```
-    @torch.no_grad()
-    def q_t(self, exp: Experience):
-        q = self.target_aqf(exp.x1)
-        dist = self.gvf.π.dist(exp.x1, q_fn=self.aqf)
-        return torch.einsum('ba,ba->b', q, dist.probs)
-    ```
+
+    .. code-block:: python
+
+        @torch.no_grad()
+        def q_t(self, exp: Experience):
+            q = self.target_aqf(exp.x1)
+            dist = self.gvf.π.dist(exp.x1, q_fn=self.aqf)
+            return torch.einsum('ba,ba->b', q, dist.probs)
+
     We do not actually use this update in here since taking a max is more
     efficient than computing weights and taking a dot product.
 
-    # TODO: integrate
+    TODO: integrate
         online:
             duelling
         offline:
@@ -154,7 +161,7 @@ class QLearning(TDControl):
     """
 
     def __init__(self, **kwargs):
-        super().__init__(trace_decay=0, **kwargs)
+        super().__init__(**kwargs)
 
         # Ensures that target policy is greedy wrt to the Q function
         if not isinstance(self.gvf.π, Egreedy):

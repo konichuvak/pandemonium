@@ -1,12 +1,13 @@
 import torch
 
 from pandemonium.demons import Loss
-from pandemonium.demons.control import AC, DQN
+from pandemonium.demons.ac import ActorCritic
+from pandemonium.implementations.rainbow import DQN
 from pandemonium.experience import ER, Trajectory, Transitions
 from pandemonium.policies import HierarchicalPolicy
 
 
-class OC(AC, DQN):
+class OC(ActorCritic, DQN):
     """ DQN style Option-Critic architecture """
 
     def __init__(self, actor: HierarchicalPolicy, **kwargs):

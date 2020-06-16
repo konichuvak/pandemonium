@@ -379,16 +379,16 @@ class PER(ER):
 
     def update_priorities(self, idxes, priorities):
         """Update priorities of sampled transitions.
-        sets priority of transition at index idxes[i] in buffer
-        to priorities[i].
+
+        Sets priority of transition at index idxes[i] to priorities[i].
+
         Parameters
         ----------
-        idxes: [int]
-          List of idxes of sampled transitions
-        priorities: [float]
-          List of updated priorities corresponding to
-          transitions at the sampled idxes denoted by
-          variable `idxes`.
+        idxes: List[int]
+            List of idxes of sampled transitions
+        priorities: List[float]
+            List of updated priorities corresponding to transitions at the
+            sampled idxes denoted by variable `idxes`.
         """
         assert len(idxes) == len(priorities)
         for idx, priority in zip(idxes, priorities):

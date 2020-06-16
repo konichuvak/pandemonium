@@ -11,11 +11,7 @@ OfflineTDPrediction
    .. autosummary::
 
       ~OfflineTDPrediction.delta
-      ~OfflineTDPrediction.target
-      ~OfflineTDPrediction.v_target
 
    .. rubric:: Methods Documentation
 
    .. automethod:: delta
-   .. automethod:: target
-   .. automethod:: v_target

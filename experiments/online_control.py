@@ -47,7 +47,7 @@ def create_demons(config, env, φ, μ) -> Horde:
     aqf = torch.nn.Linear(φ.feature_dim, env.action_space.n, bias=False)
     torch.nn.init.zeros_(aqf.weight)
 
-    control_demon = OnlineQLearning(
+    control_demon = OnlineSARSA(
         gvf=GVF(
             target_policy=μ,
             cumulant=Fitness(env),
@@ -56,8 +56,7 @@ def create_demons(config, env, φ, μ) -> Horde:
         feature=φ,
         behavior_policy=μ,
         aqf=aqf,
-        # trace_decay=config['trace_decay'],
-        double=True,
+        trace_decay=config['trace_decay'],
     )
     control_demon.μ.act = partial(control_demon.μ.act, q_fn=aqf)
 

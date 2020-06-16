@@ -12,6 +12,7 @@ from pandemonium.experience import (ER, PER, ReplayBufferMixin, Trajectory,
                                     Transitions)
 from pandemonium.networks import TargetNetMixin
 from pandemonium.policies import Policy, torch_argmax_mask
+from pandemonium.utilities.utilities import get_all_classes
 
 
 class DQN(OfflineTDControl,
@@ -42,6 +43,7 @@ class DQN(OfflineTDControl,
                  v_min: float = None,
                  v_max: float = None,
                  duelling: bool = False,
+                 double: bool = False,
                  **kwargs):
 
         # Adds a replay buffer
@@ -89,6 +91,7 @@ class DQN(OfflineTDControl,
             warn('target avf == avf')
 
         # Ensures that that target network exists
+        self.double = double
         if self.double:
             assert target_update_freq > 0
 
@@ -145,3 +148,6 @@ class DQN(OfflineTDControl,
 
     def __str__(self):
         return super().__str__()
+
+
+__all__ = get_all_classes(__name__)

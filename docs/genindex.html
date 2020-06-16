@@ -27,7 +27,7 @@
         <script type="text/javascript" src="_static/doctools.js"></script>
         <script type="text/javascript" src="_static/language_data.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-        <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}"}}})</script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}", "SARSE": "\\operatorname{SARSE}"}}})</script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -175,9 +175,9 @@
  | <a href="#I"><strong>I</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
- | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
+ | <a href="#Q"><strong>Q</strong></a>
  | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
@@ -223,10 +223,6 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pandemonium.demons.A2C.html#pandemonium.demons.A2C">A2C (class in pandemonium.demons)</a>
-</li>
-      <li><a href="api/pandemonium.demons.AC.html#pandemonium.demons.AC">AC (class in pandemonium.demons)</a>
-</li>
       <li><a href="api/pandemonium.traces.AccumulatingTrace.html#pandemonium.traces.AccumulatingTrace">AccumulatingTrace (class in pandemonium.traces)</a>
 </li>
       <li><a href="api/pandemonium.policies.Egreedy.html#pandemonium.policies.Egreedy.act">act() (Egreedy method)</a>
@@ -243,8 +239,6 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pandemonium.demons.AC.html#pandemonium.demons.AC.actor_loss">actor_loss() (AC method)</a>
-</li>
       <li><a href="api/pandemonium.experience.ER.html#pandemonium.experience.ER.add">add() (ER method)</a>
 
       <ul>
@@ -269,12 +263,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pandemonium.networks.BaseNetwork.html#pandemonium.networks.BaseNetwork">BaseNetwork (class in pandemonium.networks)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pandemonium.demons.ControlDemon.html#pandemonium.demons.ControlDemon.behavior_policy">behavior_policy() (ControlDemon method)</a>
 
       <ul>
         <li><a href="api/pandemonium.demons.Demon.html#pandemonium.demons.Demon.behavior_policy">(Demon method)</a>
+</li>
+        <li><a href="api/pandemonium.implementations.DoubleQLearning.html#pandemonium.implementations.DoubleQLearning.behavior_policy">(DoubleQLearning method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -295,24 +289,16 @@
 </li>
       <li><a href="api/pandemonium.policies.Continuous.html#pandemonium.policies.Continuous">Continuous (class in pandemonium.policies)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pandemonium.demons.ControlDemon.html#pandemonium.demons.ControlDemon">ControlDemon (class in pandemonium.demons)</a>
 </li>
       <li><a href="api/pandemonium.networks.conv2d_size_out.html#pandemonium.networks.conv2d_size_out">conv2d_size_out() (in module pandemonium.networks)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pandemonium.networks.ConvBody.html#pandemonium.networks.ConvBody">ConvBody (class in pandemonium.networks)</a>
 </li>
       <li><a href="api/pandemonium.networks.ConvLSTM.html#pandemonium.networks.ConvLSTM">ConvLSTM (class in pandemonium.networks)</a>
 </li>
-      <li><a href="api/pandemonium.demons.A2C.html#pandemonium.demons.A2C.critic_loss">critic_loss() (A2C method)</a>
-
-      <ul>
-        <li><a href="api/pandemonium.demons.AC.html#pandemonium.demons.AC.critic_loss">(AC method)</a>
-</li>
-        <li><a href="api/pandemonium.demons.TDAC.html#pandemonium.demons.TDAC.critic_loss">(TDAC method)</a>
-</li>
-      </ul></li>
       <li><a href="api/pandemonium.cumulants.Cumulant.html#pandemonium.cumulants.Cumulant">Cumulant (class in pandemonium.cumulants)</a>
 </li>
       <li><a href="api/pandemonium.gvf.GVF.html#pandemonium.gvf.GVF.cumulant">cumulant() (GVF method)</a>
@@ -327,16 +313,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pandemonium.networks.deconv2d_size_out.html#pandemonium.networks.deconv2d_size_out">deconv2d_size_out() (in module pandemonium.networks)</a>
 </li>
-      <li><a href="api/pandemonium.demons.DeepSARSA.html#pandemonium.demons.DeepSARSA">DeepSARSA (class in pandemonium.demons)</a>
-</li>
-      <li><a href="api/pandemonium.demons.DeepSARSE.html#pandemonium.demons.DeepSARSE">DeepSARSE (class in pandemonium.demons)</a>
-</li>
-      <li><a href="api/pandemonium.demons.AC.html#pandemonium.demons.AC.delta">delta() (AC method)</a>
+      <li><a href="api/pandemonium.demons.Demon.html#pandemonium.demons.Demon.delta">delta() (Demon method)</a>
 
       <ul>
-        <li><a href="api/pandemonium.demons.Demon.html#pandemonium.demons.Demon.delta">(Demon method)</a>
+        <li><a href="api/pandemonium.policies.DiffPolicy.html#pandemonium.policies.DiffPolicy.delta">(DiffPolicy method)</a>
 </li>
-        <li><a href="api/pandemonium.demons.OC.html#pandemonium.demons.OC.delta">(OC method)</a>
+        <li><a href="api/pandemonium.implementations.DoubleQLearning.html#pandemonium.implementations.DoubleQLearning.delta">(DoubleQLearning method)</a>
 </li>
         <li><a href="api/pandemonium.demons.OfflineTD.html#pandemonium.demons.OfflineTD.delta">(OfflineTD method)</a>
 </li>
@@ -346,23 +328,23 @@
 </li>
         <li><a href="api/pandemonium.demons.OnlineTD.html#pandemonium.demons.OnlineTD.delta">(OnlineTD method)</a>
 </li>
-        <li><a href="api/pandemonium.demons.RewardPrediction.html#pandemonium.demons.RewardPrediction.delta">(RewardPrediction method)</a>
+        <li><a href="api/pandemonium.demons.OnlineTDControl.html#pandemonium.demons.OnlineTDControl.delta">(OnlineTDControl method)</a>
 </li>
-        <li><a href="api/pandemonium.demons.SARSAlambda.html#pandemonium.demons.SARSAlambda.delta">(SARSAlambda method)</a>
+        <li><a href="api/pandemonium.demons.OnlineTDPrediction.html#pandemonium.demons.OnlineTDPrediction.delta">(OnlineTDPrediction method)</a>
 </li>
-        <li><a href="api/pandemonium.demons.TDlambda.html#pandemonium.demons.TDlambda.delta">(TDlambda method)</a>
+        <li><a href="api/pandemonium.implementations.RewardPrediction.html#pandemonium.implementations.RewardPrediction.delta">(RewardPrediction method)</a>
 </li>
         <li><a href="api/pandemonium.policies.VPG.html#pandemonium.policies.VPG.delta">(VPG method)</a>
 </li>
       </ul></li>
       <li><a href="api/pandemonium.demons.Demon.html#pandemonium.demons.Demon">Demon (class in pandemonium.demons)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pandemonium.continuations.DiffContinuation.html#pandemonium.continuations.DiffContinuation">DiffContinuation (class in pandemonium.continuations)</a>
 </li>
       <li><a href="api/pandemonium.policies.DiffPolicy.html#pandemonium.policies.DiffPolicy">DiffPolicy (class in pandemonium.policies)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pandemonium.policies.Discrete.html#pandemonium.policies.Discrete">Discrete (class in pandemonium.policies)</a>
 </li>
       <li><a href="api/pandemonium.continuations.DiffContinuation.html#pandemonium.continuations.DiffContinuation.dist">dist() (DiffContinuation method)</a>
@@ -387,7 +369,9 @@
         <li><a href="api/pandemonium.policies.VPG.html#pandemonium.policies.VPG.dist">(VPG method)</a>
 </li>
       </ul></li>
-      <li><a href="api/pandemonium.demons.DQN.html#pandemonium.demons.DQN">DQN (class in pandemonium.demons)</a>
+      <li><a href="api/pandemonium.implementations.DoubleQLearning.html#pandemonium.implementations.DoubleQLearning">DoubleQLearning (class in pandemonium.implementations)</a>
+</li>
+      <li><a href="api/pandemonium.implementations.DQN.html#pandemonium.implementations.DQN">DQN (class in pandemonium.implementations)</a>
 </li>
       <li><a href="api/pandemonium.demons.DuellingMixin.html#pandemonium.demons.DuellingMixin">DuellingMixin (class in pandemonium.demons)</a>
 </li>
@@ -405,17 +389,15 @@
 </li>
       <li><a href="api/pandemonium.demons.Demon.html#pandemonium.demons.Demon.eligibility">eligibility() (Demon method)</a>
 </li>
-      <li><a href="api/pandemonium.traces.EligibilityTrace.html#pandemonium.traces.EligibilityTrace">EligibilityTrace (class in pandemonium.traces)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pandemonium.traces.EligibilityTrace.html#pandemonium.traces.EligibilityTrace">EligibilityTrace (class in pandemonium.traces)</a>
+</li>
       <li><a href="api/pandemonium.cumulants.Empowerment.html#pandemonium.cumulants.Empowerment">Empowerment (class in pandemonium.cumulants)</a>
 </li>
       <li><a href="api/pandemonium.policies.Egreedy.html#pandemonium.policies.Egreedy.epsilon">epsilon (Egreedy attribute)</a>
 </li>
       <li><a href="api/pandemonium.experience.ER.html#pandemonium.experience.ER">ER (class in pandemonium.experience)</a>
-</li>
-      <li><a href="api/pandemonium.demons.OfflineTDControl.html#pandemonium.demons.OfflineTDControl.eval_actions">eval_actions() (OfflineTDControl method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -455,10 +437,12 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pandemonium.gvf.GVF.html#pandemonium.gvf.GVF">GVF (class in pandemonium.gvf)</a>
+      <li><a href="api/pandemonium.policies.Greedy.html#pandemonium.policies.Greedy">Greedy (class in pandemonium.policies)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pandemonium.gvf.GVF.html#pandemonium.gvf.GVF">GVF (class in pandemonium.gvf)</a>
+</li>
       <li><a href="api/pandemonium.demons.Demon.html#pandemonium.demons.Demon.gvf">gvf (Demon attribute)</a>
 </li>
   </ul></td>
@@ -506,19 +490,17 @@
       <ul>
         <li><a href="api/pandemonium.demons.Demon.html#pandemonium.demons.Demon.learn">(Demon method)</a>
 </li>
-        <li><a href="api/pandemonium.demons.DQN.html#pandemonium.demons.DQN.learn">(DQN method)</a>
+        <li><a href="api/pandemonium.implementations.DQN.html#pandemonium.implementations.DQN.learn">(DQN method)</a>
 </li>
         <li><a href="api/pandemonium.horde.Horde.html#pandemonium.horde.Horde.learn">(Horde method)</a>
-</li>
-        <li><a href="api/pandemonium.demons.OC.html#pandemonium.demons.OC.learn">(OC method)</a>
 </li>
         <li><a href="api/pandemonium.demons.OfflineTD.html#pandemonium.demons.OfflineTD.learn">(OfflineTD method)</a>
 </li>
         <li><a href="api/pandemonium.demons.OnlineTD.html#pandemonium.demons.OnlineTD.learn">(OnlineTD method)</a>
 </li>
-        <li><a href="api/pandemonium.demons.RewardPrediction.html#pandemonium.demons.RewardPrediction.learn">(RewardPrediction method)</a>
+        <li><a href="api/pandemonium.implementations.RewardPrediction.html#pandemonium.implementations.RewardPrediction.learn">(RewardPrediction method)</a>
 </li>
-        <li><a href="api/pandemonium.demons.ValueReplay.html#pandemonium.demons.ValueReplay.learn">(ValueReplay method)</a>
+        <li><a href="api/pandemonium.implementations.ValueReplay.html#pandemonium.implementations.ValueReplay.learn">(ValueReplay method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -538,12 +520,10 @@
       <li><a href="api/pandemonium.networks.ConvLSTM.html#pandemonium.networks.ConvLSTM.memory_state">memory_state (ConvLSTM attribute)</a>
 </li>
   </ul></td>
-</tr></table>
-
-<h2 id="N">N</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pandemonium.demons.OC.html#pandemonium.demons.OC.n_step_target">n_step_target() (OC method)</a>
+      <li><a href="api/pandemonium.implementations.MultistepQLearning.html#pandemonium.implementations.MultistepQLearning">MultistepQLearning (class in pandemonium.implementations)</a>
+</li>
+      <li><a href="api/pandemonium.implementations.MultistepSARSA.html#pandemonium.implementations.MultistepSARSA">MultistepSARSA (class in pandemonium.implementations)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -551,17 +531,23 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pandemonium.demons.OC.html#pandemonium.demons.OC">OC (class in pandemonium.demons)</a>
-</li>
       <li><a href="api/pandemonium.demons.OfflineTD.html#pandemonium.demons.OfflineTD">OfflineTD (class in pandemonium.demons)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pandemonium.demons.OfflineTDControl.html#pandemonium.demons.OfflineTDControl">OfflineTDControl (class in pandemonium.demons)</a>
 </li>
       <li><a href="api/pandemonium.demons.OfflineTDPrediction.html#pandemonium.demons.OfflineTDPrediction">OfflineTDPrediction (class in pandemonium.demons)</a>
 </li>
+      <li><a href="api/pandemonium.implementations.OnlineQLearning.html#pandemonium.implementations.OnlineQLearning">OnlineQLearning (class in pandemonium.implementations)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pandemonium.implementations.OnlineSARSA.html#pandemonium.implementations.OnlineSARSA">OnlineSARSA (class in pandemonium.implementations)</a>
+</li>
       <li><a href="api/pandemonium.demons.OnlineTD.html#pandemonium.demons.OnlineTD">OnlineTD (class in pandemonium.demons)</a>
+</li>
+      <li><a href="api/pandemonium.demons.OnlineTDControl.html#pandemonium.demons.OnlineTDControl">OnlineTDControl (class in pandemonium.demons)</a>
+</li>
+      <li><a href="api/pandemonium.demons.OnlineTDPrediction.html#pandemonium.demons.OnlineTDPrediction">OnlineTDPrediction (class in pandemonium.demons)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -583,45 +569,65 @@
 </li>
       <li><a href="package-ref.html#module-pandemonium.horde">pandemonium.horde (module)</a>
 </li>
+      <li><a href="package-ref.html#module-pandemonium.implementations">pandemonium.implementations (module)</a>
+</li>
       <li><a href="package-ref.html#module-pandemonium.networks">pandemonium.networks (module)</a>
 </li>
       <li><a href="package-ref.html#module-pandemonium.policies">pandemonium.policies (module)</a>
 </li>
       <li><a href="package-ref.html#module-pandemonium.traces">pandemonium.traces (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pandemonium.demons.ParametricDemon.html#pandemonium.demons.ParametricDemon">ParametricDemon (class in pandemonium.demons)</a>
 </li>
       <li><a href="api/pandemonium.experience.PER.html#pandemonium.experience.PER">PER (class in pandemonium.experience)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pandemonium.cumulants.PixelChange.html#pandemonium.cumulants.PixelChange">PixelChange (class in pandemonium.cumulants)</a>
 </li>
-      <li><a href="api/pandemonium.demons.PixelControl.html#pandemonium.demons.PixelControl">PixelControl (class in pandemonium.demons)</a>
+      <li><a href="api/pandemonium.implementations.PixelControl.html#pandemonium.implementations.PixelControl">PixelControl (class in pandemonium.implementations)</a>
 </li>
       <li><a href="api/pandemonium.policies.Policy.html#pandemonium.policies.Policy">Policy (class in pandemonium.policies)</a>
 </li>
-      <li><a href="api/pandemonium.demons.ControlDemon.html#pandemonium.demons.ControlDemon.predict">predict() (ControlDemon method)</a>
-
-      <ul>
-        <li><a href="api/pandemonium.demons.Demon.html#pandemonium.demons.Demon.predict">(Demon method)</a>
+      <li><a href="api/pandemonium.demons.Demon.html#pandemonium.demons.Demon.predict">predict() (Demon method)</a>
 </li>
-        <li><a href="api/pandemonium.demons.PredictionDemon.html#pandemonium.demons.PredictionDemon.predict">(PredictionDemon method)</a>
-</li>
-        <li><a href="api/pandemonium.demons.RewardPrediction.html#pandemonium.demons.RewardPrediction.predict">(RewardPrediction method)</a>
-</li>
-      </ul></li>
       <li><a href="api/pandemonium.demons.ControlDemon.html#pandemonium.demons.ControlDemon.predict_adv">predict_adv() (ControlDemon method)</a>
 </li>
       <li><a href="api/pandemonium.demons.ControlDemon.html#pandemonium.demons.ControlDemon.predict_q">predict_q() (ControlDemon method)</a>
+</li>
+      <li><a href="api/pandemonium.demons.ControlDemon.html#pandemonium.demons.ControlDemon.predict_target_adv">predict_target_adv() (ControlDemon method)</a>
+</li>
+      <li><a href="api/pandemonium.demons.ControlDemon.html#pandemonium.demons.ControlDemon.predict_target_q">predict_target_q() (ControlDemon method)</a>
+</li>
+      <li><a href="api/pandemonium.demons.PredictionDemon.html#pandemonium.demons.PredictionDemon">PredictionDemon (class in pandemonium.demons)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="Q">Q</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pandemonium.implementations.DQN.html#pandemonium.implementations.DQN.q_t">q_t() (DQN method)</a>
 
       <ul>
-        <li><a href="api/pandemonium.demons.DQN.html#pandemonium.demons.DQN.predict_q">(DQN method)</a>
+        <li><a href="api/pandemonium.demons.QLearning.html#pandemonium.demons.QLearning.q_t">(QLearning method)</a>
 </li>
-        <li><a href="api/pandemonium.demons.DuellingMixin.html#pandemonium.demons.DuellingMixin.predict_q">(DuellingMixin method)</a>
+        <li><a href="api/pandemonium.demons.SARSA.html#pandemonium.demons.SARSA.q_t">(SARSA method)</a>
+</li>
+        <li><a href="api/pandemonium.demons.SARSE.html#pandemonium.demons.SARSE.q_t">(SARSE method)</a>
+</li>
+        <li><a href="api/pandemonium.demons.TDControl.html#pandemonium.demons.TDControl.q_t">(TDControl method)</a>
 </li>
       </ul></li>
-      <li><a href="api/pandemonium.demons.PredictionDemon.html#pandemonium.demons.PredictionDemon">PredictionDemon (class in pandemonium.demons)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pandemonium.implementations.DQN.html#pandemonium.implementations.DQN.q_tm1">q_tm1() (DQN method)</a>
+
+      <ul>
+        <li><a href="api/pandemonium.demons.TDControl.html#pandemonium.demons.TDControl.q_tm1">(TDControl method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/pandemonium.demons.QLearning.html#pandemonium.demons.QLearning">QLearning (class in pandemonium.demons)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -643,7 +649,7 @@
 </li>
       <li><a href="api/pandemonium.traces.Retrace.html#pandemonium.traces.Retrace">Retrace (class in pandemonium.traces)</a>
 </li>
-      <li><a href="api/pandemonium.demons.RewardPrediction.html#pandemonium.demons.RewardPrediction">RewardPrediction (class in pandemonium.demons)</a>
+      <li><a href="api/pandemonium.implementations.RewardPrediction.html#pandemonium.implementations.RewardPrediction">RewardPrediction (class in pandemonium.implementations)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -661,12 +667,14 @@
         <li><a href="api/pandemonium.experience.SkewedER.html#pandemonium.experience.SkewedER.sample">(SkewedER method)</a>
 </li>
       </ul></li>
-      <li><a href="api/pandemonium.demons.SARSAlambda.html#pandemonium.demons.SARSAlambda">SARSAlambda (class in pandemonium.demons)</a>
+      <li><a href="api/pandemonium.demons.SARSA.html#pandemonium.demons.SARSA">SARSA (class in pandemonium.demons)</a>
 </li>
-      <li><a href="api/pandemonium.experience.SegmentedER.html#pandemonium.experience.SegmentedER">SegmentedER (class in pandemonium.experience)</a>
+      <li><a href="api/pandemonium.demons.SARSE.html#pandemonium.demons.SARSE">SARSE (class in pandemonium.demons)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/pandemonium.experience.SegmentedER.html#pandemonium.experience.SegmentedER">SegmentedER (class in pandemonium.experience)</a>
+</li>
       <li><a href="api/pandemonium.continuations.SigmoidContinuation.html#pandemonium.continuations.SigmoidContinuation">SigmoidContinuation (class in pandemonium.continuations)</a>
 </li>
       <li><a href="api/pandemonium.experience.SkewedER.html#pandemonium.experience.SkewedER">SkewedER (class in pandemonium.experience)</a>
@@ -688,11 +696,15 @@
       <li><a href="api/pandemonium.demons.OfflineTD.html#pandemonium.demons.OfflineTD.target">target() (OfflineTD method)</a>
 
       <ul>
-        <li><a href="api/pandemonium.demons.OfflineTDControl.html#pandemonium.demons.OfflineTDControl.target">(OfflineTDControl method)</a>
+        <li><a href="api/pandemonium.demons.OnlineTD.html#pandemonium.demons.OnlineTD.target">(OnlineTD method)</a>
 </li>
-        <li><a href="api/pandemonium.demons.OfflineTDPrediction.html#pandemonium.demons.OfflineTDPrediction.target">(OfflineTDPrediction method)</a>
+        <li><a href="api/pandemonium.demons.OnlineTDPrediction.html#pandemonium.demons.OnlineTDPrediction.target">(OnlineTDPrediction method)</a>
 </li>
-        <li><a href="api/pandemonium.demons.RewardPrediction.html#pandemonium.demons.RewardPrediction.target">(RewardPrediction static method)</a>
+        <li><a href="api/pandemonium.implementations.RewardPrediction.html#pandemonium.implementations.RewardPrediction.target">(RewardPrediction static method)</a>
+</li>
+        <li><a href="api/pandemonium.demons.TDControl.html#pandemonium.demons.TDControl.target">(TDControl method)</a>
+</li>
+        <li><a href="api/pandemonium.demons.TDPrediction.html#pandemonium.demons.TDPrediction.target">(TDPrediction method)</a>
 </li>
         <li><a href="api/pandemonium.demons.TTD.html#pandemonium.demons.TTD.target">(TTD method)</a>
 </li>
@@ -701,15 +713,13 @@
 </li>
       <li><a href="api/pandemonium.networks.TargetNetMixin.html#pandemonium.networks.TargetNetMixin">TargetNetMixin (class in pandemonium.networks)</a>
 </li>
-      <li><a href="api/pandemonium.demons.TD0.html#pandemonium.demons.TD0">TD0 (class in pandemonium.demons)</a>
-</li>
-      <li><a href="api/pandemonium.demons.TDAC.html#pandemonium.demons.TDAC">TDAC (class in pandemonium.demons)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pandemonium.demons.TDlambda.html#pandemonium.demons.TDlambda">TDlambda (class in pandemonium.demons)</a>
+      <li><a href="api/pandemonium.demons.TDControl.html#pandemonium.demons.TDControl">TDControl (class in pandemonium.demons)</a>
 </li>
       <li><a href="api/pandemonium.demons.TDn.html#pandemonium.demons.TDn">TDn (class in pandemonium.demons)</a>
+</li>
+      <li><a href="api/pandemonium.demons.TDPrediction.html#pandemonium.demons.TDPrediction">TDPrediction (class in pandemonium.demons)</a>
 </li>
       <li><a href="api/pandemonium.policies.SoftmaxPolicy.html#pandemonium.policies.SoftmaxPolicy.temperature">temperature (SoftmaxPolicy attribute)</a>
 </li>
@@ -720,8 +730,6 @@
       <li><a href="api/pandemonium.experience.Trajectory.html#pandemonium.experience.Trajectory">Trajectory (class in pandemonium.experience)</a>
 </li>
       <li><a href="api/pandemonium.experience.Transition.html#pandemonium.experience.Transition">Transition (class in pandemonium.experience)</a>
-</li>
-      <li><a href="api/pandemonium.demons.TrueOnlineTD.html#pandemonium.demons.TrueOnlineTD">TrueOnlineTD (class in pandemonium.demons)</a>
 </li>
       <li><a href="api/pandemonium.demons.TTD.html#pandemonium.demons.TTD">TTD (class in pandemonium.demons)</a>
 </li>
@@ -739,26 +747,12 @@
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pandemonium.demons.DeepSARSA.html#pandemonium.demons.DeepSARSA.v_target">v_target() (DeepSARSA method)</a>
-
-      <ul>
-        <li><a href="api/pandemonium.demons.DeepSARSE.html#pandemonium.demons.DeepSARSE.v_target">(DeepSARSE method)</a>
+      <li><a href="api/pandemonium.demons.TDPrediction.html#pandemonium.demons.TDPrediction.v_t">v_t() (TDPrediction method)</a>
 </li>
-        <li><a href="api/pandemonium.demons.DQN.html#pandemonium.demons.DQN.v_target">(DQN method)</a>
+      <li><a href="api/pandemonium.implementations.ValueReplay.html#pandemonium.implementations.ValueReplay">ValueReplay (class in pandemonium.implementations)</a>
 </li>
-        <li><a href="api/pandemonium.demons.OfflineTDControl.html#pandemonium.demons.OfflineTDControl.v_target">(OfflineTDControl method)</a>
-</li>
-        <li><a href="api/pandemonium.demons.OfflineTDPrediction.html#pandemonium.demons.OfflineTDPrediction.v_target">(OfflineTDPrediction method)</a>
-</li>
-        <li><a href="api/pandemonium.demons.TDAC.html#pandemonium.demons.TDAC.v_target">(TDAC method)</a>
-</li>
-        <li><a href="api/pandemonium.demons.ValueReplay.html#pandemonium.demons.ValueReplay.v_target">(ValueReplay method)</a>
-</li>
-      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/pandemonium.demons.ValueReplay.html#pandemonium.demons.ValueReplay">ValueReplay (class in pandemonium.demons)</a>
-</li>
       <li><a href="api/pandemonium.policies.VPG.html#pandemonium.policies.VPG">VPG (class in pandemonium.policies)</a>
 </li>
       <li><a href="api/pandemonium.traces.Vtrace.html#pandemonium.traces.Vtrace">Vtrace (class in pandemonium.traces)</a>

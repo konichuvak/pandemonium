@@ -62,6 +62,17 @@ class Agent:
             info.update(**policy_info)
             x1 = self.feature_extractor(s1)
             a1, policy_info = self.behavior_policy(x1)
+            # TODO: consider make the action selection conditional?
+            #   or maybe simply re-select action in ExpectedSarsa case
+            #   instead of using a1 taken here
+            # Because  the  update  rule  of  Expected  Sarsa,  unlike
+            # Sarsa,  does  not  make  use  of  the  action  taken  in s_t+1,
+            # action selection can occur after the update.
+            # Doing so can be advantageous  in  problems  containing  states
+            # with  returning actions, i.e.P(st+1=st)>0.
+            # When s_{t+1} = s_t, performing an update of Q(s_t, a_t), will also
+            # update Q(s_{t+1}, a_t), yielding a better estimate before action
+            # selection occurs.
             t = Transition(s0, a0, reward, s1, done, x0, x1, a1=a1, info=info)
             transitions.append(t)
             s0, x0, a0 = s1, x1, a1

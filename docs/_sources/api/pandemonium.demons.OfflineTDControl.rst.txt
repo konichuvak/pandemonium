@@ -11,13 +11,7 @@ OfflineTDControl
    .. autosummary::
 
       ~OfflineTDControl.delta
-      ~OfflineTDControl.eval_actions
-      ~OfflineTDControl.target
-      ~OfflineTDControl.v_target
 
    .. rubric:: Methods Documentation
 
    .. automethod:: delta
-   .. automethod:: eval_actions
-   .. automethod:: target
-   .. automethod:: v_target

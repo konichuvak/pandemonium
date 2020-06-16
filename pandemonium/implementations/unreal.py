@@ -4,7 +4,6 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-from pandemonium.demons.ac import TDAC
 from pandemonium.demons.demon import (LinearDemon, PredictionDemon, Loss,
                                       ParametricDemon)
 from pandemonium.demons.offline_td import TDn
@@ -13,12 +12,7 @@ from pandemonium.experience import ER, SkewedER, Trajectory, Transitions
 from pandemonium.implementations.rainbow import DQN
 from pandemonium.networks import Reshape
 from pandemonium.policies import Policy
-
-
-class AC(TDAC, OfflineTDPrediction, LinearDemon, TDn):
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs, output_dim=1)
+from pandemonium.utilities.utilities import get_all_classes
 
 
 class RewardPrediction(PredictionDemon, ParametricDemon):
@@ -145,3 +139,6 @@ class PixelControl(DQN):
         }))
         super().__init__(duelling=True, avf=avf, aqf=aqf, feature=feature,
                          behavior_policy=behavior_policy, **kwargs)
+
+
+__all__ = get_all_classes(__name__)

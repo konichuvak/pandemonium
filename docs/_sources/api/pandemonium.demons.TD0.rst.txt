@@ -1,7 +1,0 @@
-TD0
-===
-
-.. currentmodule:: pandemonium.demons
-
-.. autoclass:: TD0
-   :show-inheritance:

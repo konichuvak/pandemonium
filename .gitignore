@@ -1,4 +1,3 @@
 .html
 .json
-/docsrc/build
-/docsrc/source/*/
+/docsrc/*

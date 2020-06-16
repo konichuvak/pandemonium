@@ -1,5 +1,4 @@
 import textwrap
-from abc import ABC
 from typing import Tuple, Optional, Callable
 
 import torch
@@ -117,14 +116,14 @@ class Demon:
                f')'
 
 
-class PredictionDemon(Demon, ABC):
+class PredictionDemon(Demon):
     r""" Collects factual knowledge about environment by learning to predict
 
     Can be thought of as an accumulator of declarative knowledge.
     """
 
 
-class ControlDemon(Demon, ABC):
+class ControlDemon(Demon):
     r""" Learns the optimal policy while learning to predict
 
     Can be thought of as an accumulator of procedural knowledge.
@@ -171,7 +170,7 @@ class ControlDemon(Demon, ABC):
         return self.μ(x, q_fn=self.aqf)
 
 
-class ParametricDemon(Demon, torch.nn.Module, ABC):
+class ParametricDemon(Demon, torch.nn.Module):
     """ Base class fot parametrized Demons implemented in PyTorch """
 
     def __init__(self, **kwargs):
@@ -182,7 +181,7 @@ class ParametricDemon(Demon, torch.nn.Module, ABC):
         return self.predict(*args, **kwargs)
 
 
-class LinearDemon(ParametricDemon, ABC):
+class LinearDemon(ParametricDemon):
     r""" Approximates state or state-action values using linear projection
 
     .. math::
@@ -192,7 +191,7 @@ class LinearDemon(ParametricDemon, ABC):
     def __init__(self, feature, output_dim: int, *args, **kwargs):
         super().__init__(
             avf=torch.nn.Linear(feature.feature_dim, output_dim),
-            feature=feature, *args, **kwargs
+            feature=feature, **kwargs
         )
 
 

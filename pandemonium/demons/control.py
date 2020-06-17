@@ -19,7 +19,9 @@ class TDControl(ParametricDemon, ControlDemon):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.μ.act = partial(self.μ.act, q_fn=self.aqf)
+
+        # Policies require a value function to determine action preferences
+        self.μ.act = partial(self.μ.act, q_fn=self.predict_q)
 
     def q_tm1(self, x, a):
         """ Computes values associated with action batch `a`

@@ -75,12 +75,6 @@ class DQN(OfflineTDControl,
             CategoricalQ.__init__(self, num_atoms=num_atoms,
                                   v_min=v_min, v_max=v_max)
 
-        # Value-based policies require a value function to determine the
-        # preference for actions. Since we now know what our action-value
-        # function is (after possibly being affected by CategoricalQ mixin),
-        # we can pass it to the policy via `partial`
-        self.μ.act = partial(self.μ.act, q_fn=self.aqf)
-
         # Adds a target network to stabilize SGD
         TargetNetMixin.__init__(self, target_update_freq)
         if self.target_aqf == self.aqf:

@@ -1,4 +1,5 @@
 from copy import deepcopy
+from functools import partial
 from random import random
 
 import torch
@@ -21,7 +22,7 @@ class OnlineQLearning(QLearning, OnlineTDControl):
     """ Simple online Q-learning. """
 
     def __init__(self, **kwargs):
-        super().__init__(trace_decay=0., **kwargs)
+        super().__init__(**kwargs)
 
 
 class DoubleQLearning(OnlineQLearning):
@@ -32,14 +33,7 @@ class DoubleQLearning(OnlineQLearning):
         self.q1 = self.aqf
         self.q2 = deepcopy(self.aqf)
         self.q2.load_state_dict(self.q1.state_dict())
-
-        # Remove dysfunctional methods
-        del self.q_tm1
-        del self.q_t
-        del self.target
-
-    def behavior_policy(self, x: torch.Tensor):
-        return self.μ(x, q_fn=lambda φ: self.q1(φ) + self.q2(φ))
+        self.μ.act = partial(self.μ.act, q_fn=lambda φ: self.q1(φ) + self.q2(φ))
 
     def delta(self, t: Transition) -> Loss:
         γ = self.gvf.continuation(t)

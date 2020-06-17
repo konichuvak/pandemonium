@@ -24,13 +24,16 @@ class Horde(torch.nn.Module):
 
     def __init__(self,
                  demons: List[Demon],
-                 aggregation_fn: Callable[[torch.Tensor], torch.Tensor],
-                 device: torch.device):
+                 device: torch.device,
+                 aggregation_fn: Callable[[torch.Tensor], torch.Tensor] = None,
+                 ):
         super().__init__()
         demons = {str(demon): demon for demon in demons}
         self.demons = nn.ModuleDict(demons)
 
         # Determines how the total loss is weighted across demons
+        if aggregation_fn is None:
+            aggregation_fn = lambda losses: torch.ones_like(losses).dot(losses)
         self.aggregation_fn = aggregation_fn
 
         # Set up the optimizer that will be shared across all demons

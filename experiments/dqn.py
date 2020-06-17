@@ -2,9 +2,7 @@ from typing import Dict
 
 import ray
 import torch
-from gym_minigrid.wrappers import FullyObsWrapper, ImgObsWrapper
 from ray import tune
-from ray.tune import register_env
 
 from experiments import EXPERIMENT_DIR
 from experiments.trainable import Loop
@@ -13,8 +11,7 @@ from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
 from pandemonium.demons import ControlDemon, PredictionDemon
 from pandemonium.demons.control import CategoricalQ
-from pandemonium.envs.minigrid import MinigridDisplay, EmptyEnv
-from pandemonium.envs.wrappers import add_wrappers, Torch, OneHotObsWrapper
+from pandemonium.envs.minigrid import MinigridDisplay
 from pandemonium.experience import ReplayBuffer
 from pandemonium.implementations.rainbow import DQN
 from pandemonium.policies.discrete import Greedy
@@ -24,33 +21,6 @@ from pandemonium.utilities.schedules import LinearSchedule
 device = torch.device('cpu')
 EXPERIMENT_NAME = 'C51'
 RESULT_DIR = EXPERIMENT_DIR / 'tune'
-
-
-def env_creator(env_config):
-    # TODO: Ignore config for now until all the envs are properly registered
-    envs = [
-        EmptyEnv(size=5),
-        # FourRooms(),
-        # DoorKeyEnv(size=7),
-        # MultiRoomEnv(minNumRooms=4, maxNumRooms=4),
-        # CrossingEnv(),
-    ]
-    wrappers = [
-        # Non-observation wrappers
-        # SimplifyActionSpace,
-
-        # Observation wrappers
-        FullyObsWrapper,
-        ImgObsWrapper,
-        OneHotObsWrapper,
-        Torch,
-    ]
-    env = add_wrappers(base_env=envs[0], wrappers=wrappers)
-    env.unwrapped.max_steps = float('inf')
-    return env
-
-
-register_env("DQN_env", env_creator)
 
 
 def create_demons(config, env, φ, μ) -> Horde:
@@ -74,10 +44,8 @@ def create_demons(config, env, φ, μ) -> Horde:
         v_min=config.get('v_min'),
         v_max=config.get('v_max'),
     )
-    demon_weights = torch.tensor([1.]).to(device)
     return Horde(
         demons=[control_demon],
-        aggregation_fn=lambda losses: demon_weights.dot(losses),
         device=device
     )
 
@@ -202,8 +170,10 @@ if __name__ == "__main__":
             # try to see how to write horde.learn as a SyncSampleOptimizer in ray
 
             # === RLLib params ===
-            "env": "DQN_env",
-            "env_config": {},
+            "env": "MiniGrid-EmptyEnv-ImgOnly-v0",
+            "env_config": {
+                'size': 10
+            },
             "rollout_fragment_length": 10,
 
             # --- Evaluation ---

@@ -1,3 +1,5 @@
+from functools import partial
+
 import torch
 import torch.nn.functional as F
 from torch import nn
@@ -14,6 +16,10 @@ from pandemonium.utilities.utilities import get_all_classes
 
 
 class TDControl(ParametricDemon, ControlDemon):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.μ.act = partial(self.μ.act, q_fn=self.aqf)
 
     def q_tm1(self, x, a):
         """ Computes values associated with action batch `a`
@@ -40,6 +46,9 @@ class TDControl(ParametricDemon, ControlDemon):
             \end{align*}
         """
         raise NotImplementedError
+
+    def behavior_policy(self, x: torch.Tensor):
+        return self.μ(x, q_fn=self.aqf)
 
     def target(self, exp: Experience):
         return super().target(exp, v=self.q_t(exp))

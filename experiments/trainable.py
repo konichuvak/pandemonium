@@ -50,15 +50,15 @@ class Loop(Trainer):
 
         # Set up policy network
         policy_cls = Policy.by_name(cfg['policy_name'])
-        policy = policy_cls(feature_dim=feature_extractor.feature_dim,
-                            action_space=self.env.action_space,
-                            **cfg['policy_cfg'])
+        # policy = policy_cls(feature_dim=feature_extractor.feature_dim,
+        #                     action_space=self.env.action_space,
+        #                     **cfg['policy_cfg'])
         # TODO: needed for tuning softmax vs egreedy in DQN
         param_name = 'epsilon' if cfg[
                                       'policy_name'] == 'egreedy' else 'temperature'
-        # policy = policy_cls(feature_dim=feature_extractor.feature_dim,
-        #                     action_space=self.env.action_space,
-        #                     **{param_name: cfg['policy_cfg']['param']})
+        policy = policy_cls(feature_dim=feature_extractor.feature_dim,
+                            action_space=self.env.action_space,
+                            **{param_name: cfg['policy_cfg']['param']})
 
         # Set up Optimizer a.k.a. Horde
         horde = cfg['horde_fn'](cfg, self.env, feature_extractor, policy)

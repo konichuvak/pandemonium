@@ -1,11 +1,6 @@
-from functools import reduce
-
 import ray
 import torch
-from gym_minigrid.envs import EmptyEnv
-from gym_minigrid.wrappers import ImgObsWrapper
 from ray import tune
-from ray.tune import register_env
 from torch.nn.functional import mse_loss
 
 from experiments import EXPERIMENT_DIR
@@ -14,42 +9,11 @@ from pandemonium import GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
 from pandemonium.envs.minigrid import MinigridDisplay
-from pandemonium.envs.wrappers import Torch
 from pandemonium.implementations import AC
 from pandemonium.policies.discrete import Greedy
 
-# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = torch.device('cpu')
 EXPERIMENT_NAME = 'A2C'
-
-
-def env_creator(env_config):
-    # TODO: Ignore config for now until all the envs are properly registered
-    envs = [
-        EmptyEnv(size=10),
-        # FourRooms(),
-        # DoorKeyEnv(size=7),
-        # MultiRoomEnv(minNumRooms=4, maxNumRooms=4),
-        # DeepmindLabEnv(level='seekavoid_arena_01')
-        # CrossingEnv(),
-    ]
-    wrappers = [
-        # Non-observation wrappers
-        # SimplifyActionSpace,
-
-        # Observation wrappers
-        # FullyObsWrapper,
-        ImgObsWrapper,
-        # OneHotObsWrapper,
-        # FlatObsWrapper,
-        lambda e: Torch(e, device=device)
-    ]
-    env = reduce(lambda e, wrapper: wrapper(e), wrappers, envs[0])
-    env.unwrapped.max_steps = float('inf')
-    return env
-
-
-register_env("A2C_env", env_creator)
 
 
 def create_demons(config, env, feature_extractor, policy) -> Horde:
@@ -65,24 +29,13 @@ def create_demons(config, env, feature_extractor, policy) -> Horde:
         feature=feature_extractor,
         criterion=mse_loss
     )
-
-    demon_weights = torch.tensor([1.]).to(device)
-    horde = Horde(
-        demons=[control_demon],
-        aggregation_fn=lambda losses: demon_weights.dot(losses),
-        device=device
-    )
-
-    return horde
-
-
-EVAL_ENV = env_creator(dict())
+    return Horde([control_demon], device)
 
 
 def eval_fn(trainer: Loop, eval_workers):
-    # cfg = trainer.config
-    # env = trainer.env_creator(cfg['env_config'])
-    env = EVAL_ENV
+    cfg = trainer.config['evaluation_config']
+    env = cfg['eval_env'](cfg['eval_env_config'])
+
     display = MinigridDisplay(env, [])
     states = torch.stack([s[0] for s in display.all_states]).squeeze()
 
@@ -106,12 +59,16 @@ def eval_fn(trainer: Loop, eval_workers):
     return {'dummy': None}
 
 
+total_steps = int(1e5)
+
 if __name__ == "__main__":
     ray.init(local_mode=False)
     analysis = tune.run(
         Loop,
         name=EXPERIMENT_NAME,
-        stop={"timesteps_total": int(1e5)},
+        stop={
+            "timesteps_total": total_steps
+        },
         config={
             # Model a.k.a. Feature Extractor
             "feature_name": 'conv_body',
@@ -137,8 +94,10 @@ if __name__ == "__main__":
 
             # === RLLib params ===
             "use_pytorch": True,
-            "env": "A2C_env",
-            "env_config": {},
+            "env": "MiniGrid-EmptyEnv-ImgOnly-v0",
+            "env_config": {
+                'size': 10
+            },
             "rollout_fragment_length": 16,  # batch size for exp collector
             # "train_batch_size": 32,
 

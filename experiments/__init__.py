@@ -3,6 +3,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from experiments.tools import RLogger
+from pandemonium.envs import *
 
 HOME_DIR = Path.home()
 EXPERIMENT_DIR = Path(__file__).parent.absolute()

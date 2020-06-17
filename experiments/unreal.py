@@ -43,10 +43,10 @@ policy_cfg = {'entropy_coefficient': 0.01}
 
 # Horde vs Ray optimizer?
 optimizer_params = {
-    'ac_weight': 1,
-    'vr_weight': tune.grid_search([1]),
-    'pc_weight': tune.grid_search([1]),
-    'rp_weight': tune.grid_search([1]),
+    'ac_weight': 1.,
+    'vr_weight': tune.grid_search([1.]),
+    'pc_weight': tune.grid_search([1.]),
+    'rp_weight': tune.grid_search([1.]),
 }
 
 

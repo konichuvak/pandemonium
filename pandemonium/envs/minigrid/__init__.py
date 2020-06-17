@@ -1,3 +1,6 @@
+from copy import deepcopy
+from functools import partial
+
 from gym_minigrid.envs import *
 from gym_minigrid.wrappers import FullyObsWrapper, ImgObsWrapper
 from ray.tune import register_env
@@ -22,11 +25,14 @@ wrappers = {
 for cls in (EmptyEnv, MultiRoomEnv, FourRoomsEnv):
     name = cls.__name__
     for wrap_name, wraps in wrappers.items():
-        def env_creator(env_config):
-            env = cls(**env_config)
-            env = add_wrappers(base_env=env, wrappers=wraps + [Torch])
-            env.unwrapped.max_steps = float('inf')
-            return env
+        def env_creator(env_cls):
+            def env_wrapper(env_config):
+                env = env_cls(**env_config)
+                env = add_wrappers(base_env=env, wrappers=wraps + [Torch])
+                env.unwrapped.max_steps = float('inf')
+                return env
+            return env_wrapper
 
 
-        register_env(f"MiniGrid-{name}-{wrap_name}-v0", env_creator)
+        register_env(name=f"MiniGrid-{name}-{wrap_name}-v0",
+                     env_creator=env_creator(cls))

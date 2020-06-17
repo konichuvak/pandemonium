@@ -1,4 +1,3 @@
-from functools import partial
 from warnings import warn
 
 import torch
@@ -7,7 +6,7 @@ from torch import nn
 from pandemonium.demons import ParametricDemon
 from pandemonium.demons.control import (CategoricalQ, DuellingMixin, QLearning,
                                         OfflineTDControl)
-from pandemonium.demons.offline_td import TDn
+from pandemonium.demons.offline_td import TTD
 from pandemonium.experience import (ER, PER, ReplayBufferMixin, Trajectory,
                                     Transitions)
 from pandemonium.networks import TargetNetMixin
@@ -17,7 +16,7 @@ from pandemonium.utilities.utilities import get_all_classes
 
 class DQN(OfflineTDControl,
           QLearning,
-          TDn,
+          TTD,
           ParametricDemon,
           ReplayBufferMixin,
           TargetNetMixin,

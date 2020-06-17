@@ -36,6 +36,7 @@ def create_demons(config, env, φ, μ) -> Horde:
         ),
         feature=φ,
         behavior_policy=μ,
+        trace_decay=config['trace_decay'],
         replay_buffer=replay_cls(**config['replay_cfg']),
         target_update_freq=config['target_update_freq'],
         double=config['double'],
@@ -114,15 +115,15 @@ if __name__ == "__main__":
         },
         config={
             # Model a.k.a. Feature Extractor
-            'feature_name': 'identity',
-            'feature_cfg': {},
-            # "feature_name": 'conv_body',
-            # "feature_cfg": {
-            #     'feature_dim': 64,
-            #     'channels': (8, 16),
-            #     'kernels': (2, 2),
-            #     'strides': (1, 1),
-            # },
+            # 'feature_name': 'identity',
+            # 'feature_cfg': {},
+            "feature_name": 'conv_body',
+            "feature_cfg": {
+                'feature_dim': 64,
+                'channels': (8, 16),
+                'kernels': (2, 2),
+                'strides': (1, 1),
+            },
 
             # Policy
             'policy_name': 'egreedy',
@@ -157,9 +158,10 @@ if __name__ == "__main__":
 
             # Architecture
             'gamma': 0.99,
+            'trace_decay': tune.grid_search([0.5]),
             'target_update_freq': 100,
-            'double': tune.grid_search([False]),
-            'duelling': tune.grid_search([False]),
+            'double': tune.grid_search([True]),
+            'duelling': tune.grid_search([True]),
             "num_atoms": tune.grid_search([1]),
             # "v_min": 0,
             # "v_max": 1,

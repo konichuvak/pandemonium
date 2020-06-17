@@ -69,6 +69,13 @@ class TTD(OfflineTD):
         https://github.com/deepmind/rlax/blob/master/rlax/_src/multistep.py#L33
     """
 
+    def __init__(self, trace_decay: float, **kwargs):
+        # TODO: reconcile this vectorized form with EligibilityTrace class
+        super().__init__(
+            eligibility=lambda traj: torch.ones_like(traj.r) * trace_decay,
+            **kwargs
+        )
+
     def target(self, trajectory: Trajectory, v: torch.Tensor):
         assert len(trajectory) == v.shape[0]
         γ = self.gvf.continuation(trajectory)
@@ -97,10 +104,7 @@ class TDn(TTD):
     """
 
     def __init__(self, **kwargs):
-        super().__init__(
-            eligibility=lambda trajectory: torch.ones_like(trajectory.r),
-            **kwargs
-        )
+        super().__init__(trace_decay=1, **kwargs)
 
 
 __all__ = get_all_classes(__name__)

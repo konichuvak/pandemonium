@@ -32,33 +32,6 @@ def create_demons(config, env, feature_extractor, policy) -> Horde:
     return Horde([control_demon], device)
 
 
-def eval_fn(trainer: Loop, eval_workers):
-    cfg = trainer.config['evaluation_config']
-    env = cfg['eval_env'](cfg['eval_env_config'])
-
-    display = MinigridDisplay(env, [])
-    states = torch.stack([s[0] for s in display.all_states]).squeeze()
-
-    episode = 1
-    # Visualize action-value function of each demon
-    for demon in trainer.agent.horde.demons.values():
-        x = demon.feature(states)
-        v = demon.predict(x)
-        v = v.transpose(0, 1).view(4, env.height - 2, env.width - 2)
-        v = torch.nn.ConstantPad2d(1, 0)(v)
-        v = v.cpu().detach().numpy()
-
-        fig = display.plot_state_values(
-            figure_name=f'episode {episode}',
-            v=v,
-        )
-        display.save_figure(fig,
-                            save_path=f'{EXPERIMENT_DIR}/{EXPERIMENT_NAME}/vf{episode}',
-                            auto_open=False)
-
-    return {'dummy': None}
-
-
 total_steps = int(1e5)
 
 if __name__ == "__main__":

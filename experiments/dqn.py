@@ -1,17 +1,13 @@
-from typing import Dict
-
 import ray
 import torch
 from ray import tune
 
 from experiments import EXPERIMENT_DIR
+from experiments.tools.evaluation import eval_fn
 from experiments.trainable import Loop
 from pandemonium import GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
-from pandemonium.demons import ControlDemon, PredictionDemon
-from pandemonium.demons.control import CategoricalQ
-from pandemonium.envs.minigrid import MinigridDisplay
 from pandemonium.experience import ReplayBuffer
 from pandemonium.implementations.rainbow import DQN
 from pandemonium.policies.discrete import Greedy
@@ -49,58 +45,6 @@ def create_demons(config, env, φ, μ) -> Horde:
         demons=[control_demon],
         device=device
     )
-
-
-def eval_fn(trainer: Loop, eval_workers) -> Dict:
-    """
-
-    Called every `evaluation_interval` to run the current version of the
-    agent in the the evaluation environment for one episode.
-
-    Works for envs with fairly small, enumerable state space like gridworlds.
-
-    Parameters
-    ----------
-    trainer
-    eval_workers
-
-    Returns
-    -------
-
-    """
-    cfg = trainer.config['evaluation_config']
-    env = cfg['eval_env'](cfg['eval_env_config'])
-
-    display = MinigridDisplay(env)
-
-    iteration = trainer.iteration
-
-    # Visualize value functions of each demon
-    for demon in trainer.agent.horde.demons.values():
-
-        if isinstance(demon, ControlDemon):
-            # fig = display.plot_option_values(
-            #     figure_name=f'iteration {iteration}',
-            #     demon=demon,
-            # )
-            # fig = display.plot_option_values_separate(
-            #     figure_name=f'iteration {iteration}',
-            #     demon=demon,
-            # )
-            # display.save_figure(fig, f'{trainer.logdir}/{iteration}_qf')
-
-            if isinstance(demon, CategoricalQ) and hasattr(demon, 'num_atoms'):
-                fig = display.plot_option_value_distributions(
-                    figure_name=f'iteration {iteration}',
-                    demon=demon,
-                )
-                print(f'saving @ {trainer.logdir}/{iteration}_zf')
-                display.save_figure(fig, f'{trainer.logdir}/{iteration}_zf')
-
-        elif isinstance(demon, PredictionDemon):
-            pass
-
-    return {'dummy': None}
 
 
 total_steps = int(1e5)
@@ -179,8 +123,8 @@ if __name__ == "__main__":
             "rollout_fragment_length": 10,
 
             # --- Evaluation ---
-            # "evaluation_interval": 3,  # per training iteration
-            # "custom_eval_function": eval_fn,
+            "evaluation_interval": 1000,  # per training iteration
+            "custom_eval_function": eval_fn,
             # "evaluation_num_episodes": 1,
             # "evaluation_config": {
             #     'eval_env': env_creator,

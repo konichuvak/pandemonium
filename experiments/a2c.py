@@ -8,7 +8,6 @@ from experiments.trainable import Loop
 from pandemonium import GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness
-from pandemonium.envs.minigrid import MinigridDisplay
 from pandemonium.implementations import AC
 from pandemonium.policies.discrete import Greedy
 
@@ -27,7 +26,8 @@ def create_demons(config, env, feature_extractor, policy) -> Horde:
             continuation=ConstantContinuation(config['gamma'])),
         behavior_policy=policy,
         feature=feature_extractor,
-        criterion=mse_loss
+        criterion=mse_loss,
+        trace_decay=config['trace_decay']
     )
     return Horde([control_demon], device)
 
@@ -58,7 +58,8 @@ if __name__ == "__main__":
                 'entropy_coefficient': 0.01,
             },
 
-            'gamma': 0.9,
+            'gamma': tune.grid_search([0.9]),
+            'trace_decay': tune.grid_search([0.5]),
 
             # Optimizer a.k.a. Horde
             "horde_fn": create_demons,

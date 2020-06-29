@@ -1,37 +1,11 @@
 import ray
-import torch
 from ray import tune
-from torch.nn.functional import mse_loss
 
 from experiments import EXPERIMENT_DIR
 from experiments.trainable import Loop
-from pandemonium import GVF, Horde
-from pandemonium.continuations import ConstantContinuation
-from pandemonium.cumulants import Fitness
-from pandemonium.implementations import AC
-from pandemonium.policies.discrete import Greedy
+from pandemonium.implementations.a2c import create_demons
 
-device = torch.device('cpu')
 EXPERIMENT_NAME = 'A2C'
-
-
-def create_demons(config, env, feature_extractor, policy) -> Horde:
-    control_demon = AC(
-        gvf=GVF(
-            target_policy=Greedy(
-                feature_dim=feature_extractor.feature_dim,
-                action_space=env.action_space
-            ),
-            cumulant=Fitness(env),
-            continuation=ConstantContinuation(config['gamma'])),
-        behavior_policy=policy,
-        feature=feature_extractor,
-        criterion=mse_loss,
-        trace_decay=config['trace_decay']
-    )
-    return Horde([control_demon], device)
-
-
 total_steps = int(1e5)
 
 if __name__ == "__main__":

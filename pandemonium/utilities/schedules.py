@@ -15,7 +15,7 @@ def polynomial_repr(self):
 def linear_repr(self):
     return f'{self.__class__.__name__}(' \
            f'horizon={self.schedule_timesteps}, ' \
-           f'{self.initial_p} -> {self.final_p}'
+           f'{self.initial_p} -> {self.final_p})'
 
 
 def const_repr(self):

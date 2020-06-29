@@ -9,19 +9,11 @@ from tqdm import tqdm
 
 from experiments import EXPERIMENT_DIR
 from experiments.trainable import Loop
-from pandemonium import GVF, Horde
-from pandemonium.continuations import ConstantContinuation
-from pandemonium.cumulants import Fitness, PixelChange
 from pandemonium.envs import DeepmindLabEnv
 from pandemonium.envs.wrappers import Torch
 from pandemonium.experience import Transition, Trajectory
-from pandemonium.experience.buffers import ER, SkewedER
-from pandemonium.implementations.a2c import AC
-from pandemonium.implementations.unreal import (ValueReplay, RewardPrediction,
-                                                PixelControl)
-from pandemonium.policies.discrete import Greedy
+from pandemonium.implementations.unreal import create_demons
 
-# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 device = torch.device('cpu')
 
 register_env("DMLab", lambda config: Torch(DeepmindLabEnv(**config),
@@ -48,103 +40,6 @@ optimizer_params = {
     'pc_weight': tune.grid_search([1.]),
     'rp_weight': tune.grid_search([1.]),
 }
-
-
-def create_demons(config, env, φ, μ) -> Horde:
-    demons = list()
-
-    # Target policy is greedy
-    π = Greedy(feature_dim=φ.feature_dim, action_space=env.action_space)
-
-    # ==========================================================================
-    # Main task performed by control demon
-    # ==========================================================================
-
-    # The main task is to optimize for the extrinsic reward
-    optimal_control = GVF(
-        target_policy=π,
-        cumulant=Fitness(env),
-        continuation=ConstantContinuation(config['gamma'])
-    )
-
-    demons.append(AC(gvf=optimal_control,
-                     behavior_policy=μ,
-                     feature=φ))
-
-    # ==========================================================================
-    # Auxiliary tasks performed by a mix of prediction and control demons
-    # ==========================================================================
-
-    # Create a shared Experience Replay between PC and VR demons
-    replay = None
-    if config['pc_weight'] or config['vr_weight']:
-        replay = ER(size=config['buffer_size'],
-                    batch_size=config['rollout_fragment_length'])
-
-    # --------------------------------------------------------------------------
-    # Tracks the color intensity over patches of pixels in the image
-    # --------------------------------------------------------------------------
-    if config['pc_weight']:
-        demons.append(PixelControl(
-            gvf=GVF(
-                target_policy=π,
-                cumulant=PixelChange(),
-                continuation=ConstantContinuation(config['gamma']),
-            ),
-            feature=φ,
-            behavior_policy=μ,
-            replay_buffer=replay,  # shared with value replay demon
-            target_update_freq=config['target_update_freq'],
-            double=True,
-        ))
-
-    # --------------------------------------------------------------------------
-    # The objective of the value replay is to speed up & stabilize A3C agent
-    # --------------------------------------------------------------------------
-    if config['vr_weight']:
-        demons.append(ValueReplay(gvf=optimal_control,
-                                  feature=φ,
-                                  behavior_policy=μ,
-                                  replay_buffer=replay))
-
-    # --------------------------------------------------------------------------
-    # Auxiliary task of maximizing un-discounted n-step return
-    # --------------------------------------------------------------------------
-    if config['rp_weight']:
-        demons.append(RewardPrediction(
-            gvf=GVF(
-                target_policy=π,
-                cumulant=Fitness(env),
-                continuation=ConstantContinuation(0.),
-            ),
-            feature=φ,
-            behavior_policy=μ,
-            replay_buffer=SkewedER(config['buffer_size'],
-                                   config['rollout_fragment_length'])
-        ))
-
-    # ==========================================================================
-    # Combine demons into a horde
-    # ==========================================================================
-
-    weights = [
-        config.get('ac_weight'),
-        config.get('pc_weight'),
-        config.get('vr_weight'),
-        config.get('rp_weight')
-    ]
-    demon_weights = torch.tensor(
-        data=[w for w in weights if w],
-        dtype=torch.float
-    ).to(device)
-
-    horde = Horde(
-        demons=demons,
-        aggregation_fn=lambda losses: demon_weights.dot(losses),
-        device=device
-    )
-
-    return horde
 
 
 # ------------------------------------------------------------------------------

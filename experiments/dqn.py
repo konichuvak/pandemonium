@@ -1,51 +1,14 @@
 import ray
-import torch
 from ray import tune
 
 from experiments import EXPERIMENT_DIR
 from experiments.tools.evaluation import eval_fn
 from experiments.trainable import Loop
-from pandemonium import GVF, Horde
-from pandemonium.continuations import ConstantContinuation
-from pandemonium.cumulants import Fitness
-from pandemonium.experience import ReplayBuffer
-from pandemonium.implementations.rainbow import DQN
-from pandemonium.policies.discrete import Greedy
+from pandemonium.implementations.rainbow import create_demons
 from pandemonium.utilities.schedules import LinearSchedule
 
-# device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-device = torch.device('cpu')
 EXPERIMENT_NAME = 'C51'
 RESULT_DIR = EXPERIMENT_DIR / 'tune'
-
-
-def create_demons(config, env, φ, μ) -> Horde:
-    replay_cls = ReplayBuffer.by_name(config['replay_name'])
-    control_demon = DQN(
-        gvf=GVF(
-            target_policy=Greedy(
-                feature_dim=φ.feature_dim,
-                action_space=env.action_space
-            ),
-            cumulant=Fitness(env),
-            continuation=ConstantContinuation(config['gamma'])
-        ),
-        feature=φ,
-        behavior_policy=μ,
-        trace_decay=config['trace_decay'],
-        replay_buffer=replay_cls(**config['replay_cfg']),
-        target_update_freq=config['target_update_freq'],
-        double=config['double'],
-        duelling=config['duelling'],
-        num_atoms=config['num_atoms'],
-        v_min=config.get('v_min'),
-        v_max=config.get('v_max'),
-    )
-    return Horde(
-        demons=[control_demon],
-        device=device
-    )
-
 
 total_steps = int(1e5)
 

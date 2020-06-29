@@ -9,8 +9,7 @@ from pandemonium.demons.offline_td import OfflineTD, TDn
 from pandemonium.demons.online_td import OnlineTD
 from pandemonium.experience import Trajectory, Experience, Transition
 from pandemonium.networks import Reshape
-from pandemonium.policies import Policy, Egreedy
-from pandemonium.policies.utils import torch_argmax_mask
+from pandemonium.policies import Policy, Egreedy, torch_argmax_mask
 from pandemonium.utilities.distributions import cross_entropy, l2_projection
 from pandemonium.utilities.utilities import get_all_classes
 

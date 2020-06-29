@@ -3,15 +3,17 @@ from warnings import warn
 import torch
 from torch import nn
 
-from pandemonium.demons import ParametricDemon
-from pandemonium.demons.control import (CategoricalQ, DuellingMixin, QLearning,
-                                        OfflineTDControl)
-from pandemonium.demons.offline_td import TTD
-from pandemonium.experience import (ER, PER, ReplayBufferMixin, Trajectory,
-                                    Transitions)
+from pandemonium import GVF, Horde
+from pandemonium.continuations import ConstantContinuation
+from pandemonium.cumulants import Fitness
+from pandemonium.demons import (OfflineTDControl, QLearning, TTD,
+                                ParametricDemon, CategoricalQ,
+                                DuellingMixin)
+from pandemonium.experience import (ReplayBuffer, ReplayBufferMixin, PER,
+                                    Trajectory, Transitions)
 from pandemonium.networks import TargetNetMixin
-from pandemonium.policies import Policy, torch_argmax_mask
-from pandemonium.utilities.utilities import get_all_classes
+from pandemonium.policies import Policy, torch_argmax_mask, Greedy
+from pandemonium.utilities.utilities import get_all_members
 
 
 class DQN(OfflineTDControl,
@@ -33,7 +35,7 @@ class DQN(OfflineTDControl,
     def __init__(self,
                  feature: callable,
                  behavior_policy: Policy,
-                 replay_buffer: ER,
+                 replay_buffer: ReplayBuffer,
                  aqf: callable = None,
                  avf: callable = None,
                  target_update_freq: int = 0,
@@ -143,4 +145,30 @@ class DQN(OfflineTDControl,
         return super().__str__()
 
 
-__all__ = get_all_classes(__name__)
+def create_demons(config, env, φ, μ: Policy) -> Horde:
+    replay_cls = ReplayBuffer.by_name(config['replay_name'])
+    control_demon = DQN(
+        gvf=GVF(
+            target_policy=Greedy(
+                feature_dim=φ.feature_dim,
+                action_space=env.action_space
+            ),
+            cumulant=Fitness(env),
+            continuation=ConstantContinuation(config['gamma'])
+        ),
+        feature=φ,
+        behavior_policy=μ,
+        trace_decay=config['trace_decay'],
+        replay_buffer=replay_cls(**config['replay_cfg']),
+        target_update_freq=config['target_update_freq'],
+        double=config['double'],
+        duelling=config['duelling'],
+        num_atoms=config['num_atoms'],
+        v_min=config.get('v_min'),
+        v_max=config.get('v_max'),
+    )
+    # TODO: pass the device with the demon
+    return Horde(demons=[control_demon], device=torch.device('cpu'))
+
+
+__all__ = get_all_members(__name__)

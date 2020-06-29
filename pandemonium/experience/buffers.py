@@ -19,6 +19,9 @@ __all__ = ['ReplayBuffer', 'ER', 'PER', 'SkewedER', 'SegmentedER',
 class ReplayBuffer(Registrable):
     """ Registrar for replay buffers"""
 
+    def __init__(self, *args, **kwargs):
+        pass
+
 
 @ReplayBuffer.register('er')
 class ER(ReplayBuffer):

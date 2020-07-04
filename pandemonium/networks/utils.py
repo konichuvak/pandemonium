@@ -1,9 +1,9 @@
 import torch
 
 
-def conv2d_size_out(size, kernel_size=2, stride=1):
+def conv2d_size_out(size, kernel_size=2, stride=1, padding=0):
     """ Determines the dimensionality (w or h) of the 2d convolutional layer """
-    return (size - (kernel_size - 1) - 1) // stride + 1
+    return (size - kernel_size + 2 * padding) // stride + 1
 
 
 def deconv2d_size_out(size, kernel_size, stride, padding: int = 0):

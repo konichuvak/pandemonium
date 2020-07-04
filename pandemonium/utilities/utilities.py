@@ -23,7 +23,8 @@ def get_all_classes(name, return_names: bool = True):
 def get_all_members(name, return_names: bool = True):
     members = inspect.getmembers(
         object=sys.modules[name],
-        predicate=lambda member: member.__module__ == name)
+        predicate=lambda member: hasattr(member, '__module__')
+                                 and member.__module__ == name)
     if return_names:
         members = [m[0] for m in members]
     return members

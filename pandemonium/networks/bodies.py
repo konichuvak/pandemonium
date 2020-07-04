@@ -1,8 +1,8 @@
 from typing import Tuple, Optional
 
 import torch
+import torch.nn.functional as F
 from torch import nn
-from torch.functional import F
 
 from pandemonium.networks.utils import layer_init, conv2d_size_out
 from pandemonium.utilities.registrable import Registrable
@@ -57,10 +57,12 @@ class ConvBody(BaseNetwork):
 
     def __init__(self,
                  obs_shape: tuple,
-                 feature_dim: int = 256,
                  channels=(8, 16, 32),
                  kernels=(2, 2, 2),
-                 strides=(1, 1, 1)):
+                 strides=(1, 1, 1),
+                 padding=(0, 0, 0),
+                 activation=nn.ReLU,
+                 ):
         assert len(channels) == len(kernels) == len(strides)
         assert len(obs_shape) == 3, obs_shape
 
@@ -68,21 +70,38 @@ class ConvBody(BaseNetwork):
         ch = (d,) + channels
         conv = list()
         for i in range(len(channels)):
-            l = layer_init(nn.Conv2d(ch[i], ch[i + 1], kernels[i], strides[i]))
-            conv += [l, nn.ReLU()]
-            w = conv2d_size_out(w, kernels[i], strides[i])
-            h = conv2d_size_out(h, kernels[i], strides[i])
+            l = layer_init(nn.Conv2d(
+                in_channels=ch[i],
+                out_channels=ch[i + 1],
+                kernel_size=kernels[i],
+                stride=strides[i],
+                padding=padding[i],
+            ))
+            conv += [l, activation()]
+            w = conv2d_size_out(w, kernels[i], strides[i], padding[i])
+            h = conv2d_size_out(h, kernels[i], strides[i], padding[i])
 
         super().__init__(obs_shape)
         self.conv = nn.Sequential(*conv)
-        self.fc = layer_init(nn.Linear(w * h * ch[len(channels)], feature_dim))
-        self.feature_dim = feature_dim
+        self.feature_dim = w * h * ch[len(channels)]
 
     def forward(self, x):
         x = self.conv(x)
         x = x.view(x.size(0), -1)
-        x = F.relu(self.fc(x))
         return x
+
+
+@BaseNetwork.register('nature_cnn')
+class NatureCNN(ConvBody):
+    """ Adds a fully connected layer after a series of convolutional laters. """
+
+    def __init__(self, feature_dim: int, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        conv_flat_dim, self.feature_dim = self.feature_dim, feature_dim
+        self.fc = layer_init(nn.Linear(conv_flat_dim, feature_dim))
+
+    def forward(self, x):
+        return F.relu(self.fc(super().forward(x)))
 
 
 @BaseNetwork.register('conv_lstm')

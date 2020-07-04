@@ -1,7 +1,9 @@
+from typing import Set
+
 from gym import Env
 from torch import nn
 
-from pandemonium.experience import Transition, Trajectory
+from pandemonium.experience import Transition, Trajectory, Experience
 from pandemonium.utilities.utilities import get_all_classes
 
 
@@ -69,22 +71,24 @@ class FeatureCumulant(Cumulant):
     def __init__(self, idx: int):
         self.idx = idx
 
-    def __call__(self, experience: Transition):
+    def __call__(self, experience: Experience):
         return experience.x0[self.idx]
+
+
+class CombinedCumulant(Cumulant):
+    """ Sums up multiple cumulants. """
+
+    def __init__(self, cumulants: Set[Cumulant]):
+        self.cumulants = cumulants
+
+    def __call__(self, *args, **kwargs):
+        return sum(cumulant(*args, **kwargs) for cumulant in self.cumulants)
 
 
 class Surprise(Cumulant):
     r""" Tracks the 'surprise' associated with a new state using a density model
 
     See Berseth et al. 2019 for details @ https://arxiv.org/pdf/1912.05510.pdf
-    """
-    pass
-
-
-class Curiosity(Cumulant):
-    r""" Tracks the novelty of the states wrt to the forward model
-
-    See Pathak et al. 2017 for details.
     """
     pass
 

@@ -50,6 +50,7 @@ mathjax_config = {
             "Q": '\\operatorname{Q}',
             "SARSA": '\\operatorname{SARSA}',
             "SARSE": '\\operatorname{SARSE}',
+            "norm": ['\\left\\lVert#1\\right\\rVert', 1]
         }
     }
 }

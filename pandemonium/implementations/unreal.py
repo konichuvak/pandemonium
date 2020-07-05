@@ -165,7 +165,12 @@ def create_demons(config, env, φ, μ) -> Horde:
         continuation=ConstantContinuation(config['gamma'])
     )
 
-    demons.append(AC(gvf=optimal_control, behavior_policy=μ, feature=φ))
+    demons.append(AC(
+        gvf=optimal_control,
+        behavior_policy=μ,
+        feature=φ,
+        trace_decay=config.get('trace_decay', 1)  # n-step
+    ))
 
     # ==========================================================================
     # Auxiliary tasks performed by a mix of prediction and control demons
@@ -192,6 +197,7 @@ def create_demons(config, env, φ, μ) -> Horde:
             replay_buffer=replay,  # shared with value replay demon
             target_update_freq=config['target_update_freq'],
             double=True,
+            trace_decay=config.get('trace_decay', 1)  # n-step
         ))
 
     # --------------------------------------------------------------------------

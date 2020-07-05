@@ -1,23 +1,24 @@
 import torch.nn.functional as F
-from torch import device, nn
+from torch import device
 
 from pandemonium import GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import CombinedCumulant, Fitness, Cumulant
-from pandemonium.demons import Demon, Loss
+from pandemonium.demons import Loss, ParametricDemon
 from pandemonium.experience import Experience, Transition, Trajectory
 from pandemonium.implementations import AC
-from pandemonium.networks import ForwardModel, InverseModel, ConvBody
+from pandemonium.networks import ForwardModel, InverseModel
 from pandemonium.policies import Policy, Greedy
 
 
-class IntrinsicCuriosityModule(Demon):
+class IntrinsicCuriosityModule(ParametricDemon):
 
     def __init__(self,
                  feature: callable,
                  behavior_policy: Policy,
                  beta: float,
                  ):
+
         super().__init__(
             gvf=None,  # not learning any value function
             avf=None,  # not approximating any value function
@@ -91,15 +92,16 @@ class Curiosity(Cumulant):
 
 
 def create_demons(config, env, feature_extractor, policy) -> Horde:
-
-    dynamics_feature_extractor = ConvBody(
-        obs_shape=env.reset().shape,
-        channels=(32, 32, 32, 32),
-        kernels=(3, 3, 3, 3),
-        strides=(2, 2, 2, 2),
-        padding=(1, 1, 1, 1),
-        activation=nn.ELU
-    )
+    # dynamics_feature_extractor = ConvBody(
+    #     obs_shape=env.reset().shape,
+    #     channels=(32, 32, 32, 32),
+    #     kernels=(3, 3, 3, 3),
+    #     strides=(2, 2, 2, 2),
+    #     padding=(1, 1, 1, 1),
+    #     activation=nn.ELU
+    # )
+    from copy import deepcopy
+    dynamics_feature_extractor = deepcopy(feature_extractor)
 
     icm = IntrinsicCuriosityModule(
         feature=dynamics_feature_extractor,
@@ -118,7 +120,7 @@ def create_demons(config, env, feature_extractor, policy) -> Horde:
         behavior_policy=policy,
         feature=feature_extractor,
         criterion=F.mse_loss,
-        trace_decay=config['trace_decay']
+        trace_decay=config.get('trace_decay', 1)  # n-step
     )
     # TODO: pass the device with the demon
     return Horde([control_demon, icm], device('cpu'))

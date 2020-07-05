@@ -1,27 +1,40 @@
-from ray.rllib.utils.schedules import (Schedule, ConstantSchedule,
-                                       LinearSchedule, PolynomialSchedule)
+from ray.rllib.utils.schedules import ConstantSchedule as RayConstantSchedule
+from ray.rllib.utils.schedules import LinearSchedule as RayLinearSchedule
+from ray.rllib.utils.schedules import \
+    PolynomialSchedule as RayPolynomialSchedule
+from ray.rllib.utils.schedules import Schedule
 
 __all__ = ['Schedule', 'ConstantSchedule', 'LinearSchedule',
            'PolynomialSchedule']
 
 
-def polynomial_repr(self):
-    return f'{self.__class__.__name__}(' \
-           f'horizon={self.schedule_timesteps}, ' \
-           f'{self.initial_p} -> {self.final_p}, ' \
-           f'exponent={self.power})'
+class PolynomialSchedule(RayPolynomialSchedule):
+
+    def __init__(self, *args, framework='torch', **kwargs):
+        super().__init__(*args, **kwargs, framework=framework)
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(' \
+               f'horizon={self.schedule_timesteps}, ' \
+               f'{self.initial_p} -> {self.final_p}, ' \
+               f'exponent={self.power})'
 
 
-def linear_repr(self):
-    return f'{self.__class__.__name__}(' \
-           f'horizon={self.schedule_timesteps}, ' \
-           f'{self.initial_p} -> {self.final_p})'
+class LinearSchedule(RayLinearSchedule):
+
+    def __init__(self, *args, framework='torch', **kwargs):
+        super().__init__(*args, **kwargs, framework=framework)
+
+    def __repr__(self):
+        return f'{self.__class__.__name__}(' \
+               f'horizon={self.schedule_timesteps}, ' \
+               f'{self.initial_p} -> {self.final_p})'
 
 
-def const_repr(self):
-    return f'{self.__class__.__name__}({self._v})'
+class ConstantSchedule(RayConstantSchedule):
 
+    def __init__(self, *args, framework='torch', **kwargs):
+        super().__init__(*args, **kwargs, framework=framework)
 
-PolynomialSchedule.__repr__ = polynomial_repr
-LinearSchedule.__repr__ = linear_repr
-ConstantSchedule.__repr__ = const_repr
+    def __repr__(self):
+        return f'{self.__class__.__name__}({self._v})'

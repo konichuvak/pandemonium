@@ -5,6 +5,7 @@ import torch
 from torch import nn
 
 from pandemonium.demons import Demon
+from collections import OrderedDict
 
 
 class Horde(torch.nn.Module):
@@ -28,7 +29,7 @@ class Horde(torch.nn.Module):
                  aggregation_fn: Callable[[torch.Tensor], torch.Tensor] = None,
                  ):
         super().__init__()
-        demons = {str(demon): demon for demon in demons}
+        demons = OrderedDict({str(demon): demon for demon in demons})
         self.demons = nn.ModuleDict(demons)
 
         # Determines how the total loss is weighted across demons

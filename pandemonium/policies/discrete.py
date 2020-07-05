@@ -82,7 +82,7 @@ class Egreedy(Discrete):
 class Greedy(Egreedy):
 
     def __init__(self, *args, **kwargs):
-        super().__init__(ConstantSchedule(0, 'torch'), *args, **kwargs)
+        super().__init__(ConstantSchedule(0), *args, **kwargs)
 
 
 @Policy.register('softmax')

@@ -2,7 +2,7 @@ from enum import IntEnum
 
 import gym
 import numpy as np
-from gym import spaces
+from gym.spaces import Box, Discrete
 from gym_minigrid.wrappers import FlatObsWrapper
 
 
@@ -52,7 +52,7 @@ class OneHotObsWrapper(gym.core.ObservationWrapper):
         super().__init__(env)
         env = self.env.unwrapped
         self.dim = 4 * env.width * env.height
-        self.observation_space = spaces.Box(
+        self.observation_space = Box(
             low=0,
             high=1,
             shape=(self.dim,),
@@ -73,7 +73,7 @@ class Tabular(OneHotObsWrapper):
 
     def __init__(self, env):
         super().__init__(env)
-        self.observation_space = spaces.Discrete(self.dim)
+        self.observation_space = Discrete(self.dim)
 
     def observation(self, obs) -> np.float:
         obs = super().observation(obs)
@@ -92,7 +92,7 @@ class SimplifyObsSpace(gym.core.ObservationWrapper):
 
         super().__init__(env)
         self.dim_to_keep = dim_to_keep
-        self.observation_space = spaces.Box(
+        self.observation_space = Box(
             low=0,
             high=10,
             shape=(self.env.width, self.env.height),
@@ -130,7 +130,7 @@ class SimplifyActionSpace(gym.core.Wrapper):
         self.actions = SimplifyActionSpace.Actions
 
         # Actions are discrete integer values
-        self.action_space = spaces.Discrete(len(self.actions))
+        self.action_space = Discrete(len(self.actions))
 
 
 class FlatObsWrapperNoMission(FlatObsWrapper):
@@ -142,10 +142,10 @@ class FlatObsWrapperNoMission(FlatObsWrapper):
         imgSpace = env.observation_space.spaces['image']
         imgSize = np.prod(imgSpace)
 
-        self.observation_space = spaces.Box(
+        self.observation_space = Box(
             low=0,
             high=255,
-            shape=(1, imgSize),
+            shape=(imgSize, ),
             dtype='uint8'
         )
 

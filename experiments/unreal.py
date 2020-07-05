@@ -3,43 +3,12 @@ from collections import deque
 import ray
 import torch
 from ray import tune
-from ray.tune import register_env
-from ray.tune.trial import Trial
 from tqdm import tqdm
 
 from experiments import EXPERIMENT_DIR
 from experiments.trainable import Loop
-from pandemonium.envs import DeepmindLabEnv
-from pandemonium.envs.wrappers import Torch
 from pandemonium.experience import Transition, Trajectory
 from pandemonium.implementations.unreal import create_demons
-
-device = torch.device('cpu')
-
-register_env("DMLab", lambda config: Torch(DeepmindLabEnv(**config),
-                                           device=device))
-
-env_config = {
-    # 'level': 'seekavoid_arena_01',
-    'level': 'nav_maze_static_01',
-}
-
-model_cfg = tune.grid_search(['shallow', 'deep'])
-
-replay_params = {
-    'buffer_size': 100,
-    'target_update_freq': tune.grid_search([100]),
-}
-
-policy_cfg = {'entropy_coefficient': 0.01}
-
-# Horde vs Ray optimizer?
-optimizer_params = {
-    'ac_weight': 1.,
-    'vr_weight': tune.grid_search([1.]),
-    'pc_weight': tune.grid_search([1.]),
-    'rp_weight': tune.grid_search([1.]),
-}
 
 
 # ------------------------------------------------------------------------------
@@ -129,56 +98,42 @@ def viz():
 #     })
 
 
-def trial_the_creator(trial: Trial):
-    return str(trial)
-
-
 if __name__ == "__main__":
     ray.init(local_mode=True)
     analysis = tune.run(
         Loop,
         # scheduler=scheduler,
         name='UNREAL',
-        num_samples=3,
-        # stop={
-        #     "episodes_total": 10000,
-        # },
-        config={
-            # Model a.k.a. Feature Extractor
-            "feature_name": 'conv_body',
-            # "feature_cfg": model_cfg,
-            "feature_cfg": {
-                'feature_dim': 512,
-                'channels': (16, 32),
-                'kernels': (8, 4),
-                'strides': (4, 2),
-            },
-
-            # Policy
-            "policy_name": 'VPG',
-            "policy_cfg": policy_cfg,
-
-            # Optimizer a.k.a. Horde
-            "horde_fn": create_demons,
-            **replay_params,
-            **optimizer_params,
-            # optimizer.step performed in the trainer_template is same as agent.learn and includes exp collection and sgd
-            # try to see how to write horde.learn as a SyncSampleOptimizer in ray
-
-            'gamma': tune.grid_search([0.9]),
-
-            # === RLLib params ===
-            "use_pytorch": True,
-            "env": "DMLab",
-            "env_config": env_config,
-            "rollout_fragment_length": 20,  # as per original paper
-            # used as batch size for exp collector and ER buffer
-            # "train_batch_size": 32,
-        },
-        trial_name_creator=trial_the_creator,
+        # num_samples=3,
+        # stop={"episodes_total": 10000},
         local_dir=EXPERIMENT_DIR,
         checkpoint_freq=1000,  # in training iterations
         checkpoint_at_end=True,
-        verbose=1,
-        # resume='PROMPT',
+        config={
+            "env": "DeepmindLabEnv",
+            "env_config": {
+                'level': 'seekavoid_arena_01',
+                # 'level': 'nav_maze_static_01',
+            },
+            'gamma': tune.grid_search([0.9]),
+            "rollout_fragment_length": 20,
+
+            # Feature extractor
+            "encoder": 'nature_cnn_3',
+
+            # Policy
+            "policy_name": 'VPG',
+            "policy_cfg": {'entropy_coefficient': 0.01},
+
+            # Replay buffer
+            'buffer_size': 100,
+            'target_update_freq': tune.grid_search([100]),
+
+            # Optimizer a.k.a. Horde
+            "horde_fn": create_demons,
+            'ac_weight': 1.,
+            'vr_weight': tune.grid_search([1.]),
+            'pc_weight': tune.grid_search([1.]),
+            'rp_weight': tune.grid_search([1.]),
+        }
     )

@@ -19,6 +19,7 @@ class BaseNetwork(nn.Module, Registrable):
     """
 
     def __init__(self, obs_shape: tuple, **kwargs):
+        self.obs_shape = obs_shape
         super().__init__()
 
 

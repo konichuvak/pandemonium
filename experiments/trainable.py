@@ -1,29 +1,18 @@
-import torch
-from pandemonium.agent import Agent
-from pandemonium.networks.bodies import BaseNetwork
-from pandemonium.policies import Policy
+from typing import Callable, Union
+
 from ray.rllib.agents.a3c.a3c_torch_policy import A3CTorchPolicy
 from ray.rllib.agents.trainer import Trainer, COMMON_CONFIG
 from ray.rllib.utils import override
 from ray.tune import Trainable
 from ray.tune.resources import Resources
 
-Trainer._allow_unknown_configs = True
+from pandemonium.agent import Agent
+from pandemonium.envs import MiniGridEnv, DeepmindLabEnv
+from pandemonium.networks.bodies import BaseNetwork
+from pandemonium.policies import Policy
 
-networks = {
-    'shallow': {
-        'feature_dim': 512,
-        'channels': (16, 32),
-        'kernels': (8, 4),
-        'strides': (4, 2),
-    },
-    'deep': {
-        'feature_dim': 512,
-        'channels': (16, 32, 64),
-        'kernels': (8, 4, 2),
-        'strides': (4, 2, 1),
-    }
-}
+Trainer._allow_unknown_configs = True
+Env = Union[MiniGridEnv, DeepmindLabEnv]
 
 
 class Loop(Trainer):
@@ -31,40 +20,41 @@ class Loop(Trainer):
     _policy = A3CTorchPolicy
     _default_config = COMMON_CONFIG
 
-    def _init(self, cfg, env_creator):
-        # Set up the environment
-        self.env = env_creator(cfg['env_config'])
+    def create_encoder(self, cfg, obs_space):
+        if isinstance(self.env.unwrapped, MiniGridEnv):
+            from pandemonium.envs.minigrid import encoder_registry
+        elif isinstance(self.env.unwrapped, DeepmindLabEnv):
+            from pandemonium.envs.dm_lab import encoder_registry
+        else:
+            raise ValueError(f'Invalid Environment: {self.env.unwrapped}')
 
-        # Set up the feature extractor
-        net_cls = BaseNetwork.by_name(cfg['feature_name'])
-        obs_shape = self.env.reset().shape
-        if isinstance(obs_shape, torch.Size):
-            obs_shape = tuple(obs_shape[1:])  # discard batch dimension
-            if len(obs_shape) == 1:
-                obs_shape = obs_shape[0]
+        encoder = encoder_registry[cfg['encoder']]
+        encoder_cls = BaseNetwork.by_name(encoder['encoder_name'])
+        encoder_cfg = encoder.get('encoder_cfg', {})
 
-        # TODO: register various models?
-        # feature_cfg = networks[cfg['feature_cfg']]
-        feature_cfg = cfg['feature_cfg']
-        feature_extractor = net_cls(obs_shape=obs_shape, **feature_cfg)
+        obs_shape = obs_space.shape
+        if len(obs_shape) == 3:
+            obs_shape = (obs_shape[2], obs_shape[0], obs_shape[1])
+        return encoder_cls(obs_shape=obs_shape, **encoder_cfg)
 
-        # Set up policy network
+    @staticmethod
+    def create_policy(cfg, feature_dim, action_space):
         policy_cls = Policy.by_name(cfg['policy_name'])
-        policy = policy_cls(feature_dim=feature_extractor.feature_dim,
-                            action_space=self.env.action_space,
-                            **cfg['policy_cfg'])
-        # TODO: needed for tuning softmax vs egreedy in DQN
-        param_name = 'epsilon' if cfg[
-                                      'policy_name'] == 'egreedy' else 'temperature'
-        # policy = policy_cls(feature_dim=feature_extractor.feature_dim,
-        #                     action_space=self.env.action_space,
-        #                     **{param_name: cfg['policy_cfg']['param']})
+        policy_cfg = cfg.get('policy_cfg', {})
+        return policy_cls(feature_dim=feature_dim,
+                          action_space=action_space,
+                          **policy_cfg)
 
-        # Set up Optimizer a.k.a. Horde
-        horde = cfg['horde_fn'](cfg, self.env, feature_extractor, policy)
+    def _init(self, cfg, env_creator: Callable[[dict], Env]):
+        self.env = env_creator(cfg['env_config'])
+        encoder = self.create_encoder(cfg, self.env.observation_space)
+        print(encoder)
+        policy = self.create_policy(cfg, encoder.feature_dim, self.env.action_space)
+        print(policy)
+        horde = cfg['horde_fn'](cfg, self.env, encoder, policy)
 
         # Create a learning loop
-        self.agent = Agent(feature_extractor, policy, horde)
+        self.agent = Agent(encoder, policy, horde)
         self.loop = self.agent.learn(
             env=self.env,
             episodes=100000000000,

@@ -24,8 +24,8 @@ class Torch(ObservationWrapper):
     def observation(self, obs):
         t = torch.tensor(obs, device=self.device, dtype=torch.float32)
         if len(t.shape) == 3:
-            t = t.permute(2, 0, 1)  # swap (w, h, dir) -> (dir, w, h)
-        t = t.unsqueeze(0)  # add batch dim: (dir, w, h) -> (1, dir, w, h)
+            t = t.permute(2, 0, 1)  # swap (h, w, c) -> (c, h, w)
+        t = t.unsqueeze(0)  # add batch dim: (c, h, w) -> (1, c, h, w)
         return t
 
 

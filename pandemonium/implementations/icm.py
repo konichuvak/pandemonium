@@ -1,24 +1,32 @@
+import torch
 import torch.nn.functional as F
-from torch import device
 
 from pandemonium import GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import CombinedCumulant, Fitness, Cumulant
 from pandemonium.demons import Loss, ParametricDemon
-from pandemonium.experience import Experience, Transition, Trajectory
+from pandemonium.experience import Experience
 from pandemonium.implementations import AC
 from pandemonium.networks import ForwardModel, InverseModel
 from pandemonium.policies import Policy, Greedy
+from pandemonium.utilities.utilities import get_all_members
 
 
-class IntrinsicCuriosityModule(ParametricDemon):
+class ICM(ParametricDemon):
+    """ Intrinsic Curiosity Module
+
+    References
+    ----------
+    "Curiosity-driven Exploration by Self-supervised Prediction"
+        Pathak et al. 2017
+        https://arxiv.org/pdf/1705.05363.pdf
+     """
 
     def __init__(self,
                  feature: callable,
                  behavior_policy: Policy,
                  beta: float,
                  ):
-
         super().__init__(
             gvf=None,  # not learning any value function
             avf=None,  # not approximating any value function
@@ -38,13 +46,6 @@ class IntrinsicCuriosityModule(ParametricDemon):
         assert 0. <= beta <= 1.
         self.β = beta
 
-    def learn(self, exp: Experience):
-        if isinstance(exp, (Trajectory, Transition)):
-            return self.delta(experience=exp)
-        elif isinstance(exp, list) and isinstance(exp[0], Transition):
-            trajectory = Trajectory.from_transitions(exp)
-            return self.delta(experience=trajectory)
-
     def delta(self, experience: Experience) -> Loss:
         # Reuse forward model loss computed during cumulant signal generation
         φ0, φ1 = experience.info['φ0'], experience.info['φ1']
@@ -60,21 +61,15 @@ class IntrinsicCuriosityModule(ParametricDemon):
 
 
 class Curiosity(Cumulant):
-    r""" Tracks the novelty of the states wrt to the forward model
+    r""" Measures the novelty using prediction error of the forward model.
 
     Intrinsic reward on the transition at time $t$ is given by
 
     .. math::
         r^i_t = \frac{1}{2} \norm{\hat{\phi}(s_{t+1}) - \phi(s_{t+1})}^2_2
-
-    References
-    ----------
-    "Curiosity-driven Exploration by Self-supervised Prediction"
-        Pathak et al. 2017
-        https://arxiv.org/pdf/1705.05363.pdf
     """
 
-    def __init__(self, icm: IntrinsicCuriosityModule):
+    def __init__(self, icm: ICM):
         self.icm = icm
 
     def __call__(self, experience: Experience):
@@ -83,7 +78,7 @@ class Curiosity(Cumulant):
         φ1_hat = self.icm.forward_dynamics_model(φ0, experience.a)
         prediction_error = F.mse_loss(φ1_hat, φ1)
 
-        # Add to experience, to avoid recomputing during BP
+        # Add to experience, to avoid redundant computation
         experience.info['φ0'] = φ0
         experience.info['φ1'] = φ1
         experience.info['forward_model_error'] = prediction_error
@@ -91,36 +86,64 @@ class Curiosity(Cumulant):
         return prediction_error.detach()
 
 
-def create_demons(config, env, feature_extractor, policy) -> Horde:
-    # dynamics_feature_extractor = ConvBody(
-    #     obs_shape=env.reset().shape,
-    #     channels=(32, 32, 32, 32),
-    #     kernels=(3, 3, 3, 3),
-    #     strides=(2, 2, 2, 2),
-    #     padding=(1, 1, 1, 1),
-    #     activation=nn.ELU
-    # )
-    from copy import deepcopy
-    dynamics_feature_extractor = deepcopy(feature_extractor)
+def create_horde(config, env, feature_extractor, policy) -> Horde:
+    demons = list()
 
-    icm = IntrinsicCuriosityModule(
-        feature=dynamics_feature_extractor,
-        behavior_policy=policy,
-        beta=config.get('beta', 0.2)
-    )
+    cumulant = Fitness(env)
 
-    control_demon = AC(
+    if config.get('icm_weight', 1.):
+        # dynamics_feature_extractor = ConvBody(
+        #     obs_shape=env.reset().shape,
+        #     channels=(32, 32, 32, 32),
+        #     kernels=(3, 3, 3, 3),
+        #     strides=(2, 2, 2, 2),
+        #     padding=(1, 1, 1, 1),
+        #     activation=nn.ELU
+        # )
+        from copy import deepcopy
+        dynamics_feature_extractor = deepcopy(feature_extractor)
+
+        icm = ICM(
+            feature=dynamics_feature_extractor,
+            behavior_policy=policy,
+            beta=config.get('beta', 0.2)
+        )
+        demons.append(icm)
+        cumulant = CombinedCumulant({Fitness(env), Curiosity(icm)})
+
+    # Note that order matters! When we iterate over a collection of demons
+    #   in horde.py, we will start with the last demon, ICM, which
+    #   will share information required for computing intrinsic reward in the
+    #   main agent's learning loop.
+    demons.insert(0, AC(
         gvf=GVF(
             target_policy=Greedy(
                 feature_dim=feature_extractor.feature_dim,
                 action_space=env.action_space
             ),
-            cumulant=CombinedCumulant({Fitness(env), Curiosity(icm)}),
+            cumulant=cumulant,
             continuation=ConstantContinuation(config['gamma'])),
         behavior_policy=policy,
         feature=feature_extractor,
         criterion=F.mse_loss,
         trace_decay=config.get('trace_decay', 1)  # n-step
+    ))
+    weights = [
+        config.get('ac_weight', 1.),
+        config.get('icm_weight', 1.)
+    ]
+
+    device = torch.device('cpu')
+    demon_weights = torch.tensor(
+        data=[w for w in weights if w],
+        dtype=torch.float
+    ).to(device)
+
+    return Horde(
+        demons=demons,
+        device=device,
+        aggregation_fn=lambda losses: demon_weights.dot(losses),
     )
-    # TODO: pass the device with the demon
-    return Horde([control_demon, icm], device('cpu'))
+
+
+__all__ = get_all_members(__name__)

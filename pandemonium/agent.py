@@ -86,8 +86,8 @@ class Agent:
             'interaction_reward': total_reward,
             'interaction_time': time.time() - wall_time,
             'interaction_steps': steps if done else len(transitions),
-            'actions': trajectory.a.tolist(),
-            'entropy': trajectory.info['entropy'].tolist(),
+            # 'actions': trajectory.a.tolist(),
+            # 'entropy': trajectory.info['entropy'].tolist(),
             'is_ratios': trajectory.ρ.mean().item()
         }
 

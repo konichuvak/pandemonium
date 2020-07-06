@@ -1,4 +1,4 @@
-from typing import Callable, Union
+from typing import Callable
 
 from ray.rllib.agents.a3c.a3c_torch_policy import A3CTorchPolicy
 from ray.rllib.agents.trainer import Trainer, COMMON_CONFIG
@@ -7,16 +7,15 @@ from ray.tune import Trainable
 from ray.tune.resources import Resources
 
 from pandemonium.agent import Agent
-from pandemonium.envs import MiniGridEnv, DeepmindLabEnv
+from pandemonium.envs import MiniGridEnv, DeepmindLabEnv, PandemoniumEnv
 from pandemonium.networks.bodies import BaseNetwork
 from pandemonium.policies import Policy
 
 Trainer._allow_unknown_configs = True
-Env = Union[MiniGridEnv, DeepmindLabEnv]
 
 
 class Loop(Trainer):
-    # _name = name
+    _name = ''
     _policy = A3CTorchPolicy
     _default_config = COMMON_CONFIG
 
@@ -45,11 +44,13 @@ class Loop(Trainer):
                           action_space=action_space,
                           **policy_cfg)
 
-    def _init(self, cfg, env_creator: Callable[[dict], Env]):
-        self.env = env_creator(cfg['env_config'])
+    def _init(self, cfg, env_creator: Callable[[dict], PandemoniumEnv]):
+        self.env = env_creator(cfg.get('env_config', {}))
+        print(self.env)
         encoder = self.create_encoder(cfg, self.env.observation_space)
         print(encoder)
-        policy = self.create_policy(cfg, encoder.feature_dim, self.env.action_space)
+        policy = self.create_policy(cfg, encoder.feature_dim,
+                                    self.env.action_space)
         print(policy)
         horde = cfg['horde_fn'](cfg, self.env, encoder, policy)
 
@@ -79,9 +80,9 @@ class Loop(Trainer):
         logs = next(self.loop)
 
         # Add histogram stats
-        if 'episode_reward' in logs:
-            self.hist_stats['episode_reward'].append(logs['episode_reward'])
-            logs['hist_stats'] = self.hist_stats
+        # if 'episode_reward' in logs:
+        #     self.hist_stats['episode_reward'].append(logs['episode_reward'])
+        #     logs['hist_stats'] = self.hist_stats
         return logs
 
     @staticmethod
@@ -106,10 +107,6 @@ class Loop(Trainer):
             extra_memory=cf["memory_per_worker"] * num_workers,
             extra_object_store_memory=cf["object_store_memory_per_worker"] *
                                       num_workers)
-
-    @property
-    def _name(self):
-        return self.__class__.__name__
 
     # def _save(self, tmp_checkpoint_dir):
     #     # tmp_checkpoint_dir = PARAMETER_DIR / f'{episode}.pt'

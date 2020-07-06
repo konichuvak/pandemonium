@@ -1,7 +1,0 @@
-Curiosity
-=========
-
-.. currentmodule:: pandemonium.cumulants
-
-.. autoclass:: Curiosity
-   :show-inheritance:

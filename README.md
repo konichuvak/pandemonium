@@ -1,6 +1,6 @@
 # Pandæmonium
 
 A birds-eye view of the algorithms implemented in the library and their building blocks:
-![](https://konichuvak.github.io/pandemonium/_images/inheritance-4b95939eb2aa35121b6bfb9951a4f439150ef625.png)
+![](https://konichuvak.github.io/pandemonium/html/_images/inheritance-f6697398cb927679a7a85ddf278933636cfc507e.png)
 
 [[Documentation]](http://konichuvak.github.io/pandemonium/)

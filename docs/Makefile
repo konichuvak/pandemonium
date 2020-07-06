@@ -24,4 +24,3 @@ help:
 # https://www.docslikecode.com/articles/github-pages-python-sphinx/
 github:
 	@make html
-	@cp -a build/html/. ../docs

@@ -42,7 +42,9 @@ wrappers = {
     ]
 }
 
-for cls in (EmptyEnv, MultiRoomEnv, FourRoomsEnv):
+for cls in (EmptyEnv5x5, EmptyEnv6x6, EmptyEnv16x16,
+            MultiRoomEnvN2S4, MultiRoomEnvN4S5, MultiRoomEnvN6,
+            FourRoomsEnv):
     name = cls.__name__
     for wrap_name, wraps in wrappers.items():
         def env_creator(env_cls):

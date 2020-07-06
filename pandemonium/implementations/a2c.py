@@ -13,12 +13,13 @@ from pandemonium.utilities.utilities import get_all_members
 
 
 class AC(TDAC, OfflineTDPrediction, LinearDemon, TTD):
+    """ Actor Critic equipped with linear FA and eligibility traces. """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs, output_dim=1)
 
 
-def create_demons(config, env, feature_extractor, policy) -> Horde:
+def create_horde(config, env, feature_extractor, policy) -> Horde:
     control_demon = AC(
         gvf=GVF(
             target_policy=Greedy(

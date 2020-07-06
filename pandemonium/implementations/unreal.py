@@ -148,7 +148,7 @@ class PixelControl(DQN):
                          behavior_policy=behavior_policy, **kwargs)
 
 
-def create_demons(config, env, φ, μ) -> Horde:
+def create_horde(config, env, φ, μ) -> Horde:
     demons = list()
 
     # Target policy is greedy

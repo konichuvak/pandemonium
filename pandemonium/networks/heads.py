@@ -1,12 +1,15 @@
 import torch
-import torch.nn.functional as F
 from torch import nn
 
+from pandemonium.networks.bodies import BaseNetwork
 from pandemonium.networks.utils import layer_init
+from pandemonium.utilities.utilities import get_all_classes
 
 
 class LinearNet(nn.Module):
-    def __init__(self, output_dim, body):
+    """ A fully connected head that follows the network base. """
+
+    def __init__(self, output_dim, body: BaseNetwork):
         super().__init__()
         self.body = body
         self.head = layer_init(nn.Linear(body.feature_dim, output_dim))
@@ -16,6 +19,8 @@ class LinearNet(nn.Module):
 
 
 class Reshape(nn.Module):
+    """ A convenience module for reshaping the output at the end of the net. """
+
     def __init__(self, *args):
         super(Reshape, self).__init__()
         self.shape = args
@@ -25,6 +30,8 @@ class Reshape(nn.Module):
 
 
 class ForwardModel(nn.Module):
+    """ Predicts next features, given the current features and an action. """
+
     def __init__(self, action_dim: int, feature_dim: int):
         super().__init__()
         action_features = feature_dim // 2
@@ -41,7 +48,9 @@ class ForwardModel(nn.Module):
 
 
 class InverseModel(nn.Module):
-    def __init__(self, action_dim: int, feature_dim):
+    """ Predicts an action from a pair of consecutive feature vectors. """
+
+    def __init__(self, action_dim: int, feature_dim: int):
         super().__init__()
         self.head = nn.Sequential(
             layer_init(nn.Linear(feature_dim * 2, 256)),
@@ -52,3 +61,6 @@ class InverseModel(nn.Module):
     def forward(self, x0, x1):
         assert len(x0.shape) == len(x1.shape) == 2
         return self.head(torch.cat((x0, x1), dim=1))
+
+
+__all__ = get_all_classes(__name__)

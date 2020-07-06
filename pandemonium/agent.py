@@ -3,6 +3,7 @@ from typing import Tuple, Iterator
 
 import torch
 
+from pandemonium.envs import PandemoniumEnv
 from pandemonium.experience import Transition, Transitions, Trajectory
 from pandemonium.horde import Horde
 from pandemonium.policies import Policy
@@ -13,8 +14,7 @@ class Agent:
     def __init__(self,
                  feature_extractor,
                  behavior_policy: Policy,
-                 horde: Horde
-                 ):
+                 horde: Horde):
 
         # Representation shared across al demons
         self.feature_extractor = feature_extractor
@@ -26,10 +26,10 @@ class Agent:
         self.horde = horde
 
     def interact(self,
-                 env,
+                 env: PandemoniumEnv,
                  s0: torch.Tensor,
                  steps: int) -> Tuple[Transitions, torch.Tensor, dict]:
-        """ Perform number of `steps` in the environment
+        """ Perform number of `steps` in the environment.
 
         Stops early if the episode is over.
 
@@ -46,7 +46,8 @@ class Agent:
         -------
         A list of transitions with a dictionary of logs
 
-        # TODO: add parallel experience collection
+        .. todo::
+            add parallel experience collection
         """
         wall_time = time.time()
         transitions = list()
@@ -99,7 +100,11 @@ class Agent:
 
         return transitions, s0, logs
 
-    def learn(self, env, episodes: int, horizon: int) -> Iterator[dict]:
+    def learn(self,
+              env: PandemoniumEnv,
+              episodes: int,
+              horizon: int) -> Iterator[dict]:
+        """ Learn by interaction with environment. """
 
         total_steps = 0
         for episode in range(episodes):

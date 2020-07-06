@@ -53,8 +53,8 @@ class Demon:
         self.μ = behavior_policy
         self.λ = eligibility
 
-    def learn(self, *args, **kwargs):
-        raise NotImplementedError
+    def learn(self, experience: Experience):
+        return self.delta(experience)
 
     def delta(self, experience: Experience) -> Loss:
         """ Specifies the update rule for approximate value function (avf)

@@ -80,6 +80,7 @@ class Egreedy(Discrete):
 
 @Policy.register('greedy')
 class Greedy(Egreedy):
+    r""" Convenience for greedy policy, often used as a learning target. """
 
     def __init__(self, *args, **kwargs):
         super().__init__(ConstantSchedule(0), *args, **kwargs)

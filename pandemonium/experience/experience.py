@@ -38,7 +38,7 @@ class Transition(NamedTuple):
 
 
 class Trajectory(Transition):
-    r""" A batch of ``Transition``s. """
+    r""" A series of consecutive transitions experienced by the agent. """
 
     done: torch.Tensor
     ρ: torch.Tensor
@@ -46,6 +46,10 @@ class Trajectory(Transition):
 
     @classmethod
     def from_transitions(cls, t: Transitions):
+        """ Creates a Trajectory from a collection of Transitions. """
+        # if len(t) == 1:
+        #     return cls(t[0])  # Online RL
+
         batch = cls(*zip(*t))
         device = batch.s0[0].device
 
@@ -76,7 +80,10 @@ class Trajectory(Transition):
                 pass
 
         return cls(s0=s0, a=a0, r=r, s1=s1, done=done, x0=x0, x1=x1, a1=a1,
-                   ρ=ρ, buffer_index=buffer_index, info=info)
+                   ρ=ρ, buffer_index=buffer_index, info=info,
+                   o=[None for _ in range(len(t))],
+                   a_dist=[None for _ in range(len(t))]
+                   )
 
     def __len__(self):
         return self.s0.shape[0]

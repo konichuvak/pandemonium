@@ -1,0 +1,35 @@
+<map id="inheritance3e43182fb2" name="inheritance3e43182fb2">
+<area shape="rect" id="node1" title="Actor Critic equipped with linear FA and eligibility traces." alt="" coords="548,78,601,96"/>
+<area shape="rect" id="node2" title="Actor&#45;Critic that approximates advantage with :math:`TD` error." alt="" coords="403,41,456,60"/>
+<area shape="rect" id="node3" title="Offline :math:`TD` for prediction tasks." alt="" coords="375,114,484,133"/>
+<area shape="rect" id="node36" title=":math:`n text{&#45;step} TD` performed on the past experiences" alt="" coords="537,114,612,133"/>
+<area shape="rect" id="node4" title="Approximates state or state&#45;action values using linear projection" alt="" coords="389,78,470,96"/>
+<area shape="rect" id="node5" title="Truncated :math:`TD{(
+ambda)}`" alt="" coords="263,226,317,245"/>
+<area shape="rect" id="node13" title="Deep Q&#45;Network with all the bells and whistles mixed in." alt="" coords="548,467,601,485"/>
+<area shape="rect" id="node24" title=":math:`n`&#45;step :math:`TD` for estimating :math:`V approx v_{pi}`" alt="" coords="403,189,456,208"/>
+<area shape="rect" id="node6" title="Base class for Actor&#45;Critic architectures." alt="" coords="256,40,323,59"/>
+<area shape="rect" id="node7" title="Base class fot parametrized Demons implemented in PyTorch" alt="" coords="102,115,205,134"/>
+<area shape="rect" id="node21" title="Intrinsic Curiosity Module" alt="" coords="263,4,317,23"/>
+<area shape="rect" id="node35" title="A demon that maximizes un&#45;discounted :math:`n`&#45;step return." alt="" coords="240,152,340,170"/>
+<area shape="rect" id="node8" title="Categorical Q&#45;learning mixin." alt="" coords="390,484,469,503"/>
+<area shape="rect" id="node9" title="Learns the optimal policy while learning to predict" alt="" coords="111,282,196,300"/>
+<area shape="rect" id="node10" title="**General Value Function Approximator**" alt="" coords="9,226,62,245"/>
+<area shape="rect" id="node27" title="Base class for forward&#45;view :math:`TD` methods." alt="" coords="123,226,184,245"/>
+<area shape="rect" id="node32" title="Base class for backward&#45;view (online) :math:`TD` methods." alt="" coords="123,392,184,411"/>
+<area shape="rect" id="node34" title="Collects factual knowledge about environment by learning to predict" alt="" coords="104,152,203,170"/>
+<area shape="rect" id="node11" href="api/pandemonium.cumulants.Cumulant.html#pandemonium.cumulants.Cumulant" target="_top" title="A signal of interest :math:`z` accumulated over time" alt="" coords="4,79,67,97"/>
+<area shape="rect" id="node12" title="Measures the novelty using prediction error of the forward model." alt="" coords="124,79,183,97"/>
+<area shape="rect" id="node33" title="Duelling de&#45;convolutional network for auxiliary pixel control task" alt="" coords="677,467,752,485"/>
+<area shape="rect" id="node14" title="Offline :math:`TD` for control tasks." alt="" coords="382,300,478,319"/>
+<area shape="rect" id="node15" title="Classic Q&#45;learning update rule." alt="" coords="397,373,462,392"/>
+<area shape="rect" id="node20" title="Simple online Q&#45;learning." alt="" coords="526,364,623,383"/>
+<area shape="rect" id="node16" title="Mixin that adds a replay buffer to an agent." alt="" coords="378,521,481,540"/>
+<area shape="rect" id="node17" href="api/pandemonium.networks.TargetNetMixin.html#pandemonium.networks.TargetNetMixin" target="_top" title="Mixin that adds a target network to the agent." alt="" coords="385,557,474,576"/>
+<area shape="rect" id="node18" title="Mixin for value&#45;based control algorithms that uses two separate" alt="" coords="389,448,471,467"/>
+<area shape="rect" id="node19" title="Implements online version of Double Q&#45;learning." alt="" coords="665,364,764,383"/>
+<area shape="rect" id="node22" title="Base class for all neural network modules." alt="" coords="9,115,62,134"/>
+<area shape="rect" id="node26" title="Semi&#45;gradient :math:`SARSA{(
+ambda)}`." alt="" coords="403,264,456,283"/>
+<area shape="rect" id="node30" title="Base class for online :math:`TD` methods for control tasks." alt="" coords="382,337,478,355"/>
+</map>

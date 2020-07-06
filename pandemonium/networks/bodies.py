@@ -6,6 +6,7 @@ from torch import nn
 
 from pandemonium.networks.utils import layer_init, conv2d_size_out
 from pandemonium.utilities.registrable import Registrable
+from pandemonium.utilities.utilities import get_all_classes
 
 
 class BaseNetwork(nn.Module, Registrable):
@@ -35,6 +36,8 @@ class Identity(BaseNetwork):
 
 @BaseNetwork.register('fc_body')
 class FCBody(BaseNetwork):
+    """ A chain of linear layers. """
+
     def __init__(self,
                  obs_shape: tuple,
                  hidden_units: tuple = (64,),
@@ -54,7 +57,7 @@ class FCBody(BaseNetwork):
 
 @BaseNetwork.register('conv_body')
 class ConvBody(BaseNetwork):
-    """ A convolutional neural network, also known as `nature CNN` in RL """
+    """ A chain of convolutional layers. """
 
     def __init__(self,
                  obs_shape: tuple,
@@ -94,7 +97,7 @@ class ConvBody(BaseNetwork):
 
 @BaseNetwork.register('nature_cnn')
 class NatureCNN(ConvBody):
-    """ Adds a fully connected layer after a series of convolutional laters. """
+    """ Adds a fully connected layer after a series of convolutional layers. """
 
     def __init__(self, feature_dim: int, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -107,7 +110,7 @@ class NatureCNN(ConvBody):
 
 @BaseNetwork.register('conv_lstm')
 class ConvLSTM(ConvBody):
-    """ A convolutional neural net with a recurrent LSTM layer on top
+    """ A CNN with a recurrent LSTM layer on top.
 
     Used for tackling partial observability in the environment.
     A comprehensive example is given in https://arxiv.org/pdf/1507.06527.pdf
@@ -155,3 +158,6 @@ class ConvLSTM(ConvBody):
     @memory_state.setter
     def memory_state(self, other: torch.Tensor):
         self._memory_state = other
+
+
+__all__ = get_all_classes(__name__)

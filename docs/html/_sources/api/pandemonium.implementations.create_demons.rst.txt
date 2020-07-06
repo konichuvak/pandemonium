@@ -1,6 +1,0 @@
-create_demons
-=============
-
-.. currentmodule:: pandemonium.implementations
-
-.. autofunction:: create_demons

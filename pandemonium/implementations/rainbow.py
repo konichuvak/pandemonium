@@ -145,7 +145,7 @@ class DQN(OfflineTDControl,
         return super().__str__()
 
 
-def create_demons(config, env, φ, μ: Policy) -> Horde:
+def create_horde(config, env, φ, μ: Policy) -> Horde:
     replay_cls = ReplayBuffer.by_name(config['replay_name'])
     control_demon = DQN(
         gvf=GVF(

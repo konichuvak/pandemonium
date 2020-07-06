@@ -25,7 +25,7 @@ class ReplayBuffer(Registrable):
 
 @ReplayBuffer.register('er')
 class ER(ReplayBuffer):
-    """ Experience Replay buffer
+    """ Experience Replay buffer.
 
     Was originally designed as a means to make RL more data efficient [1].
     Later on adapted in DQN architecture to make the data distribution more
@@ -135,7 +135,7 @@ class ER(ReplayBuffer):
 
 @ReplayBuffer.register('segmented_er')
 class SegmentedER(ER):
-    """ Segmented Experience Replay
+    """ Segmented Experience Replay buffer.
 
     Allows for partitioning the ER into multiple segments, specifying a
     sampling distribution over segments.
@@ -209,7 +209,8 @@ class SegmentedER(ER):
 
 @ReplayBuffer.register('skewed_er')
 class SkewedER(ER):
-    """
+    """ Skewed Experience Replay buffer.
+
     Used in the UNREAL architecture for the auxiliary reward prediction task.
 
     References
@@ -274,7 +275,7 @@ class SkewedER(ER):
 
 @ReplayBuffer.register('per')
 class PER(ER):
-    """ Prioritized Experience Replay buffer
+    """ Prioritized Experience Replay buffer.
 
     References
     ----------
@@ -411,7 +412,7 @@ class PER(ER):
 
 
 class ReplayBufferMixin:
-    """ Mixin that adds a replay buffer to an agent."""
+    """ Mixin that adds a replay buffer to an agent. """
     delta: callable
 
     def __init__(self,
@@ -449,6 +450,7 @@ class ReplayBufferMixin:
             self.replay_buffer.add_batch(transitions)
 
     def _update_priorities(self, trajectory: Trajectory, info: dict):
+        """ Updates priorities of existing transitions stored in the buffer. """
         if isinstance(self.replay_buffer, PER):
             priorities = info[self.priority_measure]
             if len(priorities.shape) == 2:

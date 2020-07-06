@@ -8,7 +8,7 @@ from tqdm import tqdm
 from experiments import EXPERIMENT_DIR
 from experiments.trainable import Loop
 from pandemonium.experience import Transition, Trajectory
-from pandemonium.implementations.unreal import create_demons
+from pandemonium.implementations.unreal import create_horde
 
 
 # ------------------------------------------------------------------------------
@@ -130,7 +130,7 @@ if __name__ == "__main__":
             'target_update_freq': tune.grid_search([100]),
 
             # Optimizer a.k.a. Horde
-            "horde_fn": create_demons,
+            "horde_fn": create_horde,
             'ac_weight': 1.,
             'vr_weight': tune.grid_search([1.]),
             'pc_weight': tune.grid_search([1.]),

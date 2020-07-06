@@ -1,11 +1,12 @@
 import textwrap
+from collections import OrderedDict
 from typing import List, Callable
 
 import torch
 from torch import nn
 
 from pandemonium.demons import Demon
-from collections import OrderedDict
+from pandemonium.experience import Trajectory
 
 
 class Horde(torch.nn.Module):
@@ -54,6 +55,9 @@ class Horde(torch.nn.Module):
 
         losses = torch.empty(len(self.demons), device=self.device)
         logs = dict()
+
+        if 'AC' in self.demons:
+            transitions = Trajectory.from_transitions(transitions)
 
         # Aggregate losses from each demon
         for i, (d, demon) in enumerate(self.demons.items()):

@@ -197,19 +197,19 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.agent.Agent.interact" title="pandemonium.agent.Agent.interact"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interact</span></code></a>(self, env, s0, steps)</p></td>
-<td><p>Perform number of <cite>steps</cite> in the environment</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.agent.Agent.interact" title="pandemonium.agent.Agent.interact"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interact</span></code></a>(self, env, …)</p></td>
+<td><p>Perform number of <cite>steps</cite> in the environment.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.agent.Agent.learn" title="pandemonium.agent.Agent.learn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">learn</span></code></a>(self, env, episodes, horizon)</p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.agent.Agent.learn" title="pandemonium.agent.Agent.learn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">learn</span></code></a>(self, env, …)</p></td>
+<td><p>Learn by interaction with environment.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
 <dl class="method">
 <dt id="pandemonium.agent.Agent.interact">
-<code class="sig-name descname">interact</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">env</em>, <em class="sig-param">s0: torch.Tensor</em>, <em class="sig-param">steps: int</em><span class="sig-paren">)</span> &#x2192; Tuple[List[ForwardRef('Transition')], torch.Tensor, dict]<a class="headerlink" href="#pandemonium.agent.Agent.interact" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform number of <cite>steps</cite> in the environment</p>
+<code class="sig-name descname">interact</code><span class="sig-paren">(</span><em class="sig-param">self, env: Union[gym_minigrid.minigrid.MiniGridEnv, pandemonium.envs.dm_lab.dm_env.DeepmindLabEnv], s0: torch.Tensor, steps: int</em><span class="sig-paren">)</span> &#x2192; Tuple[List[ForwardRef('Transition')], torch.Tensor, dict]<a class="headerlink" href="#pandemonium.agent.Agent.interact" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform number of <cite>steps</cite> in the environment.</p>
 <p>Stops early if the episode is over.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -222,7 +222,7 @@
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><em>A list of transitions with a dictionary of logs</em></p></li>
-<li><p><strong># TODO</strong> (<em>add parallel experience collection</em>)</p></li>
+<li><p><em>.. todo::</em> – add parallel experience collection</p></li>
 </ul>
 </p>
 </dd>
@@ -231,8 +231,9 @@
 
 <dl class="method">
 <dt id="pandemonium.agent.Agent.learn">
-<code class="sig-name descname">learn</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">env</em>, <em class="sig-param">episodes: int</em>, <em class="sig-param">horizon: int</em><span class="sig-paren">)</span> &#x2192; Iterator[dict]<a class="headerlink" href="#pandemonium.agent.Agent.learn" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">learn</code><span class="sig-paren">(</span><em class="sig-param">self, env: Union[gym_minigrid.minigrid.MiniGridEnv, pandemonium.envs.dm_lab.dm_env.DeepmindLabEnv], episodes: int, horizon: int</em><span class="sig-paren">)</span> &#x2192; Iterator[dict]<a class="headerlink" href="#pandemonium.agent.Agent.learn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Learn by interaction with environment.</p>
+</dd></dl>
 
 </dd></dl>
 

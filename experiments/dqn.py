@@ -4,7 +4,7 @@ from ray import tune
 from experiments import EXPERIMENT_DIR
 from experiments.tools.evaluation import eval_fn
 from experiments.trainable import Loop
-from pandemonium.implementations.rainbow import create_demons
+from pandemonium.implementations.rainbow import create_horde
 from pandemonium.utilities.schedules import LinearSchedule
 
 EXPERIMENT_NAME = 'RAINBOW'
@@ -73,7 +73,7 @@ if __name__ == "__main__":
             # "v_max": 1,
 
             # Optimizer a.k.a. Horde
-            "horde_fn": create_demons,
+            "horde_fn": create_horde,
 
             "rollout_fragment_length": 10,
 

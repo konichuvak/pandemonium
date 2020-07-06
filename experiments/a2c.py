@@ -3,7 +3,7 @@ from ray import tune
 
 from experiments import EXPERIMENT_DIR
 from experiments.trainable import Loop
-from pandemonium.implementations.a2c import create_demons
+from pandemonium.implementations.a2c import create_horde
 
 EXPERIMENT_NAME = 'AC'
 total_steps = int(1e5)
@@ -24,7 +24,7 @@ if __name__ == "__main__":
             "policy_cfg": {'entropy_coefficient': tune.grid_search([0.01])},
             'gamma': tune.grid_search([0.9]),
             'trace_decay': tune.grid_search([0.5]),
-            "horde_fn": create_demons,
+            "horde_fn": create_horde,
 
             # # --- Evaluation ---
             # "evaluation_interval": 100,  # per training iteration

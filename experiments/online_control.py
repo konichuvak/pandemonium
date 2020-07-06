@@ -4,46 +4,15 @@ from ray import tune
 
 from experiments import EXPERIMENT_DIR
 from experiments.trainable import Loop
-from pandemonium import GVF, Horde
-from pandemonium.policies import Greedy
-from pandemonium.continuations import ConstantContinuation
-from pandemonium.cumulants import Fitness
-from pandemonium.implementations import OnlineQLearning, DoubleQLearning, OnlineSARSA
+from pandemonium.implementations.q_learning import create_horde
 from pandemonium.utilities.schedules import LinearSchedule
 
 device = torch.device('cpu')
 EXPERIMENT_NAME = 'ttt'
 RESULT_DIR = EXPERIMENT_DIR / 'tune'
 
-
-def create_demons(config, env, φ, μ) -> Horde:
-    aqf = torch.nn.Linear(φ.feature_dim, env.action_space.n, bias=False)
-    torch.nn.init.zeros_(aqf.weight)
-
-    control_demon = OnlineQLearning(
-        gvf=GVF(
-            target_policy=Greedy(
-                feature_dim=φ.feature_dim,
-                action_space=env.action_space
-            ),
-            cumulant=Fitness(env),
-            continuation=ConstantContinuation(config['gamma'])
-        ),
-        aqf=aqf,
-        feature=φ,
-        behavior_policy=μ,
-        trace_decay=config['trace_decay'],
-    )
-
-    return Horde(
-        demons=[control_demon],
-        device=device
-    )
-
-
 total_steps = int(1e5)
 room_size = tune.grid_search([5, 8, 10])
-
 
 if __name__ == "__main__":
     ray.init(local_mode=True)
@@ -72,7 +41,7 @@ if __name__ == "__main__":
             'trace_decay': tune.grid_search(torch.arange(0, 1.1, 0.1).tolist()),
 
             # Optimizer a.k.a. Horde
-            "horde_fn": create_demons,
+            "horde_fn": create_horde,
 
             # === RLLib params ===
             "use_pytorch": True,

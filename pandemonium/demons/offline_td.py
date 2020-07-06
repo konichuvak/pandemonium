@@ -27,16 +27,6 @@ class OfflineTD(Demon):
         """ Computes discounted returns for each step in the trajectory. """
         raise NotImplementedError
 
-    def learn(self, transitions: Transitions):
-        """
-
-        As opposed to the online case, where we learn on individual
-        `Transition`s, in the offline case we learn on a sequence of
-        transitions referred to as `Trajectory`.
-        """
-        trajectory = Trajectory.from_transitions(transitions)
-        return self.delta(trajectory)
-
 
 class TTD(OfflineTD):
     r""" Truncated :math:`\TD{(\lambda)}`

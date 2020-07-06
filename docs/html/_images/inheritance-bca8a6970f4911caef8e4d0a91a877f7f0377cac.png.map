@@ -1,0 +1,31 @@
+<map id="inheritance12629b3358" name="inheritance12629b3358">
+<area shape="rect" id="node2" title="Actor&#45;Critic that approximates advantage with :math:`TD` error." alt="" coords="398,4,452,23"/>
+<area shape="rect" id="node3" title="Offline :math:`TD` for prediction tasks." alt="" coords="370,41,481,60"/>
+<area shape="rect" id="node33" title=":math:`n text{&#45;step} TD` performed on the past experiences" alt="" coords="534,78,610,97"/>
+<area shape="rect" id="node4" title="Approximates state or state&#45;action values using linear projection" alt="" coords="384,78,466,97"/>
+<area shape="rect" id="node5" title="Truncated :math:`TD{(
+ambda)}`" alt="" coords="257,192,311,210"/>
+<area shape="rect" id="node11" title="Deep Q&#45;Network with all the bells and whistles mixed in." alt="" coords="545,435,599,454"/>
+<area shape="rect" id="node21" title=":math:`n`&#45;step :math:`TD` for estimating :math:`V approx v_{pi}`" alt="" coords="398,192,452,210"/>
+<area shape="rect" id="node6" title="Base class for Actor&#45;Critic architectures." alt="" coords="250,78,318,97"/>
+<area shape="rect" id="node7" title="Base class fot parametrized Demons implemented in PyTorch" alt="" coords="94,154,197,173"/>
+<area shape="rect" id="node32" title="A demon that maximizes un&#45;discounted :math:`n`&#45;step return." alt="" coords="233,41,334,60"/>
+<area shape="rect" id="node8" title="Categorical Q&#45;learning mixin." alt="" coords="385,454,465,473"/>
+<area shape="rect" id="node9" title="Learns the optimal policy while learning to predict" alt="" coords="102,247,189,266"/>
+<area shape="rect" id="node10" title="**General Value Function Approximator**" alt="" coords="4,192,58,210"/>
+<area shape="rect" id="node24" title="Base class for forward&#45;view :math:`TD` methods." alt="" coords="115,192,177,210"/>
+<area shape="rect" id="node29" title="Base class for backward&#45;view (online) :math:`TD` methods." alt="" coords="115,340,177,359"/>
+<area shape="rect" id="node31" title="Collects factual knowledge about environment by learning to predict" alt="" coords="95,41,196,60"/>
+<area shape="rect" id="node30" title="Duelling de&#45;convolutional network for auxiliary pixel control task" alt="" coords="676,435,752,454"/>
+<area shape="rect" id="node12" title="Offline :math:`TD` for control tasks." alt="" coords="377,265,474,284"/>
+<area shape="rect" id="node13" title="Classic Q&#45;learning update rule." alt="" coords="392,302,458,321"/>
+<area shape="rect" id="node18" title="Simple online Q&#45;learning." alt="" coords="523,368,621,387"/>
+<area shape="rect" id="node14" title="Mixin that adds a replay buffer to an agent." alt="" coords="373,491,478,510"/>
+<area shape="rect" id="node15" href="api/pandemonium.networks.TargetNetMixin.html#pandemonium.networks.TargetNetMixin" target="_top" title="Mixin that adds a target network to the agent." alt="" coords="381,528,470,547"/>
+<area shape="rect" id="node16" title="Mixin for value&#45;based control algorithms that uses two separate" alt="" coords="384,565,467,583"/>
+<area shape="rect" id="node17" title="Implements online version of Double Q&#45;learning." alt="" coords="663,368,764,387"/>
+<area shape="rect" id="node19" title="Base class for all neural network modules." alt="" coords="4,154,58,173"/>
+<area shape="rect" id="node23" title="Semi&#45;gradient :math:`SARSA{(
+ambda)}`." alt="" coords="398,228,452,247"/>
+<area shape="rect" id="node27" title="Base class for online :math:`TD` methods for control tasks." alt="" coords="377,378,474,397"/>
+</map>

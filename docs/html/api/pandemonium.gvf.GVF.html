@@ -1,0 +1,314 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>GVF &mdash; pandemonium  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}", "SARSE": "\\operatorname{SARSE}", "norm": ["\\left\\lVert#1\\right\\rVert", 1]}}})</script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="CategoricalQ" href="pandemonium.demons.CategoricalQ.html" />
+    <link rel="prev" title="Agent" href="pandemonium.agent.Agent.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pandemonium
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Spinning Up</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../spinning-up.html">Spinning Up</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../package-ref.html">Library Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.agent">pandemonium.agent Module</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../package-ref.html#module-pandemonium.gvf">pandemonium.gvf Module</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../package-ref.html#id1">Classes</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">GVF</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../package-ref.html#id2">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.demons">pandemonium.demons Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.implementations">pandemonium.implementations Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.horde">pandemonium.horde Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.policies">pandemonium.policies Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.networks">pandemonium.networks Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.cumulants">pandemonium.cumulants Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.continuations">pandemonium.continuations Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.experience">pandemonium.experience Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../package-ref.html#module-pandemonium.traces">pandemonium.traces Module</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Architectures</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../architectures.html">Architectures</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Benchmarks</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../benchmarks.html">Benchmarks</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pandemonium</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../package-ref.html">Library Reference</a> &raquo;</li>
+        
+      <li>GVF</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api/pandemonium.gvf.GVF.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="gvf">
+<h1>GVF<a class="headerlink" href="#gvf" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pandemonium.gvf.GVF">
+<em class="property">class </em><code class="sig-name descname">GVF</code><span class="sig-paren">(</span><em class="sig-param">target_policy: pandemonium.policies.policy.Policy</em>, <em class="sig-param">continuation: pandemonium.continuations.ContinuationFunction</em>, <em class="sig-param">cumulant: pandemonium.cumulants.Cumulant</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.gvf.GVF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p><strong>General Value Function</strong></p>
+<p>Consider a stream of data <span class="math notranslate nohighlight">\(\{ (x_t, A_t) \}^{\infty}_{t=0}\)</span>, produced
+by agent-environment interaction. Here, <span class="math notranslate nohighlight">\(x\)</span> is a tensor of experience
+(see <a class="reference internal" href="pandemonium.experience.Transition.html#pandemonium.experience.Transition" title="pandemonium.experience.Transition"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.experience.Transition</span></code></a>) and <span class="math notranslate nohighlight">\(A\)</span> is an action
+from a finite action space <span class="math notranslate nohighlight">\(\mathcal{A}\)</span>.</p>
+<p>The target <span class="math notranslate nohighlight">\(G\)</span> is a summary of the future value of the cumulant
+<span class="math notranslate nohighlight">\(Z\)</span>, discounted according to the termination function <span class="math notranslate nohighlight">\(\gamma\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[G_t = Z_{t+1} + \sum_{\tau=t+1}^{\infty} \gamma_{\tau} Z_{\tau+1}\]</div>
+<p>GVF estimates the expected value of the target cumulant,
+given actions are generated according to the target policy:</p>
+<div class="math notranslate nohighlight">
+\[\mathbb{E}_π [G_t|S_t = s]\]</div>
+<p>To make things more concrete, keep in mind an example of predicting a
+robot’s light sensor as it drives around a room. We will stick to this
+example throughout definitions in this abstract class.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The value produced is not necessarily scalar, i.e. in case of estimating
+an action-function(Q) we get a row vector with values corresponding to
+each possible action.</p>
+</div>
+<p class="rubric">Methods Summary</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.gvf.GVF.continuation" title="pandemonium.gvf.GVF.continuation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">continuation</span></code></a>(self, s)</p></td>
+<td><p>Outputs continuation signal based on the agent’s observation</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pandemonium.gvf.GVF.cumulant" title="pandemonium.gvf.GVF.cumulant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumulant</span></code></a>(self, s)</p></td>
+<td><p>Accumulates future values of the signal.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pandemonium.gvf.GVF.target_policy" title="pandemonium.gvf.GVF.target_policy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">target_policy</span></code></a>(self, s)</p></td>
+<td><p>The policy, whose value we would like to learn</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="pandemonium.gvf.GVF.continuation">
+<code class="sig-name descname">continuation</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">s</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.gvf.GVF.continuation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Outputs continuation signal based on the agent’s observation</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\gamma: \mathcal{S} \mapsto[0, 1] \\\end{split}\]</div>
+<p>Notice that this is different from an MDP discounting factor <span class="math notranslate nohighlight">\(\gamma\)</span>
+in classic RL. Here we allow the termination to be state-dependent.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pandemonium.gvf.GVF.cumulant">
+<code class="sig-name descname">cumulant</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">s</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.gvf.GVF.cumulant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accumulates future values of the signal.</p>
+<div class="math notranslate nohighlight">
+\[z: \mathcal{S} \mapsto \mathbb{R}\]</div>
+<p>For example, this could be current light sensor reading of a robot.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pandemonium.gvf.GVF.target_policy">
+<code class="sig-name descname">target_policy</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">s</em><span class="sig-paren">)</span> &#x2192; torch.distributions.distribution.Distribution<a class="headerlink" href="#pandemonium.gvf.GVF.target_policy" title="Permalink to this definition">¶</a></dt>
+<dd><p>The policy, whose value we would like to learn</p>
+<div class="math notranslate nohighlight">
+\[\pi: \mathcal{S} \times \mathcal{A} \mapsto [0, 1]\]</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="pandemonium.demons.CategoricalQ.html" class="btn btn-neutral float-right" title="CategoricalQ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="pandemonium.agent.Agent.html" class="btn btn-neutral float-left" title="Agent" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, konichuvak
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

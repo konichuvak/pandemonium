@@ -133,7 +133,7 @@ class DQN(OfflineTDControl,
         return δ, info
 
     def __repr__(self):
-        demon = ParametricDemon().__repr__()
+        demon = ParametricDemon.__repr__(self)
         params = f'(replay_buffer): {repr(self.replay_buffer)}\n' \
                  f'(warmup): {self.warm_up_period}\n' \
                  f'(target_update_freq): {self.target_update_freq}\n' \

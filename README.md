@@ -1,5 +1,3 @@
-# Pandæmonium
-
 ## What is pandemonium?
 
 **pandemonium** is a library that provides implementations for Reinforcement Learning agents that seek to learn about their environment by predicting _multiple_ signals from a _single_ stream of experience.

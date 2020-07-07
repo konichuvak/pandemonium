@@ -12,7 +12,7 @@ if __name__ == "__main__":
     )
     analysis = tune.run(
         Loop,
-        name='t',
+        name='ICM',
         verbose=1,
         stop={"timesteps_total": int(1e6)},
         num_samples=6,

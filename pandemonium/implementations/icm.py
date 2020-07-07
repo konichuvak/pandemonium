@@ -143,6 +143,7 @@ def create_horde(config, env, feature_extractor, policy) -> Horde:
         demons=demons,
         device=device,
         aggregation_fn=lambda losses: demon_weights.dot(losses),
+        to_transitions=True,
     )
 
 

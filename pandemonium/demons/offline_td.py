@@ -1,3 +1,5 @@
+from typing import Union
+
 import torch
 import torch.nn.functional as F
 
@@ -26,6 +28,11 @@ class OfflineTD(Demon):
     def target(self, trajectory: Trajectory, v: torch.Tensor):
         """ Computes discounted returns for each step in the trajectory. """
         raise NotImplementedError
+
+    def learn(self, trajectory: Union[Trajectory, Transitions]):
+        if not isinstance(trajectory, Trajectory):
+            trajectory = Trajectory.from_transitions(trajectory)
+        return self.delta(trajectory)
 
 
 class TTD(OfflineTD):

@@ -28,6 +28,7 @@ class Horde(torch.nn.Module):
                  demons: List[Demon],
                  device: torch.device,
                  aggregation_fn: Callable[[torch.Tensor], torch.Tensor] = None,
+                 to_transitions: bool = False,
                  ):
         super().__init__()
         demons = OrderedDict({str(demon): demon for demon in demons})
@@ -43,20 +44,18 @@ class Horde(torch.nn.Module):
         self.first_pass = True
 
         self.device = device
+        self.to_transitions = to_transitions
 
     def learn(self, transitions) -> dict:
 
         # TODO: update independent demons in parallel via threading
         #   (or turn demons into ray actors)
 
-        # TODO: problem: sharing info between demons requires an extra argument
-        #   to both delta and learn method. is there any way to pack that info
-        #   into transitions themselves?
-
         losses = torch.empty(len(self.demons), device=self.device)
         logs = dict()
 
-        if 'AC' in self.demons:
+        # Required to share information between ICM and AC
+        if self.to_transitions:
             transitions = Trajectory.from_transitions(transitions)
 
         # Aggregate losses from each demon

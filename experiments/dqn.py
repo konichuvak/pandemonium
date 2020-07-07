@@ -22,10 +22,7 @@ if __name__ == "__main__":
         stop={"timesteps_total": total_steps},
         config={
 
-            "env": "MiniGrid-EmptyEnv-ImgOnly-v0",
-            "env_config": {
-                'size': 10
-            },
+            "env": "MiniGrid-EmptyEnv6x6-ImgOnly-v0",
 
             # Feature extractor for observations
             'encoder': 'image',

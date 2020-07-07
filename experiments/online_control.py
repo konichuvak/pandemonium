@@ -7,12 +7,9 @@ from experiments.trainable import Loop
 from pandemonium.implementations.q_learning import create_horde
 from pandemonium.utilities.schedules import LinearSchedule
 
-device = torch.device('cpu')
-EXPERIMENT_NAME = 'ttt'
-RESULT_DIR = EXPERIMENT_DIR / 'tune'
+EXPERIMENT_NAME = 'OnlineControl'
 
 total_steps = int(1e5)
-room_size = tune.grid_search([5, 8, 10])
 
 if __name__ == "__main__":
     ray.init(local_mode=True)
@@ -20,6 +17,8 @@ if __name__ == "__main__":
         Loop,
         name=EXPERIMENT_NAME,
         # num_samples=3,  # number of seeds
+        local_dir=EXPERIMENT_DIR,
+        verbose=1,
         stop={"timesteps_total": total_steps},
         config={
             # Model a.k.a. Feature Extractor
@@ -32,7 +31,6 @@ if __name__ == "__main__":
                 'param': LinearSchedule(
                     schedule_timesteps=total_steps // 2,
                     final_p=0.001, initial_p=1,
-                    framework='torch'
                 )
             },
 
@@ -45,10 +43,7 @@ if __name__ == "__main__":
 
             # === RLLib params ===
             "use_pytorch": True,
-            "env": "MiniGrid-EmptyEnv-Simple-v0",
-            "env_config": {
-                'size': room_size
-            },
+            "env": "MiniGrid-EmptyEnv6x6-Simple-v0",
             "rollout_fragment_length": 1,
 
             # --- Evaluation ---
@@ -70,11 +65,5 @@ if __name__ == "__main__":
             #     ],
             #     'fcnet_hiddens': [256]
             # }
-        },
-        local_dir=RESULT_DIR,
-        trial_name_creator=lambda trial: '_'.join(str(trial).split('_')[1:]),
-        # checkpoint_freq=1000,  # in training iterations
-        # checkpoint_at_end=True,
-        verbose=1,
-        # resume='PROMPT',
+        }
     )

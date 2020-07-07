@@ -13,10 +13,13 @@ if __name__ == "__main__":
     analysis = tune.run(
         Loop,
         name=EXPERIMENT_NAME,
+        local_dir=EXPERIMENT_DIR,
+        # num_samples=1,
+        # checkpoint_freq=1000,  # in training iterations
+        verbose=1,
         stop={"timesteps_total": total_steps},
         config={
-            "env": "MiniGrid-EmptyEnv-ImgOnly-v0",
-            "env_config": {'size': 10},
+            "env": "MiniGrid-EmptyEnv6x6-ImgOnly-v0",
             'encoder': 'image',
             "rollout_fragment_length": 16,  # batch size for exp collector
 
@@ -43,12 +46,5 @@ if __name__ == "__main__":
             #     'fcnet_hiddens': [256]
             # }
 
-        },
-        # num_samples=1,
-        local_dir=EXPERIMENT_DIR,
-        # checkpoint_freq=1000,  # in training iterations
-        # checkpoint_at_end=True,
-        fail_fast=True,
-        verbose=1,
-        # resume='PROMPT',
+        }
     )

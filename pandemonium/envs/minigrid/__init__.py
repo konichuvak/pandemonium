@@ -1,4 +1,7 @@
-from gym_minigrid.envs import *
+import inspect
+
+import gym_minigrid
+from gym_minigrid.envs import MiniGridEnv
 from gym_minigrid.wrappers import FullyObsWrapper, ImgObsWrapper
 from ray.tune import register_env
 
@@ -6,6 +9,10 @@ from pandemonium.envs.minigrid.four_rooms import FourRooms
 from pandemonium.envs.minigrid.plotter import MinigridDisplay
 from pandemonium.envs.wrappers import (add_wrappers, Torch, OneHotObsWrapper,
                                        SimplifyActionSpace)
+
+MINIGRIDS = {member[1] for member in inspect.getmembers(gym_minigrid.envs) if
+             inspect.isclass(member[1]) and issubclass(member[1], MiniGridEnv)}
+MINIGRIDS -= {MiniGridEnv}
 
 encoder_registry = {
     'binary': {
@@ -42,11 +49,9 @@ wrappers = {
     ]
 }
 
-for cls in (EmptyEnv5x5, EmptyEnv6x6, EmptyEnv16x16,
-            MultiRoomEnvN2S4, MultiRoomEnvN4S5, MultiRoomEnvN6,
-            FourRoomsEnv):
+for cls in MINIGRIDS:
     name = cls.__name__
-    for wrap_name, wraps in wrappers.items():
+    for wrapper_name, wraps in wrappers.items():
         def env_creator(env_cls):
             def env_wrapper(env_config):
                 env = env_cls(**env_config)
@@ -57,5 +62,5 @@ for cls in (EmptyEnv5x5, EmptyEnv6x6, EmptyEnv16x16,
             return env_wrapper
 
 
-        register_env(name=f"MiniGrid-{name}-{wrap_name}-v0",
+        register_env(name=f"MiniGrid-{name}-{wrapper_name}-v0",
                      env_creator=env_creator(cls))

@@ -10,15 +10,14 @@ from pandemonium.cumulants import Fitness
 from pandemonium.demons import Loss
 from pandemonium.demons.control import (QLearning, OfflineTDControl,
                                         OnlineTDControl)
-from pandemonium.demons.offline_td import TDn
+from pandemonium.demons.offline_td import TTD
 from pandemonium.experience import Transition
 from pandemonium.policies import Greedy
 from pandemonium.policies.utils import torch_argmax_mask
 from pandemonium.utilities.utilities import get_all_classes
 
 
-class MultistepQLearning(QLearning, OfflineTDControl, TDn):
-    # TODO: eligibility
+class MultistepQLearning(QLearning, OfflineTDControl, TTD):
     ...
 
 

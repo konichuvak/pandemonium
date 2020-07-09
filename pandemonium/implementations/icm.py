@@ -76,12 +76,12 @@ class Curiosity(Cumulant):
         # Compute curiosity measure
         φ0, φ1 = self.icm.φ(experience.s0), self.icm.φ(experience.s1)
         φ1_hat = self.icm.forward_dynamics_model(φ0, experience.a)
-        prediction_error = F.mse_loss(φ1_hat, φ1)
+        prediction_error = F.mse_loss(φ1_hat, φ1, reduction='none').mean(1)
 
         # Add to experience, to avoid redundant computation
         experience.info['φ0'] = φ0
         experience.info['φ1'] = φ1
-        experience.info['forward_model_error'] = prediction_error
+        experience.info['forward_model_error'] = prediction_error.mean()
 
         return prediction_error.detach()
 

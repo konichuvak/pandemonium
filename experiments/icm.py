@@ -18,7 +18,7 @@ if __name__ == "__main__":
         num_samples=6,
         local_dir=EXPERIMENT_DIR,
         config={
-            "env": "MiniGrid-MultiRoomEnvN4S5-ImgOnly-v0",
+            "env": "MiniGrid-MultiRoomEnvN4S5-Img-v0",
             'encoder': 'image',
             "policy_name": 'VPG',
             "policy_cfg": {'entropy_coefficient': tune.grid_search([0.01])},

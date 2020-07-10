@@ -20,8 +20,8 @@ encoder_registry = {
         'encoder_cfg': {}
     },
     'image': {
-        "encoder_name": 'nature_cnn',
-        "encoder_cfg": {
+        'encoder_name': 'nature_cnn',
+        'encoder_cfg': {
             'feature_dim': 64,
             'channels': (8, 16),
             'kernels': (2, 2),
@@ -35,17 +35,24 @@ encoder_registry = {
 }
 
 wrappers = {
-    "OneHotImage": [
+    "Img": [
+        ImgObsWrapper,
+    ],
+    "OneHotFullObsImage": [
         FullyObsWrapper,
         ImgObsWrapper,
         OneHotObsWrapper,
     ],
-    "OneHotImageText": [
+    "OneHotFullObsImage+Text": [
         FullyObsWrapper,
         OneHotObsWrapper,
     ],
-    "ImgOnly": [
+    "FullObsImg": [
+        FullyObsWrapper,
         ImgObsWrapper,
+    ],
+    "FullObsImg+Text": [
+        FullyObsWrapper,
     ]
 }
 
@@ -56,11 +63,12 @@ for cls in MINIGRIDS:
             def env_wrapper(env_config):
                 env = env_cls(**env_config)
                 env = add_wrappers(base_env=env, wrappers=wraps + [Torch])
+                # NOTE: allows unlimited steps per episode
                 env.unwrapped.max_steps = float('inf')
                 return env
-
+            
             return env_wrapper
-
-
+        
+        
         register_env(name=f"MiniGrid-{name}-{wrapper_name}-v0",
                      env_creator=env_creator(cls))

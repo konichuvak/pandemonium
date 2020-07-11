@@ -102,10 +102,11 @@ class NatureCNN(ConvBody):
     def __init__(self, feature_dim: int, *args, **kwargs):
         super().__init__(*args, **kwargs)
         conv_flat_dim, self.feature_dim = self.feature_dim, feature_dim
-        self.fc = layer_init(nn.Linear(conv_flat_dim, feature_dim))
+        self.fc1 = layer_init(nn.Linear(conv_flat_dim, 256))
+        self.fc2 = layer_init(nn.Linear(256, feature_dim))
 
     def forward(self, x):
-        return F.relu(self.fc(super().forward(x)))
+        return self.fc2(F.relu(self.fc1(super().forward(x))))
 
 
 @BaseNetwork.register('conv_lstm')

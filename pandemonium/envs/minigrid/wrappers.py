@@ -2,6 +2,7 @@ from enum import IntEnum
 
 import gym
 import numpy as np
+from gym import Wrapper
 from gym.spaces import Box, Discrete
 from gym_minigrid.wrappers import FlatObsWrapper
 
@@ -145,7 +146,7 @@ class FlatObsWrapperNoMission(FlatObsWrapper):
         self.observation_space = Box(
             low=0,
             high=255,
-            shape=(imgSize, ),
+            shape=(imgSize,),
             dtype='uint8'
         )
 
@@ -153,3 +154,11 @@ class FlatObsWrapperNoMission(FlatObsWrapper):
         image = obs['image']
         obs = image.flatten()
         return obs
+
+
+class AgentPositionInfo(Wrapper):
+
+    def step(self, a):
+        obs, reward, done, info = super().step(a)
+        agent_pos = (self.agent_dir, *reversed(self.agent_pos))
+        return obs, reward, done, {**info, **{'agent_pos': agent_pos}}

@@ -8,7 +8,7 @@ from ray.tune import register_env
 from pandemonium.envs.minigrid.four_rooms import FourRooms
 from pandemonium.envs.minigrid.plotter import MinigridDisplay
 from pandemonium.envs.wrappers import (add_wrappers, Torch, OneHotObsWrapper,
-                                       SimplifyActionSpace)
+                                       SimplifyActionSpace, AgentPositionInfo)
 
 MINIGRIDS = {member[1] for member in inspect.getmembers(gym_minigrid.envs) if
              inspect.isclass(member[1]) and issubclass(member[1], MiniGridEnv)}
@@ -62,7 +62,7 @@ for cls in MINIGRIDS:
         def env_creator(env_cls):
             def env_wrapper(env_config):
                 env = env_cls(**env_config)
-                env = add_wrappers(base_env=env, wrappers=wraps + [Torch])
+                env = add_wrappers(env, wraps + [Torch, AgentPositionInfo])
                 # NOTE: allows unlimited steps per episode
                 env.unwrapped.max_steps = float('inf')
                 return env

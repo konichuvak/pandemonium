@@ -66,6 +66,10 @@ class Horde(torch.nn.Module):
             logs.update({f'{d}': {f'{k}': v for k, v in info.items() if not (
                     isinstance(v, torch.Tensor) and not v.is_leaf)}})
 
+        for k, v in transitions.info.items():
+            if isinstance(v, (int, float)):
+                logs[k] = v
+
         # Optimize joint objective
         total_loss = self.aggregation_fn(losses)
         if not total_loss.requires_grad:

@@ -109,7 +109,11 @@ def create_horde(config, env, feature_extractor, policy) -> Horde:
             beta=config.get('beta', 0.2)
         )
         demons.append(icm)
-        cumulant = CombinedCumulant({Fitness(env), Curiosity(icm)})
+        cumulant = CombinedCumulant(
+            cumulants={Fitness(env), Curiosity(icm)},
+            weights=torch.tensor([config.get('er_weight', 1.),
+                                  config.get('ir_weight', 1.)]),
+        )
 
     # Note that order matters! When we iterate over a collection of demons
     #   in horde.py, we will start with the last demon, ICM, which

@@ -1,7 +1,7 @@
 from typing import Set
 
+import torch
 from gym import Env
-from torch import nn
 
 from pandemonium.experience import Transition, Trajectory, Experience
 from pandemonium.utilities.utilities import get_all_classes
@@ -46,7 +46,7 @@ class PixelChange(Cumulant):
     """
 
     def __init__(self):
-        self.pooler = nn.AvgPool2d(kernel_size=4, stride=0)
+        self.pooler = torch.nn.AvgPool2d(kernel_size=4, stride=0)
 
     def __call__(self, traj: Trajectory):
         crop = slice(2, -2)
@@ -76,13 +76,22 @@ class FeatureCumulant(Cumulant):
 
 
 class CombinedCumulant(Cumulant):
-    """ Sums up multiple cumulants. """
+    """ A weighted sum of multiple cumulants. """
 
-    def __init__(self, cumulants: Set[Cumulant]):
+    def __init__(self, cumulants: Set[Cumulant], weights: torch.Tensor = None):
         self.cumulants = cumulants
+        if weights is None:
+            weights = torch.ones(len(cumulants))
+        assert len(weights.shape) == 1, weights.shape
+        assert len(cumulants) == weights.shape[0], weights.shape[0]
+        self.weights = weights  # TODO: make these learnable
 
     def __call__(self, *args, **kwargs):
-        return sum(cumulant(*args, **kwargs) for cumulant in self.cumulants)
+        z = [cumulant(*args, **kwargs) for cumulant in self.cumulants]
+        assert len({cumulant.shape for cumulant in z}) == 1
+        cumulant = torch.einsum('i,ij->j', [self.weights, torch.stack(z)])
+        assert cumulant.shape == z[0].shape, f'{cumulant.shape}, {z[0].shape}'
+        return cumulant.detach()
 
 
 class Surprise(Cumulant):

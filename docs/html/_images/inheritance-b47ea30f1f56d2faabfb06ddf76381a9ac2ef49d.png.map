@@ -1,0 +1,11 @@
+<map id="inheritance3c61d1b915" name="inheritance3c61d1b915">
+<area shape="rect" id="node1" title="Experience Replay buffer" alt="" coords="347,104,419,129"/>
+<area shape="rect" id="node3" title="Prioritized Experience Replay buffer" alt="" coords="487,55,559,80"/>
+<area shape="rect" id="node6" title="Segmented Experience Replay" alt="" coords="467,104,580,129"/>
+<area shape="rect" id="node7" title="Used in the UNREAL architecture for the auxiliary reward prediction task." alt="" coords="478,153,569,179"/>
+<area shape="rect" id="node2" title="Registrar for replay buffers" alt="" coords="193,104,299,129"/>
+<area shape="rect" id="node4" title="Any class that inherits from ``Registrable`` gains access to a named" alt="" coords="28,104,123,129"/>
+<area shape="rect" id="node5" title="Mixin that adds a replay buffer to an agent." alt="" coords="5,55,145,80"/>
+<area shape="rect" id="node8" title="A batch of `Transition`s." alt="" coords="203,5,289,31"/>
+<area shape="rect" id="node9" title="An experience tuple." alt="" coords="33,5,118,31"/>
+</map>

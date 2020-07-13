@@ -12,8 +12,6 @@ Since then, Horde was further developed and formalized in Adam White’s Doctora
 
 The goal of this project is to further develop the computational framework established by the creators of Horde and express some of the latest algorithms in RL in terms of hierarchy of demons. 
 
-The goal of this project is to further develop the computational framework established by the creators of Horde and express some of the common algorithms in RL in terms of hierarchy of demons. 
-
 ### A research toolbox
 
 A single demon can be seen as a sub-agent responsible for learning a piece of predictive knowledge about the agent’s interaction with its environment. 

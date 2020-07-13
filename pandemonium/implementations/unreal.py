@@ -7,8 +7,7 @@ from torch import nn
 from pandemonium import GVF, Horde
 from pandemonium.continuations import ConstantContinuation
 from pandemonium.cumulants import Fitness, PixelChange
-from pandemonium.demons.demon import (LinearDemon, PredictionDemon, Loss,
-                                      ParametricDemon)
+from pandemonium.demons.demon import LinearDemon, Loss, ParametricDemon
 from pandemonium.demons.offline_td import TDn
 from pandemonium.demons.prediction import OfflineTDPrediction
 from pandemonium.experience import Trajectory
@@ -22,7 +21,7 @@ from pandemonium.policies.discrete import Greedy
 from pandemonium.utilities.utilities import get_all_members
 
 
-class RewardPrediction(PredictionDemon, ParametricDemon):
+class RewardPrediction(ParametricDemon):
     """ A demon that maximizes un-discounted :math:`n`-step return.
 
     Learns the sign (+, 0, -) of the reward at the end of a state sequence.

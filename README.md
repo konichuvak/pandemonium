@@ -12,12 +12,6 @@ Since then, Horde was further developed and formalized in Adam White’s Doctora
 
 The goal of this project is to further develop the computational framework established by the creators of Horde and express some of the latest algorithms in RL in terms of hierarchy of demons. 
 
-  
-// Monolithic learner (ModelV2 in Ray or Learner in Acme) paradigm vs multiple value function learners, sharing the same.
-// Environment is bigger than the agent (rich)
-// The library is grounded in the abstractions that are developed in Sutton & Barto, 2018 book and tries to deviate as little as possible from the pseudo-code in order to bridge the gap between the math and implementation.
-  
-
 ### A research toolbox
 
 A single demon can be seen as a sub-agent responsible for learning a piece of predictive knowledge about the agent’s interaction with its environment. 

@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}", "SARSE": "\\operatorname{SARSE}", "norm": ["\\left\\lVert#1\\right\\rVert", 1]}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
@@ -205,9 +205,9 @@
             
   <div class="section" id="ttd">
 <h1>TTD<a class="headerlink" href="#ttd" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="pandemonium.demons.TTD">
-<em class="property">class </em><code class="sig-name descname">TTD</code><span class="sig-paren">(</span><em class="sig-param">trace_decay: float</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.TTD" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">TTD</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">trace_decay</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.TTD" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.offline_td.OfflineTD</span></code></p>
 <p>Truncated <span class="math notranslate nohighlight">\(\TD{(\lambda)}\)</span></p>
 <p class="rubric">Notes</p>
@@ -244,9 +244,9 @@ updated towards <span class="math notranslate nohighlight">\([n, n-1, \dots, 1]\
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.demons.TTD.target">
-<code class="sig-name descname">target</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">trajectory: pandemonium.experience.experience.Trajectory</em>, <em class="sig-param">v: torch.Tensor</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.TTD.target" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">target</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">trajectory</span><span class="p">:</span> <span class="n">pandemonium.experience.experience.Trajectory</span></em>, <em class="sig-param"><span class="n">v</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.TTD.target" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes discounted returns for each step in the trajectory.</p>
 </dd></dl>
 

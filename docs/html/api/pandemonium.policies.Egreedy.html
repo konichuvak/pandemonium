@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}", "SARSE": "\\operatorname{SARSE}", "norm": ["\\left\\lVert#1\\right\\rVert", 1]}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
@@ -197,9 +197,9 @@
             
   <div class="section" id="egreedy">
 <h1>Egreedy<a class="headerlink" href="#egreedy" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="pandemonium.policies.Egreedy">
-<em class="property">class </em><code class="sig-name descname">Egreedy</code><span class="sig-paren">(</span><em class="sig-param">epsilon: Union[pandemonium.utilities.schedules.ConstantSchedule, pandemonium.utilities.schedules.LinearSchedule], *args, **kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.Egreedy" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Egreedy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">epsilon</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>pandemonium.utilities.schedules.ConstantSchedule<span class="p">, </span>pandemonium.utilities.schedules.LinearSchedule<span class="p">]</span></span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.Egreedy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.policies.discrete.Discrete</span></code></p>
 <p><span class="math notranslate nohighlight">\(\epsilon\)</span>-greedy policy for discrete action spaces.</p>
 <p>Picks the optimal action wrt to Q with probability 1 - <span class="math notranslate nohighlight">\(\epsilon\)</span></p>
@@ -231,21 +231,21 @@
 </tbody>
 </table>
 <p class="rubric">Attributes Documentation</p>
-<dl class="attribute">
+<dl class="py attribute">
 <dt id="pandemonium.policies.Egreedy.epsilon">
 <code class="sig-name descname">epsilon</code><a class="headerlink" href="#pandemonium.policies.Egreedy.epsilon" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.policies.Egreedy.act">
-<code class="sig-name descname">act</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.Egreedy.act" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">act</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">\*args</em>, <em class="sig-param">\*\*kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.Egreedy.act" title="Permalink to this definition">¶</a></dt>
 <dd><p>Samples an action from a distribution over actions</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.policies.Egreedy.dist">
-<code class="sig-name descname">dist</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">features</em>, <em class="sig-param">q_fn</em><span class="sig-paren">)</span> &#x2192; torch.distributions.categorical.Categorical<a class="headerlink" href="#pandemonium.policies.Egreedy.dist" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">dist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">features</span></em>, <em class="sig-param"><span class="n">q_fn</span></em><span class="sig-paren">)</span> &#x2192; torch.distributions.categorical.Categorical<a class="headerlink" href="#pandemonium.policies.Egreedy.dist" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a categorical distribution with <span class="math notranslate nohighlight">\(\epsilon\)</span>-greedy pmf</p>
 <p>Assumes that Q-values are of shape (batch, actions, states)</p>
 </dd></dl>

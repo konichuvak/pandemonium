@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}", "SARSE": "\\operatorname{SARSE}", "norm": ["\\left\\lVert#1\\right\\rVert", 1]}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
@@ -186,9 +186,9 @@
             
   <div class="section" id="agent">
 <h1>Agent<a class="headerlink" href="#agent" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="pandemonium.agent.Agent">
-<em class="property">class </em><code class="sig-name descname">Agent</code><span class="sig-paren">(</span><em class="sig-param">feature_extractor</em>, <em class="sig-param">behavior_policy: pandemonium.policies.policy.Policy</em>, <em class="sig-param">horde: pandemonium.horde.Horde</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.agent.Agent" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Agent</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">feature_extractor</span></em>, <em class="sig-param"><span class="n">behavior_policy</span><span class="p">:</span> <span class="n">pandemonium.policies.policy.Policy</span></em>, <em class="sig-param"><span class="n">horde</span><span class="p">:</span> <span class="n"><a class="reference internal" href="pandemonium.horde.Horde.html#pandemonium.horde.Horde" title="pandemonium.horde.Horde">pandemonium.horde.Horde</a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.agent.Agent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p class="rubric">Methods Summary</p>
 <table class="longtable docutils align-default">
@@ -206,9 +206,9 @@
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.agent.Agent.interact">
-<code class="sig-name descname">interact</code><span class="sig-paren">(</span><em class="sig-param">self, env: Union[gym_minigrid.minigrid.MiniGridEnv, pandemonium.envs.dm_lab.dm_env.DeepmindLabEnv], s0: torch.Tensor, steps: int</em><span class="sig-paren">)</span> &#x2192; Tuple[List[ForwardRef('Transition')], torch.Tensor, dict]<a class="headerlink" href="#pandemonium.agent.Agent.interact" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">interact</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>gym_minigrid.minigrid.MiniGridEnv<span class="p">, </span>pandemonium.envs.dm_lab.dm_env.DeepmindLabEnv<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">s0</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">steps</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; Tuple[List[ForwardRef(‘Transition’)], torch.Tensor, dict]<a class="headerlink" href="#pandemonium.agent.Agent.interact" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform number of <cite>steps</cite> in the environment.</p>
 <p>Stops early if the episode is over.</p>
 <dl class="field-list simple">
@@ -229,9 +229,9 @@
 </dl>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.agent.Agent.learn">
-<code class="sig-name descname">learn</code><span class="sig-paren">(</span><em class="sig-param">self, env: Union[gym_minigrid.minigrid.MiniGridEnv, pandemonium.envs.dm_lab.dm_env.DeepmindLabEnv], episodes: int, horizon: int</em><span class="sig-paren">)</span> &#x2192; Iterator[dict]<a class="headerlink" href="#pandemonium.agent.Agent.learn" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">learn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">env</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>gym_minigrid.minigrid.MiniGridEnv<span class="p">, </span>pandemonium.envs.dm_lab.dm_env.DeepmindLabEnv<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">episodes</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">horizon</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; Iterator<span class="p">[</span>dict<span class="p">]</span><a class="headerlink" href="#pandemonium.agent.Agent.learn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Learn by interaction with environment.</p>
 </dd></dl>
 

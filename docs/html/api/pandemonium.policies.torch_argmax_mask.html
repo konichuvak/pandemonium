@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}", "SARSE": "\\operatorname{SARSE}", "norm": ["\\left\\lVert#1\\right\\rVert", 1]}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
@@ -188,12 +188,12 @@
             
   <div class="section" id="torch-argmax-mask">
 <h1>torch_argmax_mask<a class="headerlink" href="#torch-argmax-mask" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
+<dl class="py function">
 <dt id="pandemonium.policies.torch_argmax_mask">
-<code class="sig-name descname">torch_argmax_mask</code><span class="sig-paren">(</span><em class="sig-param">q: torch.Tensor</em>, <em class="sig-param">dim: int</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.torch_argmax_mask" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">torch_argmax_mask</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">q</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">dim</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.policies.torch_argmax_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a random tie-breaking argmax mask</p>
 <p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">1337</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">torch_argmax_mask</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>

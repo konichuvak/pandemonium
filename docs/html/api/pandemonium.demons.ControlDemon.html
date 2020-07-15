@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}", "SARSE": "\\operatorname{SARSE}", "norm": ["\\left\\lVert#1\\right\\rVert", 1]}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
@@ -205,9 +205,9 @@
             
   <div class="section" id="controldemon">
 <h1>ControlDemon<a class="headerlink" href="#controldemon" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="pandemonium.demons.ControlDemon">
-<em class="property">class </em><code class="sig-name descname">ControlDemon</code><span class="sig-paren">(</span><em class="sig-param">aqf: Callable</em>, <em class="sig-param">avf: Callable = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.ControlDemon" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">ControlDemon</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">aqf</span><span class="p">:</span> <span class="n">Callable</span></em>, <em class="sig-param"><span class="n">avf</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.ControlDemon" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.demons.demon.Demon</span></code></p>
 <p>Learns the optimal policy while learning to predict</p>
 <p>Can be thought of as an accumulator of procedural knowledge.</p>
@@ -241,9 +241,9 @@ Q-value function (aqf) that produces value estimates for state-action pairs.</p>
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.demons.ControlDemon.behavior_policy">
-<code class="sig-name descname">behavior_policy</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">x: torch.Tensor</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.ControlDemon.behavior_policy" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">behavior_policy</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.ControlDemon.behavior_policy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Specifies behavior of the agent</p>
 <div class="math notranslate nohighlight">
 \[\mu: \mathcal{S} \times \mathcal{A} \mapsto [0, 1]\]</div>
@@ -251,9 +251,9 @@ Q-value function (aqf) that produces value estimates for state-action pairs.</p>
 could be specified in this way.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.demons.ControlDemon.implied_avf">
-<code class="sig-name descname">implied_avf</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">x</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.ControlDemon.implied_avf" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">implied_avf</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.ControlDemon.implied_avf" title="Permalink to this definition">¶</a></dt>
 <dd><p>State-value function in terms of action-value function</p>
 <div class="math notranslate nohighlight">
 \[V^{\pi}(s) = \sum_{a \in \mathcal{A}} \pi (a|s) * Q^{\pi}(a,s)\]</div>
@@ -262,27 +262,27 @@ could be specified in this way.</p>
 TODO: handle predictions made to compute targets via target_aqf</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.demons.ControlDemon.predict_adv">
-<code class="sig-name descname">predict_adv</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">x</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.ControlDemon.predict_adv" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_adv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.ControlDemon.predict_adv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the advantage in a given state.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.demons.ControlDemon.predict_q">
-<code class="sig-name descname">predict_q</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">x</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.ControlDemon.predict_q" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_q</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.ControlDemon.predict_q" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes action-values in a given state.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.demons.ControlDemon.predict_target_adv">
-<code class="sig-name descname">predict_target_adv</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">x</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.ControlDemon.predict_target_adv" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_target_adv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.ControlDemon.predict_target_adv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the target advantage in a given state.</p>
 </dd></dl>
 
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.demons.ControlDemon.predict_target_q">
-<code class="sig-name descname">predict_target_q</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">x</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.ControlDemon.predict_target_q" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">predict_target_q</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.demons.ControlDemon.predict_target_q" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes target action-values in a given state.</p>
 </dd></dl>
 

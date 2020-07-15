@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}", "SARSE": "\\operatorname{SARSE}", "norm": ["\\left\\lVert#1\\right\\rVert", 1]}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
@@ -186,9 +186,9 @@
             
   <div class="section" id="horde">
 <h1>Horde<a class="headerlink" href="#horde" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="pandemonium.horde.Horde">
-<em class="property">class </em><code class="sig-name descname">Horde</code><span class="sig-paren">(</span><em class="sig-param">demons: List[pandemonium.demons.demon.Demon], device: torch.device, aggregation_fn: Callable[[torch.Tensor], torch.Tensor] = None, to_transitions: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.horde.Horde" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">Horde</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">demons</span><span class="p">:</span> <span class="n">List<span class="p">[</span>pandemonium.demons.demon.Demon<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">device</span><span class="p">:</span> <span class="n">torch.device</span></em>, <em class="sig-param"><span class="n">aggregation_fn</span><span class="p">:</span> <span class="n">Callable<span class="p">[</span><span class="p">[</span>torch.Tensor<span class="p">]</span><span class="p">, </span>torch.Tensor<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">to_transitions</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.horde.Horde" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p>A horde of Demons</p>
 <p>Container class for all the demons of a particular agent.</p>
@@ -213,9 +213,9 @@ however, named_parameters() handles the duplicates somehow!</p>
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.horde.Horde.learn">
-<code class="sig-name descname">learn</code><span class="sig-paren">(</span><em class="sig-param">self</em>, <em class="sig-param">transitions</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#pandemonium.horde.Horde.learn" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">learn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">transitions</span></em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#pandemonium.horde.Horde.learn" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

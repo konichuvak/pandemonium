@@ -21,11 +21,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"TeX": {"Macros": {"TD": "\\operatorname{TD}", "Q": "\\operatorname{Q}", "SARSA": "\\operatorname{SARSA}", "SARSE": "\\operatorname{SARSE}", "norm": ["\\left\\lVert#1\\right\\rVert", 1]}}})</script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
@@ -192,9 +192,9 @@
             
   <div class="section" id="featurecumulant">
 <h1>FeatureCumulant<a class="headerlink" href="#featurecumulant" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+<dl class="py class">
 <dt id="pandemonium.cumulants.FeatureCumulant">
-<em class="property">class </em><code class="sig-name descname">FeatureCumulant</code><span class="sig-paren">(</span><em class="sig-param">idx: int</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.cumulants.FeatureCumulant" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-name descname">FeatureCumulant</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">idx</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.cumulants.FeatureCumulant" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="pandemonium.cumulants.Cumulant.html#pandemonium.cumulants.Cumulant" title="pandemonium.cumulants.Cumulant"><code class="xref py py-class docutils literal notranslate"><span class="pre">pandemonium.cumulants.Cumulant</span></code></a></p>
 <p>Tracks a single value from the feature vector <span class="math notranslate nohighlight">\(\boldsymbol{x}\)</span></p>
 <p>In case when the features are linearly separable (linea FA) this cumulant
@@ -215,9 +215,9 @@ corresponds to the reading of the light sensor.</p>
 </tbody>
 </table>
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
+<dl class="py method">
 <dt id="pandemonium.cumulants.FeatureCumulant.__call__">
-<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">self, experience: Union[ForwardRef('Transition'), ForwardRef('Trajectory')]</em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.cumulants.FeatureCumulant.__call__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">experience</span><span class="p">:</span> <span class="n">Union[ForwardRef(‘Transition’), ForwardRef(‘Trajectory’)]</span></em><span class="sig-paren">)</span><a class="headerlink" href="#pandemonium.cumulants.FeatureCumulant.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call self as a function.</p>
 </dd></dl>
 

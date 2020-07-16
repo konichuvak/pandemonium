@@ -126,6 +126,8 @@ class PixelControl(DQN):
                  kernel: int = 4,
                  stride: int = 2,
                  **kwargs):
+        # TODO: modify criterion to use sum across pathches instead of average
+
         # deconv2d_size_out(6, 2, 1) == 7 (7x7 observation in minigrids)
         # deconv2d_size_out(9, 4, 2) == 20 (20x20 avg pooled pixel change vals)
         # TODO: remove redundant second pass through FC through `feature` method
@@ -145,6 +147,19 @@ class PixelControl(DQN):
         }))
         super().__init__(duelling=True, avf=avf, aqf=aqf, feature=feature,
                          behavior_policy=behavior_policy, **kwargs)
+
+    def delta(self, trajectory: Trajectory) -> Loss:
+        x = self.feature(trajectory.s0)  # could use trajectory.x1 instead
+        v = self.q_tm1(x, trajectory.a)
+        u = self.target(trajectory).detach()
+        assert u.shape == v.shape, f'{u.shape} vs {v.shape}'
+        loss = self.criterion(input=v, target=u, reduction='none')
+        loss = loss.view(len(trajectory), -1)
+        batch_loss = (loss * trajectory.ρ).mean()  # weighted IS
+        # TODO: td-error is not necessarily u-v depending on the criterion
+        return batch_loss, {'batch_loss': batch_loss.item(),
+                            'loss': loss,
+                            'td_error': u - v}
 
 
 def create_horde(config, env, φ, μ) -> Horde:

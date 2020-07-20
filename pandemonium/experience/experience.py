@@ -21,6 +21,8 @@ class Transition(NamedTuple):
             incompatible with python3.6
             need to write a custom __iter__ method
 
+    TODO: also consider using a TypedDict instead!
+
     """
     s0: torch.Tensor  # raw observation before state construction
     a: torch.Tensor = None  # action taken by the agent

@@ -8,14 +8,14 @@ from pandemonium.implementations.icm import create_horde
 if __name__ == "__main__":
     ray.init(
         local_mode=False,
-        dashboard_port=8268
+        # dashboard_port=8269
     )
     analysis = tune.run(
         Loop,
         name='ICM',
         verbose=1,
         stop={"timesteps_total": int(1e6)},
-        num_samples=6,
+        num_samples=3,
         local_dir=EXPERIMENT_DIR,
         config={
             "env": "MiniGrid-MultiRoomEnvN4S5-Img-v0",
@@ -25,7 +25,7 @@ if __name__ == "__main__":
             'gamma': tune.grid_search([0.9]),
             'beta': tune.grid_search([0.2]),
             'trace_decay': tune.grid_search([1]),
-            'icm_weight': tune.grid_search([0, 1]),
+            'icm_weight': tune.grid_search([1]),
             "rollout_fragment_length": 16,  # batch size for exp collector
             "horde_fn": create_horde,
         }

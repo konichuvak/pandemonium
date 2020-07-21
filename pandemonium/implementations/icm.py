@@ -92,14 +92,6 @@ def create_horde(config, env, feature_extractor, policy) -> Horde:
     cumulant = Fitness(env)
 
     if config.get('icm_weight', 1.):
-        # dynamics_feature_extractor = ConvBody(
-        #     obs_shape=env.reset().shape,
-        #     channels=(32, 32, 32, 32),
-        #     kernels=(3, 3, 3, 3),
-        #     strides=(2, 2, 2, 2),
-        #     padding=(1, 1, 1, 1),
-        #     activation=nn.ELU
-        # )
         from copy import deepcopy
         dynamics_feature_extractor = deepcopy(feature_extractor)
 
@@ -126,7 +118,7 @@ def create_horde(config, env, feature_extractor, policy) -> Horde:
                 action_space=env.action_space
             ),
             cumulant=cumulant,
-            continuation=ConstantContinuation(config['gamma'])),
+            continuation=ConstantContinuation(config.get('gamma', 0.99))),
         behavior_policy=policy,
         feature=feature_extractor,
         criterion=F.mse_loss,

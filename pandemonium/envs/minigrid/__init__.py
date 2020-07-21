@@ -4,6 +4,7 @@ import gym_minigrid
 from gym_minigrid.envs import MiniGridEnv
 from gym_minigrid.wrappers import FullyObsWrapper, ImgObsWrapper
 from ray.tune import register_env
+from torch import nn
 
 from pandemonium.envs.minigrid.four_rooms import FourRooms
 from pandemonium.envs.minigrid.plotter import MinigridDisplay
@@ -30,7 +31,17 @@ encoder_registry = {
         },
     },
     'image+text': {
-
+    
+    },
+    'curiosity': {
+        'encoder_name': 'conv_body',  # replace by conv_lstm
+        'encoder_cfg': {
+            'channels': (32, 32, 32),
+            'kernels': (3, 3, 3),
+            'strides': (2, 2, 2),
+            'padding': (1, 1, 1),
+            'activation': nn.ELU
+        }
     }
 }
 

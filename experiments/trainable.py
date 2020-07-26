@@ -1,7 +1,7 @@
 from typing import Callable
 
 from ray.rllib.agents.a3c.a3c_torch_policy import A3CTorchPolicy
-from ray.rllib.agents.trainer import Trainer, COMMON_CONFIG
+from ray.rllib.agents.trainer import Trainer as RllibTrainer, COMMON_CONFIG
 from ray.rllib.utils import override
 from ray.tune import Trainable
 from ray.tune.resources import Resources
@@ -11,10 +11,10 @@ from pandemonium.envs import MiniGridEnv, DeepmindLabEnv, PandemoniumEnv
 from pandemonium.networks.bodies import BaseNetwork
 from pandemonium.policies import Policy
 
-Trainer._allow_unknown_configs = True
+RllibTrainer._allow_unknown_configs = True
 
 
-class Loop(Trainer):
+class Trainer(RllibTrainer):
     _name = ''
     _policy = A3CTorchPolicy
     _default_config = COMMON_CONFIG
@@ -39,26 +39,37 @@ class Loop(Trainer):
     @staticmethod
     def create_policy(cfg, feature_dim, action_space):
         policy_cls = Policy.by_name(cfg['policy_name'])
-        policy_cfg = cfg.get('policy_cfg', {})
         return policy_cls(feature_dim=feature_dim,
                           action_space=action_space,
-                          **policy_cfg)
+                          **cfg)
+
+    def reset_config(self, new_config):
+
+        # print('hi')
+        # print(new_config)
+        # exit(1)
+        return False
+
+    def load_checkpoint(self, checkpoint_path: str):
+        print(self.workers)
+        exit(1)
+        return False
 
     def _init(self, cfg, env_creator: Callable[[dict], PandemoniumEnv]):
         self.env = env_creator(cfg.get('env_config', {}))
         print(self.env)
-        encoder = self.create_encoder(cfg, self.env.observation_space)
-        print(encoder)
-        policy = self.create_policy(cfg, encoder.feature_dim,
-                                    self.env.action_space)
-        print(policy)
-        horde = cfg['horde_fn'](cfg, self.env, encoder, policy)
+        self.encoder = self.create_encoder(cfg, self.env.observation_space)
+        print(self.encoder)
+        self.policy = self.create_policy(cfg, self.encoder.feature_dim,
+                                         self.env.action_space)
+        print(self.policy)
+        horde = cfg['horde_fn'](cfg, self.env, self.encoder, self.policy)
 
         # Create a learning loop
-        self.agent = Agent(encoder, policy, horde)
+        self.agent = Agent(self.encoder, self.policy, horde)
         self.loop = self.agent.learn(
             env=self.env,
-            episodes=100000000000,
+            episodes=int(1e25),
             horizon=cfg['rollout_fragment_length'],
         )
 
